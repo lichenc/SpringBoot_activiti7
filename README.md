@@ -1,4 +1,6 @@
 # SpringBoot_activiti7
+
 new branch 
 
-Creating a new branch is quick  & simple.
+creating a new branch is quick.
+Creating a new branch is quick AND simple.
