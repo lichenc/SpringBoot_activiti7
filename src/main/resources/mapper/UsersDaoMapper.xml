@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.example.tquan.dao.UsersDao">
+<mapper namespace="com.example.tquan.dao.AccountDao">
     <!-- 根据主键查询-->
-    <select id="getById" resultType="com.example.tquan.entity.UsersEntity" parameterType="java.lang.Integer">
+    <select id="getById" resultType="com.example.tquan.entity.AccountEntity" parameterType="java.lang.Integer">
         select *
-        from users
+        from im_account
         where id = #{id}
     </select>
     <!--新增用户 -->
-    <insert id="addUser" parameterType="com.example.tquan.entity.UsersEntity">
-        insert into users(username,password) values(#{username},#{password})
+    <insert id="addUser" parameterType="com.example.tquan.entity.AccountEntity">
+        insert into im_account(LOGIN_NAME,LOGIN_PWD) values(#{loginName},#{loginPwd})
     </insert>
     <!--用户登录 -->
     <select id="findUserByName" parameterType="java.lang.String"
-            resultType="com.example.tquan.entity.UsersEntity">
-        select * from users where username=#{username}
+            resultType="com.example.tquan.entity.AccountEntity">
+        select LOGIN_NAME,LOGIN_PWD from im_account where LOGIN_NAME=#{loginName}
     </select>
 </mapper>

@@ -20,7 +20,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+       /* http
                 .httpBasic()     //security提供的登录页面
                 .and()
                 .authorizeRequests()    //认证请求
@@ -29,9 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()    //任何请求都需要认证
                 .and()
                 .csrf()
-                .disable();     //CSRF跨站请求伪造直接关闭
+                .disable();     //CSRF跨站请求伪造直接关闭*/
 
-       /* http
+        http
                 .formLogin()                          //使用表单登录页面
                 .loginPage("/login")                 //登录url
                 .loginProcessingUrl("/doLogin")     //登录提交url
@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .csrf()
-                .disable();*/
+                .disable();
 
         http.logout().logoutUrl("/logout").logoutSuccessUrl("/loginPage").invalidateHttpSession(true);
     }

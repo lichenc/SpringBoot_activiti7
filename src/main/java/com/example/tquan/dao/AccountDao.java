@@ -1,27 +1,27 @@
 package com.example.tquan.dao;
 
-import com.example.tquan.entity.UsersEntity;
+import com.example.tquan.entity.AccountEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
  * Created by chenjin on 2021/5/17 10:49
  */
 @Mapper
-public interface UsersDao {
+public interface AccountDao {
     /**
      * 根据id查询
      *
      * @param id
      * @return
      */
-    UsersEntity getById(Integer id);
+    AccountEntity getById(Integer id);
 
     /**
      * 添加用户
      *
      * @return
      */
-    int addUser(UsersEntity usersEntity);
+    int addUser(AccountEntity accountEntity);
 
     /**
      * 用户登录
@@ -29,5 +29,5 @@ public interface UsersDao {
      * @param username
      * @return
      */
-    UsersEntity findUserByName(String username);
+    AccountEntity findUserByName(String username);
 }
