@@ -11,7 +11,7 @@ public class AccountEntity {
     private String loginName;
     private String loginPwd;
     private Integer appId;
-    private Integer userId;
+    private String userId;
     private Integer status;
     private Date createTime;
     private String optUser;
@@ -51,11 +51,11 @@ public class AccountEntity {
         this.appId = appId;
     }
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

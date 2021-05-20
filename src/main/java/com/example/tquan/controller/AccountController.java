@@ -1,7 +1,9 @@
 package com.example.tquan.controller;
 
 import com.example.tquan.entity.AccountEntity;
+import com.example.tquan.entity.UserEntity;
 import com.example.tquan.service.AccountService;
+import com.example.tquan.service.UserService;
 import com.ninghang.core.security.UIM;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -22,6 +24,8 @@ public class AccountController {
 
     @Autowired
     private AccountService accountService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;   //security提供的加密接口
 
@@ -59,27 +63,45 @@ public class AccountController {
      */
     @PostMapping("/doLogin")
     public String login(AccountEntity accountEntity, HttpServletRequest request) {
-        AccountEntity usersEntity1 = accountService.findUserByName(accountEntity);
+        AccountEntity accountEntity1 = accountService.findUserByName(accountEntity);
         //判断用户是否存在
-        if (usersEntity1 != null) {
-            usersEntity1.setLoginPwd(UIM.decode(usersEntity1.getLoginPwd()));
-            //校验密码
+        if (accountEntity1 != null) {
+            accountEntity1.setLoginPwd(UIM.decode(accountEntity1.getLoginPwd()));
+
             // boolean matche = passwordEncoder.matches(usersEntity.getPassword(), usersEntity1.getPassword());
             //密码正确
             // if (matche == true) {
-            if (accountEntity.getLoginPwd().equals(usersEntity1.getLoginPwd()) || accountEntity.getLoginPwd() == usersEntity1.getLoginPwd()) {
+            //校验密码
+            if (accountEntity.getLoginPwd().equals(accountEntity1.getLoginPwd()) || accountEntity.getLoginPwd() == accountEntity1.getLoginPwd()) {
                 log.info("==========================" + accountEntity.getLoginName() + "登录成功");
                 request.setAttribute("loginabnormal", "200");
-                return "loginPage";
+                //获取登录账号的个人详细信息
+                UserEntity userEntity1 = new UserEntity();
+                userEntity1.setId(accountEntity1.getUserId());
+                UserEntity userEntity = userService.getUserByProperty(userEntity1);
+                //判断是否查询到了用户
+                if (userEntity != null) {
+                    //用户性别设置
+                    if (userEntity.getSex() == "1" || userEntity.getSex().equals("1")) {
+                        userEntity.setSex("男");
+                    } else {
+                        userEntity.setSex("女");
+                    }
+                    request.setAttribute("userEntity", userEntity);
+                    return "/index";
+                } else {
+                    log.info("==========================账号没有对应的用户");
+                    return "/loginPage";
+                }
             } else {
                 log.info("==========================用户名或密码错误");
                 request.setAttribute("loginabnormal", "201");
-                return "loginPage";
+                return "/loginPage";
             }
         } else {
             log.info("==========================用户不存在");
             request.setAttribute("loginabnormal", "202");
-            return "loginPage";
+            return "/loginPage";
         }
     }
 }
