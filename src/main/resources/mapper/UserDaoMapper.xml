@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.UserDao">
+    <!--根据参数查询用户-->
+    <select id="getUserByProperty" parameterType="com.example.tquan.entity.UserEntity"
+            resultType="com.example.tquan.entity.UserEntity">
+        select * from im_user
+        <where>
+            <if test="id != null and id != ''">
+                and ID=#{id}
+            </if>
+            <if test="sn != null and sn != ''">
+                and SN=#{sn}
+            </if>
+            <if test="name != null and name!=''">
+                and NAME=#{id}
+            </if>
+            <if test="userTypeId != null and userTypeId != ''">
+                and USER_TYPE_ID=#{userTypeId}
+            </if>
+            <if test="telephone != null and telephone != ''">
+                and TELEPHONE=#{telephone}
+            </if>
+            <if test="status != null and status != ''">
+                and STATUS=#{status}
+            </if>
+        </where>
+    </select>
+</mapper>

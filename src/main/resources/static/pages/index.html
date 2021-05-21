@@ -1,11 +1,47 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="referrer" content="no-referrer"/>
+    <title>首页</title>
+    <script type="text/javascript" src="../js/jquery-1.8.3.min.js"/>
 </head>
 <body>
-<h1>你好啊</h1>
-<input type="text">
+<h1>欢迎你</h1>
+<br>
+
+姓名：<em id="name"/>
+性别：<em id="sex"/>
+工号：<em id="sn"/>
+电话：<em id="phone"/>
+邮件：<em id="email"/>
+<script type="text/javascript">
+    /**
+     * 初始化用户数据
+     */
+    window.onload = function () {
+        var name = '[[${userEntity.name}]]';
+        var sex = '[[${userEntity.sex}]]';
+        var sn = '[[${userEntity.sn}]]';
+        var phone = '[[${userEntity.telephone}]]';
+        var email = '[[${userEntity.email}]]';
+
+        if (name != null && name != "") {
+            document.getElementById("name").innerText = name;
+        }
+        if (sex != null && sex != "") {
+            document.getElementById("sex").ht = sex;
+        }
+        if (sn != null && sn != "") {
+            document.getElementById("sn").innerText = sn;
+        }
+        if (phone != null && phone != "") {
+            document.getElementById("phone").innerText = phone;
+        }
+        if (email != null && email != "") {
+            document.getElementById("email").innerText = email;
+        }
+    }
+</script>
 </body>
 </html>
