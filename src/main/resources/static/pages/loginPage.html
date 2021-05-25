@@ -10,12 +10,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>统一身份管理平台-登录</title>
-    <script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="../js/jquery.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/login.css">
 </head>
 <body>
 <div class="wrap">
-    <!-- <img src="../img/back.jpg" class="imgStyle">-->
     <div class="loginForm">
         <form action="/doLogin" method="post" id="submit_from">
             <div class="logoHead">
@@ -47,8 +46,7 @@
             <em class="err_infor" id="errorInfo" style="color: red;font-family: 微软雅黑"></em>
             <div class="usernameWrapDiv">
                 <div class="submitLabel">
-                    <label> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<a
-                            href="#" id="loginRegister">忘记密码</a></label>
+                    <label>&nbsp;<a href="#" id="loginRegister">忘记密码</a></label>
                 </div>
                 <div class="submitDiv">
                     <input id="loginBtn" type="button" class="submit layui-btn layui-btn-primary" value="登录"
@@ -58,13 +56,12 @@
         </form>
     </div>
 </div>
-<script type="text/javascript" src="../js/layui.js"></script>
 <script>
     window.onload = function () {
         var loginabnormal = '[[${loginabnormal}]]';
         if (loginabnormal != null && loginabnormal != "") {
             if (loginabnormal == "200") {
-                alert("登录成功！");
+                //alert("登录成功！");
             } else if (loginabnormal == "201") {
                 //alert("用户名或密码错误！");
                 document.getElementById("errorInfo").innerText = "用户名或密码错误！";

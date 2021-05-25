@@ -23,4 +23,11 @@ public class IndexController {
     public String register() {
         return "/registerPage";
     }
+
+    @GetMapping("/personInfo")
+    public String personInfo() {
+        return "/personInfo";
+    }
+
+
 }

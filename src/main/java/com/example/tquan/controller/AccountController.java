@@ -104,4 +104,15 @@ public class AccountController {
             return "/loginPage";
         }
     }
+
+    /**
+     * 退出登录
+     *
+     * @return
+     */
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.removeAttribute("userEntity");
+        return "/loginPage";
+    }
 }
