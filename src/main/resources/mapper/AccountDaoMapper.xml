@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.tquan.dao.AccountDao">
-    <!-- 根据主键查询-->
-    <select id="getById" resultType="com.example.tquan.entity.AccountEntity" parameterType="java.lang.Integer">
-        select *
-        from im_account
-        where id = #{id}
+    <!-- 根据用户ID查询-->
+    <select id="getByUserId" resultType="com.example.tquan.entity.AccountEntity" parameterType="java.lang.String">
+        SELECT
+            ia.ID,
+            ia.APP_ID,
+            ia.LOGIN_NAME,
+            ia.`STATUS`,
+            ia.ACCT_TYPE,
+            iap.`NAME` as appName
+        FROM
+	        im_account ia
+	    LEFT JOIN im_app iap ON ia.APP_ID = iap.ID
+        WHERE
+	        ia.USER_ID = #{userId}
     </select>
     <!--新增用户 -->
     <insert id="addUser" parameterType="com.example.tquan.entity.AccountEntity">
@@ -14,6 +23,6 @@
     <!--用户登录 -->
     <select id="findUserByName" parameterType="java.lang.String"
             resultType="com.example.tquan.entity.AccountEntity">
-        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName}
+        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1
     </select>
 </mapper>

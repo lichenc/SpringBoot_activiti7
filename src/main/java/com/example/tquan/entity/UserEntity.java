@@ -20,6 +20,17 @@ public class UserEntity {
     private String optTime;
     private String companySn;
 
+    //辅助字段：组织名称
+    private String orgName;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
+
     public String getId() {
         return id;
     }

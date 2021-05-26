@@ -3,6 +3,8 @@ package com.example.tquan.dao;
 import com.example.tquan.entity.AccountEntity;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * Created by chenjin on 2021/5/17 10:49
  */
@@ -14,7 +16,7 @@ public interface AccountDao {
      * @param id
      * @return
      */
-    AccountEntity getById(Integer id);
+    List<AccountEntity> getByUserId(String id);
 
     /**
      * 添加用户

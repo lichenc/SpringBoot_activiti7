@@ -26,7 +26,7 @@ public class IndexController {
 
     @GetMapping("/personInfo")
     public String personInfo() {
-        return "/personInfo";
+        return "/personInfoPage";
     }
 
 
