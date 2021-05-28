@@ -1,125 +1,64 @@
 package com.example.tquan.controller;
 
 import com.example.tquan.entity.AccountEntity;
-import com.example.tquan.entity.UserEntity;
 import com.example.tquan.service.AccountService;
 import com.example.tquan.service.UserService;
 import com.ninghang.core.security.UIM;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
  * Created by chenjin on 2021/5/17 10:59
  */
-@Controller
+
+@RestController
 public class AccountController {
 
     @Autowired
     private AccountService accountService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;   //security提供的加密接口
 
     private Log log = LogFactory.getLog(getClass());
 
-    @GetMapping("/Hello1/{id}")
-    public AccountEntity test(@PathVariable("id") String id) {
-        //System.out.println("id:" + id);
-        //return accountService.getByUserId(id);
-        return null;
-    }
 
     /**
-     * 用户注册
-     *
-     * @param accountEntity
-     * @return
+     * 修改账号
      */
-    @PostMapping("/doRegister")
-    public void register(AccountEntity accountEntity) {
-        int iden = accountService.addUser(accountEntity);
-        if (iden == 0) {
-            log.info("==========================注册失败");
-
+    @PostMapping("/updateAccount")
+    public int updateAccount(String id, String loginPwd) {
+        int iden = 0;
+        //初始化对象，设置修改需要的参数
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(id);
+        accountEntity.setLoginPwd(UIM.encode(loginPwd));
+        //执行修改
+        iden = accountService.updateAccountById(accountEntity);
+        System.out.println(iden);
+        if (iden != 0) {
+            log.info("==========================账号ID:" + id + "的账号密码修改成功");
         } else {
-            log.info("==========================" + accountEntity.getLoginName() + "注册成功");
-
+            log.info("==========================账号ID:" + id + "的账号密码修改失败");
         }
+        return iden;
     }
 
     /**
-     * 用户登录
-     *
-     * @param accountEntity
-     * @return
+     * 获取账号详情
      */
-    @PostMapping("/doLogin")
-    public String login(AccountEntity accountEntity, HttpServletRequest request) {
-        AccountEntity accountEntity1 = accountService.findUserByName(accountEntity);
-        //判断用户是否存在
-        if (accountEntity1 != null) {
-            accountEntity1.setLoginPwd(UIM.decode(accountEntity1.getLoginPwd()));
+    @PostMapping("/getAccountDetail")
+    public AccountEntity getAccountDetail(String id) {
+        AccountEntity accountEntity = new AccountEntity();
+        accountEntity.setId(id);
+        //查询账号详情
+        List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity);
+        return accountEntityList.get(0);
 
-            // boolean matche = passwordEncoder.matches(usersEntity.getPassword(), usersEntity1.getPassword());
-            //密码正确
-            // if (matche == true) {
-            //校验密码
-            if (accountEntity.getLoginPwd().equals(accountEntity1.getLoginPwd()) || accountEntity.getLoginPwd() == accountEntity1.getLoginPwd()) {
-                log.info("==========================" + accountEntity.getLoginName() + "登录成功");
-                request.setAttribute("loginabnormal", "200");
-                //获取登录账号的个人详细信息
-                UserEntity userEntity1 = new UserEntity();
-                userEntity1.setId(accountEntity1.getUserId());
-                UserEntity userEntity = userService.getUserByProperty(userEntity1);
-                //判断是否查询到了用户
-                if (userEntity != null) {
-                    //用户性别设置
-                    if (userEntity.getSex() == "1" || userEntity.getSex().equals("1")) {
-                        userEntity.setSex("男");
-                    } else {
-                        userEntity.setSex("女");
-                    }
-                    //获取账号集合
-                    List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity1.getUserId());
-                    request.setAttribute("accountEntityList", accountEntityList);
-                    request.setAttribute("userEntity", userEntity);
-                    request.setAttribute("accountCount", accountEntityList.size());
-                    return "/index";
-                } else {
-                    log.info("==========================账号没有对应的用户");
-                    return "/loginPage";
-                }
-            } else {
-                log.info("==========================用户名或密码错误");
-                request.setAttribute("loginabnormal", "201");
-                return "/loginPage";
-            }
-        } else {
-            log.info("==========================用户不存在");
-            request.setAttribute("loginabnormal", "202");
-            return "/loginPage";
-        }
-    }
-
-    /**
-     * 退出登录
-     *
-     * @return
-     */
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        request.removeAttribute("userEntity");
-        return "/loginPage";
     }
 
 }

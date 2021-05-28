@@ -23,11 +23,11 @@ public class AccountService {
     /**
      * 根据id查询
      *
-     * @param id
+     * @param accountEntity
      * @return
      */
-    public List<AccountEntity> getByUserId(String id) {
-        return accountDao.getByUserId(id);
+    public List<AccountEntity> getByUserId(AccountEntity accountEntity) {
+        return accountDao.getByUserId(accountEntity);
     }
 
     /**
@@ -50,10 +50,20 @@ public class AccountService {
     /**
      * 用户登录
      *
-     * @param usersEntity
+     * @param accountEntity
      * @return
      */
-    public AccountEntity findUserByName(AccountEntity usersEntity) {
-        return accountDao.findUserByName(usersEntity.getLoginName());
+    public AccountEntity findUserByName(AccountEntity accountEntity) {
+        return accountDao.findUserByName(accountEntity.getLoginName());
+    }
+
+    /**
+     * 根据ID修改账号
+     *
+     * @param accountEntity
+     * @return
+     */
+    public int updateAccountById(AccountEntity accountEntity) {
+        return accountDao.updateAccountById(accountEntity);
     }
 }

@@ -2,19 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.tquan.dao.AccountDao">
     <!-- 根据用户ID查询-->
-    <select id="getByUserId" resultType="com.example.tquan.entity.AccountEntity" parameterType="java.lang.String">
+    <select id="getByUserId" resultType="com.example.tquan.entity.AccountEntity"
+            parameterType="com.example.tquan.entity.AccountEntity">
         SELECT
-            ia.ID,
-            ia.APP_ID,
-            ia.LOGIN_NAME,
-            ia.`STATUS`,
-            ia.ACCT_TYPE,
-            iap.`NAME` as appName
+        ia.ID,
+        ia.APP_ID,
+        ia.LOGIN_NAME,
+        ia.`STATUS`,
+        ia.ACCT_TYPE,
+        iap.`NAME` as appName
         FROM
-	        im_account ia
-	    LEFT JOIN im_app iap ON ia.APP_ID = iap.ID
-        WHERE
-	        ia.USER_ID = #{userId}
+        im_account ia
+        LEFT JOIN im_app iap ON ia.APP_ID = iap.ID
+        <where>
+            <if test="userId !=null and userId != '' ">
+                and ia.USER_ID = #{userId}
+            </if>
+            <if test="id !=null and id !='' ">
+                and ia.id=#{id}
+            </if>
+        </where>
+
+
     </select>
     <!--新增用户 -->
     <insert id="addUser" parameterType="com.example.tquan.entity.AccountEntity">
@@ -25,4 +34,22 @@
             resultType="com.example.tquan.entity.AccountEntity">
         select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1
     </select>
+    <!--根据账号ID修改账号-->
+    <update id="updateAccountById" parameterType="com.example.tquan.entity.AccountEntity">
+        update im_account
+        <set>
+            <if test="loginPwd != null and loginPwd != '' ">
+                LOGIN_PWD=#{loginPwd},
+            </if>
+            <if test="loginName != null and loginName !='' ">
+                LOGIN_NAME=#{loginName},
+            </if>
+            <if test="status !=null and status != '' ">
+                STATUS=#{status}
+            </if>
+        </set>
+        <where>
+            ID=#{id}
+        </where>
+    </update>
 </mapper>
