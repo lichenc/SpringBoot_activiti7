@@ -25,12 +25,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
 
                 .authorizeRequests()    //认证请求
-                .antMatchers("/register", "/doRegister", "/login", "/doLogin", "/css/**", "/js/**", "/img/**", "/font/**").permitAll()     //除了***能够无认证访问
+                .antMatchers("/register", "/doRegister", "/login", "/updateAccount", "/getAccountDetail", "/doLogin", "/css/**", "/js/**", "/img/**", "/font/**")
+                .permitAll()     //除了***能够无认证访问
                 .anyRequest()
                 .authenticated()    //任何请求都需要认证
+
                 .and()
                 .csrf()
-                .disable();     //CSRF跨站请求伪造直接关闭
+                .disable(); //CSRF跨站请求伪造直接关闭
 
 
         http.logout().logoutUrl("/logout").invalidateHttpSession(true);

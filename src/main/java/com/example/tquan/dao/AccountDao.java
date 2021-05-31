@@ -13,10 +13,10 @@ public interface AccountDao {
     /**
      * 根据id查询
      *
-     * @param id
+     * @param accountEntity
      * @return
      */
-    List<AccountEntity> getByUserId(String id);
+    List<AccountEntity> getByUserId(AccountEntity accountEntity);
 
     /**
      * 添加用户
@@ -32,4 +32,12 @@ public interface AccountDao {
      * @return
      */
     AccountEntity findUserByName(String username);
+
+    /**
+     * 根据ID修改账号
+     *
+     * @param accountEntity
+     * @return
+     */
+    int updateAccountById(AccountEntity accountEntity);
 }
