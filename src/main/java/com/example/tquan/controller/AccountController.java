@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by chenjin on 2021/5/17 10:59
@@ -32,9 +33,10 @@ public class AccountController {
     private Log log = LogFactory.getLog(getClass());
 
     @GetMapping("/Hello1/{id}")
-    public AccountEntity test(@PathVariable("id") Integer id) {
-        System.out.println("id:" + id);
-        return accountService.getById(id);
+    public AccountEntity test(@PathVariable("id") String id) {
+        //System.out.println("id:" + id);
+        //return accountService.getByUserId(id);
+        return null;
     }
 
     /**
@@ -87,7 +89,11 @@ public class AccountController {
                     } else {
                         userEntity.setSex("女");
                     }
+                    //获取账号集合
+                    List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity1.getUserId());
+                    request.setAttribute("accountEntityList", accountEntityList);
                     request.setAttribute("userEntity", userEntity);
+                    request.setAttribute("accountCount", accountEntityList.size());
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");
@@ -104,4 +110,16 @@ public class AccountController {
             return "/loginPage";
         }
     }
+
+    /**
+     * 退出登录
+     *
+     * @return
+     */
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request) {
+        request.removeAttribute("userEntity");
+        return "/loginPage";
+    }
+
 }

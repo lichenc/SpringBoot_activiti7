@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>个人信息</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+</head>
+
+<style>
+    body {
+        padding: 10px;
+        background-color: #F2F2F2;
+    }
+</style>
+<body>
+<div class="layui-row layui-col-space15">
+    <!-- 操作表单 -->
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">用户标识</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${userEntity.sn}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${userEntity.name}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">组织机构</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${userEntity.orgName}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <input type="text" th:value="${userEntity.sex}" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">职级</label>
+                    <div class="layui-input-block">
+                        <input type="text" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item  layui-form-text">
+                    <label class="layui-form-label">身份证号</label>
+                    <div class="layui-input-block">
+                        <input type="text" autocomplete="off"
+                               class="layui-input">
+                    </div>
+                </div>
+                <br>
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">权限</li>
+                        <li>平台角色</li>
+                        <li>岗位</li>
+                        <li>用户组</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <table class="layui-table">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>系统标识</th>
+                                    <th>系统名称</th>
+                                    <th>账号标识</th>
+                                    <th>状态</th>
+                                    <th>账号类型</th>
+                                    <th>角色标识</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="account:${accountEntityList}">
+                                    <td th:text="${account.appId}"></td>
+                                    <td th:text="${account.appName}"></td>
+                                    <td th:text="${account.loginName}"></td>
+                                    <div th:if="${account.status}==1">
+                                        <td th:text="启用"></td>
+                                    </div>
+
+                                    <div th:if="${account.status}==2">
+                                        <td th:text="禁用"></td>
+                                    </div>
+                                    <div th:if="${account.acctType}==1">
+                                        <td th:text="一般账号"></td>
+                                    </div>
+                                    <div th:if="${account.acctType}==2">
+                                        <td th:text="公共账号"></td>
+                                    </div>
+                                    <div th:if="${account.acctType}==3">
+                                        <td th:text="接口账号"></td>
+                                    </div>
+                                    <td></td>
+                                    <td><a href="http://www.layui.com" class="layui-btn">查看账号</a>
+                                        <a href="http://www.layui.com" class="layui-btn">修改密码</a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="layui-tab-item">内容2</div>
+                        <div class="layui-tab-item">内容3</div>
+                        <div class="layui-tab-item">内容4</div>
+                    </div>
+                </div>
+            </div>
+            <div id="accountPage" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<script>
+
+    //注意：选项卡 依赖 element 模块，否则无法进行功能性操作
+    layui.use('element', function () {
+        var element = layui.element;
+        //…
+
+    });
+    layui.use('laypage', function () {
+        var laypage = layui.laypage;
+        var accountCount = '[[${accountCount}]]';
+
+        //执行一个laypage实例
+        laypage.render({
+            elem: 'accountPage'
+            , count: accountCount //数据总数，从服务端得到
+        });
+    });
+</script>
+</body>
+</html>

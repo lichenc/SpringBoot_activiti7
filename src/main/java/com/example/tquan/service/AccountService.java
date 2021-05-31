@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by chenjin on 2021/5/17 10:51
  */
@@ -24,8 +26,8 @@ public class AccountService {
      * @param id
      * @return
      */
-    public AccountEntity getById(Integer id) {
-        return accountDao.getById(id);
+    public List<AccountEntity> getByUserId(String id) {
+        return accountDao.getByUserId(id);
     }
 
     /**

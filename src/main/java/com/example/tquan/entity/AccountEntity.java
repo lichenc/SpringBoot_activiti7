@@ -7,10 +7,10 @@ import java.util.Date;
  * Created by chenjin on 2021/5/17 10:45
  */
 public class AccountEntity {
-    private Integer id;
+    private String id;
     private String loginName;
     private String loginPwd;
-    private Integer appId;
+    private String appId;
     private String userId;
     private Integer status;
     private Date createTime;
@@ -19,11 +19,22 @@ public class AccountEntity {
     private Integer acctType;
     private Integer companySn;
 
-    public Integer getId() {
+    //辅助字段：显示应用名称
+    private String appName;
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,11 +54,11 @@ public class AccountEntity {
         this.loginPwd = loginPwd;
     }
 
-    public Integer getAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setAppId(Integer appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 
