@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.ImAppDao">
+    <!-- 查询全部业务系统-->
+    <select id="findAll" resultType="com.example.tquan.entity.ImApp">
+        select *
+        from im_app
+    </select>
+
+</mapper>
