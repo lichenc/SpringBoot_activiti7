@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -35,7 +36,7 @@ public class LoginController {
      * @return
      */
     @PostMapping("/doLogin")
-    public String login(AccountEntity accountEntity, HttpServletRequest request) {
+    public String login(AccountEntity accountEntity, HttpSession session,HttpServletRequest request) {
         AccountEntity accountEntity1 = accountService.findUserByName(accountEntity);
         //判断用户是否存在
         if (accountEntity1 != null) {
@@ -54,17 +55,8 @@ public class LoginController {
                 UserEntity userEntity = userService.getUserByProperty(userEntity1);
                 //判断是否查询到了用户
                 if (userEntity != null) {
-                    //用户性别设置
-                    if (userEntity.getSex() == "1" || userEntity.getSex().equals("1")) {
-                        userEntity.setSex("男");
-                    } else {
-                        userEntity.setSex("女");
-                    }
-                    //获取账号集合
-                    List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity1);
-                    request.setAttribute("accountEntityList", accountEntityList);
-                    request.setAttribute("userEntity", userEntity);
-                    request.setAttribute("accountCount", accountEntityList.size());
+                    request.setAttribute("userName", userEntity.getName());
+                    session.setAttribute("UserId",accountEntity1.getUserId());
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");
@@ -88,8 +80,9 @@ public class LoginController {
      * @return
      */
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
+    public String logout(HttpServletRequest request,HttpSession session) {
         request.removeAttribute("userEntity");
+        session.removeAttribute("UserId");
         return "/loginPage";
     }
 
