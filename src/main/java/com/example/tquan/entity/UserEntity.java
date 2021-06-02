@@ -1,6 +1,7 @@
 package com.example.tquan.entity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户实体类
@@ -22,6 +23,36 @@ public class UserEntity {
 
     //辅助字段：组织名称
     private String orgName;
+    //辅助字段：账号个数
+    private int accountCount;
+
+    //辅助字段：岗位个数
+    private int positionCount;
+    //辅助字段：用户所属岗位集合
+    private  List<PositionEntity> positionEntityList;
+    //辅助字段：账号集合
+    private List<AccountEntity> accountEntities;
+
+    //辅助字段:用户组个数
+    private int groupCount;
+    //辅助字段：用户组集合
+    private List<GroupEntity> groupEntities;
+
+    public int getGroupCount() {
+        return groupCount;
+    }
+
+    public void setGroupCount(int groupCount) {
+        this.groupCount = groupCount;
+    }
+
+    public List<GroupEntity> getGroupEntities() {
+        return groupEntities;
+    }
+
+    public void setGroupEntities(List<GroupEntity> groupEntities) {
+        this.groupEntities = groupEntities;
+    }
 
     public String getOrgName() {
         return orgName;
@@ -127,10 +158,42 @@ public class UserEntity {
         this.companySn = companySn;
     }
 
+    public int getAccountCount() {
+        return accountCount;
+    }
+
+    public void setAccountCount(int accountCount) {
+        this.accountCount = accountCount;
+    }
+
+    public List<AccountEntity> getAccountEntities() {
+        return accountEntities;
+    }
+
+    public void setAccountEntities(List<AccountEntity> accountEntities) {
+        this.accountEntities = accountEntities;
+    }
+
+    public List<PositionEntity> getPositionEntityList() {
+        return positionEntityList;
+    }
+
+    public void setPositionEntityList(List<PositionEntity> positionEntityList) {
+        this.positionEntityList = positionEntityList;
+    }
+
+    public int getPositionCount() {
+        return positionCount;
+    }
+
+    public void setPositionCount(int positionCount) {
+        this.positionCount = positionCount;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", sn='" + sn + '\'' +
                 ", sex='" + sex + '\'' +
                 ", name='" + name + '\'' +
@@ -142,6 +205,10 @@ public class UserEntity {
                 ", updateTime=" + updateTime +
                 ", optTime='" + optTime + '\'' +
                 ", companySn='" + companySn + '\'' +
+                ", orgName='" + orgName + '\'' +
+                ", accountCount=" + accountCount +
+                ", positionEntityList=" + positionEntityList +
+                ", accountEntities=" + accountEntities +
                 '}';
     }
 }

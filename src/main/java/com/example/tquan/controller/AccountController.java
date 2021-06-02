@@ -1,7 +1,12 @@
 package com.example.tquan.controller;
 
 import com.example.tquan.entity.AccountEntity;
+import com.example.tquan.entity.GroupEntity;
+import com.example.tquan.entity.PositionEntity;
+import com.example.tquan.entity.UserEntity;
 import com.example.tquan.service.AccountService;
+import com.example.tquan.service.GroupService;
+import com.example.tquan.service.PositionService;
 import com.example.tquan.service.UserService;
 import com.ninghang.core.security.UIM;
 import org.apache.commons.logging.Log;
@@ -10,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -23,6 +30,10 @@ public class AccountController {
     private AccountService accountService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private PositionService positionService;
+    @Autowired
+    private GroupService groupService;
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -58,6 +69,56 @@ public class AccountController {
         //查询账号详情
         List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity);
         return accountEntityList.get(0);
+
+    }
+
+    /**
+     * 获取账号列表
+     * @param session
+     * @param request
+     */
+    @PostMapping("/getAccountList")
+    public UserEntity getAccountList(HttpSession session, HttpServletRequest request) throws Exception{
+        //获取存在session里的用户id
+        String userId=session.getAttribute("UserId").toString();
+        log.info("==========================当前登录用户id"+userId);
+
+        //设置查询帐号参数
+        AccountEntity accountEntity=new AccountEntity();
+        accountEntity.setUserId(userId);
+        //获取账号列表
+       List<AccountEntity> accountEntityList= accountService.getByUserId(accountEntity);
+
+        //设置查询用户参数
+        UserEntity userEntity=new UserEntity();
+        userEntity.setId(userId);
+        UserEntity userEntity1= userService.getUserByProperty(userEntity);
+
+        //获取用户岗位集合
+        List<PositionEntity> positionEntityList=positionService.getPositionByUserId(userId);
+
+        //获取用户组集合
+        List<GroupEntity> groupEntityList=groupService.getGroupByUserId(userId);
+
+        if(accountEntityList.size()>0){
+            //添加账号记录条数
+            userEntity1.setAccountCount(accountEntityList.size());
+            //添加账号集合
+            userEntity1.setAccountEntities(accountEntityList);
+        }
+
+        if(positionEntityList.size()>0){
+            //添加用户岗位集合
+            userEntity1.setPositionEntityList(positionEntityList);
+            userEntity1.setPositionCount(positionEntityList.size());
+        }
+
+        if (groupEntityList.size()>0){
+            userEntity1.setGroupEntities(groupEntityList);
+            userEntity1.setGroupCount(groupEntityList.size());
+        }
+        return userEntity1;
+
 
     }
 

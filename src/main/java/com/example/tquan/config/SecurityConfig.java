@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
 
                 .authorizeRequests()    //认证请求
-                .antMatchers("/register", "/doRegister", "/login", "/updateAccount", "/getAccountDetail", "/doLogin", "/css/**", "/js/**", "/img/**", "/font/**")
+                .antMatchers("/register", "/doRegister", "/login", "/personInfoPage" ,"/getAccountList","/updateAccount", "/getAccountDetail", "/doLogin", "/css/**", "/js/**", "/img/**", "/font/**")
                 .permitAll()     //除了***能够无认证访问
                 .anyRequest()
                 .authenticated()    //任何请求都需要认证
@@ -34,8 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable(); //CSRF跨站请求伪造直接关闭
 
+        http.headers().frameOptions().disable();   //解决无法使用iframe引入页面
 
-        http.logout().logoutUrl("/logout").invalidateHttpSession(true);
+        http.logout().logoutUrl("/logout").invalidateHttpSession(true);  //退出登录
 
     }
 
