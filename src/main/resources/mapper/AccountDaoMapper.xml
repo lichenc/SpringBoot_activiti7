@@ -32,7 +32,7 @@
     <!--用户登录 -->
     <select id="findUserByName" parameterType="java.lang.String"
             resultType="com.example.tquan.entity.AccountEntity">
-        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1
+        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1 and APP_ID=100000065
     </select>
     <!--根据账号ID修改账号-->
     <update id="updateAccountById" parameterType="com.example.tquan.entity.AccountEntity">

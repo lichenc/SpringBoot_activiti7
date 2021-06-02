@@ -1,9 +1,12 @@
 package com.example.tquan.service;
 
 import com.example.tquan.dao.UserDao;
+import com.example.tquan.entity.PositionEntity;
 import com.example.tquan.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by chenjin on 2021/5/20 15:04
@@ -23,4 +26,6 @@ public class UserService {
         userEntity = userDao.getUserByProperty(userEntity);
         return userEntity;
     }
+
+
 }

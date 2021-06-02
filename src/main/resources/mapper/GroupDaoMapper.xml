@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.GroupDao">
+    <!--查询用户所属用户组-->
+    <select id="getGroupByUserId" parameterType="java.lang.String" resultType="com.example.tquan.entity.GroupEntity">
+       SELECT
+	          ag.SN sn,
+	          ag.`NAME` name,
+	         ag.REMARK remark
+       FROM
+	        am_user_groupe aug
+	    LEFT JOIN am_group ag ON aug.AM_GROUP_ID = ag.ID
+        WHERE
+	        aug.IM_USER_ID =#{userId}
+    </select>
+</mapper>
