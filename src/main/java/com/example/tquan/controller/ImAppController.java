@@ -27,7 +27,7 @@ public class ImAppController {
      * @param
      * @return
      */
-    @RequestMapping("/audit")
+    @RequestMapping("/apply")
     public void findAll(HttpServletRequest request) {
         System.out.println();
         List appList=imAppService.findAll();

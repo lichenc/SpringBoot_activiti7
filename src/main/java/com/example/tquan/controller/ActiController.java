@@ -76,7 +76,6 @@ public class ActiController{
     /**
      * 启动流程实例,分配任务给个人
      */
-   //@PostMapping("/audit")
     @RequestMapping(value = "/activi")
     public String start(ActivitiEntity activiti,HttpServletRequest request) {
         RuntimeService runtimeService = processEngine.getRuntimeService();
@@ -92,7 +91,7 @@ public class ActiController{
         runtimeService.startProcessInstanceByKey("myProcess_1",variables);
         String name=activiti.getProposer();
         findTask(name,request);
-        return "/audit";
+        return "/apply";
     }
 
 
@@ -124,20 +123,27 @@ public class ActiController{
         }
         return request;
     }
+
+    public void completeTask(){
+        //获取ProcessEngine对象   默认配置文件名称：activiti.cfg.xml  并且configuration的Bean实例ID为processEngineConfiguration
+        ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+        //获取一个TaskService对象
+        TaskService taskService=processEngine.getTaskService();
+        //任务处理
+        taskService.complete("2505");
+    }
     /**
      * 审核人完成任务
      */
-    @RequestMapping(value = "", method = {RequestMethod.POST, RequestMethod.GET})
+    //@RequestMapping(value = "", method = {RequestMethod.POST, RequestMethod.GET})
     public void aaaCompleteTask(String taskId, String days) {
         //任务ID
 //        String taskId = "47506";
 //        String days="4";
-
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("days", days);//userKey在上文的流程变量中指定了
 //        taskService.claim(taskid,"ZJ2");//指定办理人
 //        taskService.setAssignee(taskid, null);//回退为组任务状态
-
         taskService.complete(taskId, variables);
         System.out.println("完成任务：任务ID：" + taskId);
     }
