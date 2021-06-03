@@ -58,8 +58,8 @@ public class LoginController {
                 if (userEntity != null) {
                     request.setAttribute("userName", userEntity.getName());
                     session.setAttribute("UserId",accountEntity1.getUserId());
-                    session.setAttribute("userName",userEntity1.getName());
-                    session.setAttribute("userSn",userEntity1.getSn());
+                    session.setAttribute("userName",userEntity.getName());
+                    session.setAttribute("userSn",userEntity.getSn());
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");
