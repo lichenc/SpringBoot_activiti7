@@ -3,6 +3,7 @@ package com.example.tquan.controller;
 import com.example.tquan.entity.AccountEntity;
 import com.example.tquan.entity.UserEntity;
 import com.example.tquan.service.AccountService;
+import com.example.tquan.service.TaskService;
 import com.example.tquan.service.UserService;
 import com.ninghang.core.security.UIM;
 import org.apache.commons.logging.Log;
@@ -57,6 +58,8 @@ public class LoginController {
                 if (userEntity != null) {
                     request.setAttribute("userName", userEntity.getName());
                     session.setAttribute("UserId",accountEntity1.getUserId());
+                    session.setAttribute("userName",userEntity1.getName());
+                    session.setAttribute("userSn",userEntity1.getSn());
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");

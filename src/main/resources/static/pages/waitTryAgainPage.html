@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>待重试</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+    .span{
+        float:right;
+        width:50px;
+        margin:9px 0 0 0;
+    }
+</style>
+
+<body>
+<br>
+<div class="cBody">
+    <div class="console">
+        <form class="layui-form" >
+            <div class="layui-form-item">
+                <div class="main">
+
+                </div>
+                <div class="au layui-input-inline">
+                    <span class="span">申请人</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="name"   placeholder="申请人" autocomplete="off" class="layui-input">
+                </div>
+                <div class="au layui-input-inline">
+                    <span class="span">审批人</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="time" placeholder="审批人">
+                </div>
+                <div class="layui-input-inline">
+                     <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                     <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <br>
+    &nbsp;&nbsp;
+    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重试&nbsp;&nbsp;</button>
+    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
+    <!--事件列表-->
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="150">
+                        <col width="200">
+                        <col>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>事件标识</th>
+                        <th>事件类型</th>
+                        <th>申请人标识</th>
+                        <th>审批人标识</th>
+                        <th>任务类型</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="eventList">
+
+                    </tbody>
+                </table>
+                <div id="eventPage" style="text-align: center"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

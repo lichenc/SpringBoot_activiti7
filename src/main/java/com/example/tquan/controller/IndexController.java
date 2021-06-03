@@ -29,5 +29,13 @@ public class IndexController {
         return "/personInfoPage";
     }
 
+    @GetMapping("/waitTryAgainPage")
+    public String waitTryAgainPage() {
+        return "/waitTryAgainPage";
+    }
 
+    @GetMapping("/apply")
+    public String apply() {
+        return "/apply";
+    }
 }
