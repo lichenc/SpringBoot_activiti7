@@ -2,8 +2,8 @@
 <definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:tns="http://www.activiti.org/testm1621845808321" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" expressionLanguage="http://www.w3.org/1999/XPath" id="m1621845808321" name="" targetNamespace="http://www.activiti.org/testm1621845808321" typeLanguage="http://www.w3.org/2001/XMLSchema">
   <process id="myProcess_1" isClosed="false" isExecutable="true" processType="None">
     <startEvent id="_2" name="开始"/>
-    <userTask activiti:exclusive="true" id="_3" name="申请应用系统"/>
-    <userTask activiti:assignee="${user}" activiti:exclusive="true" id="_4" name="审批人"/>
+    <userTask activiti:exclusive="true" activiti:assignee="${userId}" id="_3" name="申请应用系统"/>
+    <userTask activiti:assignee="${user}" activiti:exclusive="true" id="_4" name="审批应用系统"/>
     <exclusiveGateway gatewayDirection="Unspecified" id="_5" name="是否同意"/>
     <endEvent id="_6" name="结束"/>
     <sequenceFlow id="_7" name="准备申请" sourceRef="_2" targetRef="_3"/>

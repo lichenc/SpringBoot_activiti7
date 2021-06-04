@@ -35,36 +35,7 @@ button{
     border-radius: 10px;
 }
 
-/*.form_2{
-    width:600px;
-    height:450px;
-    border:3px solid #f8f8f8;
-    visibility: hidden;
-    position: absolute;
-    z-index: 100;
-    opacity: 1;
-    overflow: hidden;
-    background-color: white;
-    text-align: center;
-    margin-top: -12.5%;
-    margin-left: 24%;
-    border-radius: 10px;
-}
-.form_3{
-    width:600px;
-    height:450px;
-    border:3px solid #f8f8f8;
-    visibility: hidden;
-    position: absolute;
-    z-index: 100;
-    opacity: 1;
-    overflow: hidden;
-    background-color: white;
-    text-align: center;
-    margin-top: -12.5%;
-    margin-left: 24%;
-    border-radius: 10px;
-}*/
+
 .open{
     visibility: visible;
     opacity: 1;
@@ -154,9 +125,7 @@ hr{
 .test{
     overflow: hidden;
 }
-/*#btn_2{
-    background-color: #F88020;
-}*/
+
 .dialog{
     width:300px;
     height:120px;
@@ -171,26 +140,7 @@ hr{
     margin-top: 3%;
     margin-left: 40%;
 }
-/*.dialog .title{
-    text-align: center;
-    font-size: 20px;
-    font-weight: 300;
-    margin-top: 28px;
-    margin-bottom: 25px;
-}
-.dialog  .btn_2{
-    width:50%;
-    height:40px;
-    float:left;
-    background-color: #dff6f0;
-    line-height: 40px;
-    color: black;
-    text-align: center;
-    margin-bottom: 0px;
-}
-.dialog .btn_2:hover{
-    background-color:#F88020 ;
-}*/
+
 .close_1{
     overflow: hidden;
     width:60px;
