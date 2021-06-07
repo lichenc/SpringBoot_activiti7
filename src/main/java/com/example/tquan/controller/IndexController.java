@@ -38,4 +38,9 @@ public class IndexController {
     public String apply() {
         return "/apply";
     }
+
+    @GetMapping("/position")
+    public String position(){
+        return "/position";
+    }
 }

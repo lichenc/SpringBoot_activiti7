@@ -1,6 +1,7 @@
 package com.example.tquan.controller;
 
 
+import com.example.tquan.entity.TaskEntity;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
@@ -13,6 +14,7 @@ import java.util.Map;
 //import cn.yunlingfy.springbootactiviti.infra.util.UploadFileMgr;
 import com.example.tquan.entity.ActivitiEntity;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +43,8 @@ public class ActiController{
     @Resource
     private HistoryService historyService;
 */
-
+    @Autowired
+    private com.example.tquan.service.TaskService taskService;
 
     /**
      * 会默认按照Resources目录下的activiti.cfg.xml创建流程引擎
@@ -90,11 +93,11 @@ public class ActiController{
         String sn = (String) session.getAttribute("userSn");
         Map<String,Object> map = new HashMap<String,Object>();
         System.out.println(sn);
-        map.put("userId",sn);
+        map.put("userId","001");
         map.put("user",activiti.getProposer());
         ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("myProcess_1",map);
         String name=activiti.getProposer();
-        findTask(sn,request);
+        findTask("001",request);
         return "/apply";
     }
 
@@ -160,7 +163,7 @@ public class ActiController{
    /*     name="001";*/
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
-                .taskAssignee(name)//指定个人任务查询
+                .taskAssignee("001")//指定个人任务查询
                 .list();
         request.setAttribute("task",list);
         if (list != null && list.size() > 0) {
@@ -179,19 +182,19 @@ public class ActiController{
 
     //打回任务
     @RequestMapping("/repulse")
-    public void setTaskAssignee(HttpSession session){
+    public String setTaskAssignee(HttpSession session){
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
         TaskService taskService=processEngine.getTaskService();
         String name = (String) session.getAttribute("userSn");
         List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
+                .taskAssignee("001")
                 .list();
         Task task = taskService.createTaskQuery().taskId(list.get(0).getId()).singleResult();
         taskService.setAssignee(list.get(0).getId(),null);//归还候选任务
        /* taskService.setAssignee(list.get(0).getId(),"wukong");//交办*/
-
+        return "/audit";
     }
 
     //审核人拾取任务
@@ -203,10 +206,10 @@ public class ActiController{
         TaskService taskService=processEngine.getTaskService();
         String name = (String) session.getAttribute("userSn");
         List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
+                .taskAssignee("001")
                 .list();
         Task task = taskService.createTaskQuery().taskId(list.get(0).getId()).singleResult();
-        taskService.claim(list.get(0).getId(),name);
+        taskService.claim(list.get(0).getId(),"001");
         System.out.println(list.get(0).getId()+"任务拾取成功");
         //返回所有任务
         request.setAttribute("pickupTask",list);
@@ -234,7 +237,7 @@ public class ActiController{
         TaskService taskService=processEngine.getTaskService();
         String name = (String) session.getAttribute("userSn");
         List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
+                .taskAssignee("001")
                 .list();
         processEngine.getTaskService()// 与正在执行任务相关的Service
                 .complete(list.get(0).getId());
@@ -257,7 +260,7 @@ public class ActiController{
         HistoryService historyService=processEngine.getHistoryService();
         String name = (String) session.getAttribute("userSn");
         List<HistoricTaskInstance> taskList  = historyService.createHistoricTaskInstanceQuery()
-                .taskAssignee(name)
+                .taskAssignee("001")
                 .finished()
                 .list();
         for (HistoricTaskInstance task : taskList) {
@@ -269,7 +272,6 @@ public class ActiController{
         }
         return "completeRecords";
     }
-
 
 
 }

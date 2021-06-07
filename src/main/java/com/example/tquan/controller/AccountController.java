@@ -1,18 +1,13 @@
 package com.example.tquan.controller;
 
-import com.example.tquan.entity.AccountEntity;
-import com.example.tquan.entity.GroupEntity;
-import com.example.tquan.entity.PositionEntity;
-import com.example.tquan.entity.UserEntity;
-import com.example.tquan.service.AccountService;
-import com.example.tquan.service.GroupService;
-import com.example.tquan.service.PositionService;
-import com.example.tquan.service.UserService;
+import com.example.tquan.entity.*;
+import com.example.tquan.service.*;
 import com.ninghang.core.security.UIM;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +29,8 @@ public class AccountController {
     private PositionService positionService;
     @Autowired
     private GroupService groupService;
+    @Autowired
+    private TaskService taskService;
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -50,7 +47,6 @@ public class AccountController {
         accountEntity.setLoginPwd(UIM.encode(loginPwd));
         //执行修改
         iden = accountService.updateAccountById(accountEntity);
-        System.out.println(iden);
         if (iden != 0) {
             log.info("==========================账号ID:" + id + "的账号密码修改成功");
         } else {
@@ -121,5 +117,37 @@ public class AccountController {
 
 
     }
+    /**
+     *查询待重试的流程
+     * @return
+     */
+    @RequestMapping("/waitTryAgain")
+    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpSession session){
+        TaskEntity taskEntity1=new TaskEntity();
+        List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
+        if(taskEntities.size()>0){
+            taskEntity1.setTaskEntities(taskEntities);
+            taskEntity1.setTaskCount(taskEntities.size());
+        }
+        return taskEntity1;
+    }
+
+    /**
+     * 任务重试
+     * @param id
+     * @return
+     */
+    @PostMapping("/taskRetry")
+    public int taskRetry(String id){
+        int iden=taskService.updateTask(id);
+        if (iden!=0){
+            log.info("==========================taskID:" + id + "任务重试成功！");
+        }else {
+            log.info("==========================taskID:" + id + "任务重试失败！");
+        }
+        return iden;
+    }
 
 }
+
+

@@ -57,7 +57,6 @@ $(document).ready(function(){
                     +"<td><input type='text' value='"+positionList[i].sn+"'  class='layui-input' style='border:none;'></td>"
                     +"<td><input type='text' value='"+positionList[i].name+"' class='layui-input' style='border:none;'></td>"
                     +" <td><input type='text' value='"+positionList[i].remark+"' class='layui-input' style='border:none;'></td>"
-                    +" <td><input type='text' value='"+positionList[i].createTime+"' class='layui-input' style='border:none;'></td>"
                     +"  <td></td>"
                     +" </tr>";
             }
@@ -110,7 +109,7 @@ var accountID;
  * */
 $("body").on("click", "#resetPassword", function (e) {
     //获取账号ID
-    let accountId = $(this).val();
+    var accountId = $(this).val();
     accountID = accountId;
     layui.use('layer', function () {
         var layer = layui.layer;
@@ -176,7 +175,7 @@ function updatePassword() {
  */
 $("body").on("click", "#account", function (e) {
     //获取账号ID
-    let
+    var
         accountId = $(this).val();
     $.ajax({
         url: "/getAccountDetail",

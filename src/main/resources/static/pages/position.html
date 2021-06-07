@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>待重试</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+    .span{
+        float:right;
+        width:60px;
+        margin:9px 0 0 0;
+    }
+</style>
+<script>
+    /**
+     * 打开岗位申请弹窗
+     */
+    function positionApply() {
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "岗位申请",   //标题
+                area: ['500px', '400px'],    //弹窗大小
+                shadeClose: false,      //禁止点击空白关闭
+                scrollbar: false,      //禁用滚动条
+                move: false,       //禁用移动
+                scrolling: 'no',
+                resize: false,
+                closeBtn: 1,
+                content: $('#positionApply'),
+                end: function () {
+                    $('#positionApply').hide();
+                }
+            });
+        });
+    }
+</script>
+<body>
+<br>
+<div class="cBody">
+    <div class="console">
+        <div class="layui-form-item">
+            <div class="main">
+            </div>
+            <div class="au layui-input-inline">
+                <span class="span">申请时间</span>
+            </div>
+            <div class="layui-input-inline">
+                <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-input-inline">
+                <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
+            </div>
+            <div class="au layui-input-inline">
+                <span class="span">审批人</span>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
+            </div>
+            <div class="layui-input-inline">
+                <button class="layui-btn" onclick="selectTaskList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                <button class="layui-btn"  onclick="reset()">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <button type="button" class="layui-btn" onclick="positionApply()">岗位申请</button>
+    <!--事件列表-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table" id="table">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>事件标识</th>
+                    <th>申请者</th>
+                    <th>申请时间</th>
+                    <th>岗位</th>
+                    <th>审批者</th>
+                    <th>标题</th>
+                    <th>申请理由</th>
+                </tr>
+                </thead>
+                <tbody class="tbody" id="positionList">
+                <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
+                </tbody>
+
+            </table>
+            <div id="eventPage" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<!--岗位申请弹窗-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="positionApply">
+    <div class="layui-form" lay-filter="" id="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请者
+            </label>
+            <div class="layui-input-inline">
+                <input id="password" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text" placeholder="申请者">
+            </div>
+            <div class="layui-form-mid layui-word-aux"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                任务类型：
+            </label>
+            <div class="layui-input-inline">
+                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text" value="岗位申请" readonly="readonly">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                岗位：
+            </label>
+            <div class="layui-input-inline">
+                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text" placeholder="岗位">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请理由：
+            </label>
+            <div class="layui-input-inline">
+                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text" style="width: 300px;height: 100px" placeholder="申请理由">
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button lay-submit="" lay-filter="setmypass" href="" class="layui-btn" onclick="updatePassword();">确定
+            </button>
+                <button lay-submit="" lay-filter="setmypass" href="" class="layui-btn" onclick="updatePassword();">取消
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 
 layui.use('element', function () {
     var $ = layui.jquery;
-    let element = layui.element;
+    var element = layui.element;
     /**
      * 菜单点击事件
      */
@@ -9,9 +9,9 @@ layui.use('element', function () {
         if ($(this).next("dl").length > 0) {
             return;
         }
-        let url = $(this).data("url");
-        let id = $(this).data("id");
-        let text = $(this).text();
+        var url = $(this).data("url");
+        var id = $(this).data("id");
+        var text = $(this).text();
 
         //如果不存在
         if ($(".layui-tab-title").find("li[lay-id='" + id + "']").length <= 0) {

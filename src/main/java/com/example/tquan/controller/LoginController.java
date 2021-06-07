@@ -86,6 +86,8 @@ public class LoginController {
     public String logout(HttpServletRequest request,HttpSession session) {
         request.removeAttribute("userEntity");
         session.removeAttribute("UserId");
+        session.removeAttribute("userName");
+        session.removeAttribute("userSn");
         return "/loginPage";
     }
 
