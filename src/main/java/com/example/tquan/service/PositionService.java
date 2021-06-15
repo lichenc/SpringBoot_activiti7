@@ -22,4 +22,40 @@ public class PositionService {
     public List<PositionEntity> getPositionByUserId(String userId){
         return positionDao.getPositionByUserId(userId);
     }
+
+    /**
+     * 获取所有岗位
+     * @return
+     */
+    public List<PositionEntity> findAll(){
+        return positionDao.findAll();
+    }
+
+    /**
+     * 根据岗位名称获取岗位id
+     * @param name
+     * @return
+     */
+    public String getPositionByName(String name){
+        return positionDao.getPositionByName(name);
+    }
+
+    /**
+     * 为用户关联岗位
+     * @param positionEntity
+     * @return
+     */
+    public int addUserPosition(PositionEntity positionEntity){
+        return positionDao.addUserPosition(positionEntity);
+    }
+
+    /**
+     * 查询用户是否存在某个岗位
+     * @param positionEntity
+     * @return
+     */
+    public PositionEntity getInfo(PositionEntity positionEntity){
+        return positionDao.getInfo(positionEntity);
+    }
+
 }

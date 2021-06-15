@@ -15,7 +15,9 @@
     <title>待重试</title>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/position.js"></script>
 </head>
 <style>
     body {
@@ -27,31 +29,6 @@
         margin:9px 0 0 0;
     }
 </style>
-<script>
-    /**
-     * 打开岗位申请弹窗
-     */
-    function positionApply() {
-        layui.use('layer', function () {
-            var layer = layui.layer;
-            layer.open({
-                type: 1,
-                title: "岗位申请",   //标题
-                area: ['500px', '400px'],    //弹窗大小
-                shadeClose: false,      //禁止点击空白关闭
-                scrollbar: false,      //禁用滚动条
-                move: false,       //禁用移动
-                scrolling: 'no',
-                resize: false,
-                closeBtn: 1,
-                content: $('#positionApply'),
-                end: function () {
-                    $('#positionApply').hide();
-                }
-            });
-        });
-    }
-</script>
 <body>
 <br>
 <div class="cBody">
@@ -59,6 +36,7 @@
         <div class="layui-form-item">
             <div class="main">
             </div>
+            <br>
             <div class="au layui-input-inline">
                 <span class="span">申请时间</span>
             </div>
@@ -66,16 +44,16 @@
                 <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
             </div>
             <div class="layui-input-inline">
-                <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
-            </div>
-            <div class="au layui-input-inline">
+                <input type="date" name="endTime" id="endTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
+            </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           <!-- <div class="au layui-input-inline">
                 <span class="span">审批人</span>
             </div>
             <div class="layui-input-inline">
                 <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
-            </div>
+            </div>-->
             <div class="layui-input-inline">
-                <button class="layui-btn" onclick="selectTaskList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                <button class="layui-btn" onclick="getPositionList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
                 <button class="layui-btn"  onclick="reset()">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
             </div>
 
@@ -108,7 +86,7 @@
                 </tbody>
 
             </table>
-            <div id="eventPage" style="text-align: center"></div>
+            <div id="positionPage" style="text-align: center"></div>
         </div>
     </div>
 </div>
@@ -120,8 +98,8 @@
                 申请者
             </label>
             <div class="layui-input-inline">
-                <input id="password" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
-                       type="text" placeholder="申请者">
+                <input id="applyPerson" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text"  readonly="readonly">
             </div>
             <div class="layui-form-mid layui-word-aux"></div>
         </div>
@@ -130,7 +108,7 @@
                 任务类型：
             </label>
             <div class="layui-input-inline">
-                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                <input id="taskType" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
                        type="text" value="岗位申请" readonly="readonly">
             </div>
         </div>
@@ -139,8 +117,9 @@
                 岗位：
             </label>
             <div class="layui-input-inline">
-                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
-                       type="text" placeholder="岗位">
+                <select lay-verify="required" id="position" class="select">
+                    <option value="0">请选择岗位</option>
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
@@ -148,17 +127,15 @@
                 申请理由：
             </label>
             <div class="layui-input-inline">
-                <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
-                       type="text" style="width: 300px;height: 100px" placeholder="申请理由">
+                <textarea  id="applyReason"  autocomplete="off" class="layui-textarea"
+                           placeholder="申请理由" ></textarea>
             </div>
         </div>
         <div height="100px;"></div>
         <div class="layui-form-item">
             <div class="layui-input-block">
-                <button lay-submit="" lay-filter="setmypass" href="" class="layui-btn" onclick="updatePassword();">确定
+                <button lay-filter="setmypass" href="" class="layui-btn" onclick="addPosition();">确定
             </button>
-                <button lay-submit="" lay-filter="setmypass" href="" class="layui-btn" onclick="updatePassword();">取消
-                </button>
             </div>
         </div>
     </div>

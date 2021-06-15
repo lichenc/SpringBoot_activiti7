@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.VariableDao">
+    <!--根据流程名获取流程的参数-->
+    <select id="getProcessParamByName" parameterType="com.example.tquan.entity.VariableEntity" resultType="com.example.tquan.entity.VariableEntity">
+       SELECT DISTINCT
+	        var.PROC_INST_ID_ AS procInstId,
+	        task.CREATE_TIME_ as applyCreateTime
+        FROM
+	        act_ru_task task
+	    LEFT JOIN act_ru_variable var ON var.PROC_INST_ID_ = task.PROC_INST_ID_
+	    <where>
+            <if test="startTime != null and startTime != ''">
+                <![CDATA[   DATE_FORMAT(task.CREATE_TIME_, '%Y-%m-%d') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')   ]]>
+            </if>
+            <if test="endTime != null and endTime != ''">
+               and  <![CDATA[   DATE_FORMAT(task.CREATE_TIME_, '%Y-%m-%d') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')   ]]>
+            </if>
+            and  task.PROC_DEF_ID_ like  CONCAT('%', #{procDefId}, '%')  and var.PROC_INST_ID_ is not null order by task.CREATE_TIME_ desc
+        </where>
+
+    </select>
+    <!--根据name获取text内容-->
+    <select id="getTextByName" parameterType="com.example.tquan.entity.VariableEntity" resultType="java.lang.String">
+        SELECT
+	        TEXT_  as text
+        FROM
+	        act_ru_variable
+        WHERE
+	        PROC_INST_ID_ = #{procInstId}
+	    AND NAME_ = #{name}
+    </select>
+    <!--根据id获取任务-->
+    <select id="getTaskDefByProcInstId" parameterType="java.lang.String" resultType="com.example.tquan.entity.VariableEntity">
+        SELECT
+	        PROC_DEF_ID_ AS procDefId
+        FROM
+	        act_ru_task
+        WHERE
+	        PROC_INST_ID_ = #{procInstId}
+    </select>
+</mapper>

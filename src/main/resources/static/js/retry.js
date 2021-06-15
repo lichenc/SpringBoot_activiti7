@@ -4,7 +4,7 @@ $(document).ready(function(){
 });
 function selectTaskList(){
     //清空之前的列表记录
-    $('.tbody tr').remove()
+    $('.tbody tr').remove();
     taskStr=null;
     //获取申请人
     var applyPerson=document.getElementById("applyPerson").value;
@@ -36,7 +36,7 @@ function selectTaskList(){
                         +  "  </td>"
                         + "  </tr>";
                 }
-                $("#eventList").append(taskStr);
+               $("#eventList").append(taskStr);
                 //渲染分页
                 layui.use('laypage', function () {
                     var laypage = layui.laypage;

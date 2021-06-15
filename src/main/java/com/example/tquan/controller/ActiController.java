@@ -1,7 +1,10 @@
 package com.example.tquan.controller;
 
 
-import com.example.tquan.entity.TaskEntity;
+import com.example.tquan.entity.*;
+import com.example.tquan.service.PositionService;
+import com.example.tquan.service.UserService;
+import com.example.tquan.service.VariableService;
 import org.activiti.engine.*;
 import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
@@ -12,8 +15,9 @@ import java.util.List;
 import java.util.Map;
 
 //import cn.yunlingfy.springbootactiviti.infra.util.UploadFileMgr;
-import com.example.tquan.entity.ActivitiEntity;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +49,14 @@ public class ActiController{
 */
     @Autowired
     private com.example.tquan.service.TaskService taskService;
+    @Autowired
+    private VariableService variableService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PositionService positionService;
+
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * 会默认按照Resources目录下的activiti.cfg.xml创建流程引擎
@@ -231,17 +243,63 @@ public class ActiController{
      */
     @RequestMapping("/AuditTask")
     public String AuditTask(HttpSession session) {
-        //1:得到ProcessEngine对象
-        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
-        //2：得到TaskService对象
-        TaskService taskService=processEngine.getTaskService();
-        String name = (String) session.getAttribute("userSn");
-        List<Task> list = taskService.createTaskQuery()
-                .taskAssignee("001")
-                .list();
-        processEngine.getTaskService()// 与正在执行任务相关的Service
-                .complete(list.get(0).getId());
-        System.out.println("完成任务：任务ID：" + list.get(0).getId());
+       try {
+           //1:得到ProcessEngine对象
+           ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+           //2：得到TaskService对象
+           TaskService taskService=processEngine.getTaskService();
+           String name = (String) session.getAttribute("userSn");
+           List<Task> list = taskService.createTaskQuery()
+                   .taskAssignee("001")
+                   .list();
+           processEngine.getTaskService()// 与正在执行任务相关的Service
+                   .complete(list.get(0).getId());
+
+           //如果申请为岗位申请，审批通过之后需要授权申请的岗位
+           VariableEntity variableEntity=variableService.getTaskDefByProcInstId(list.get(0).getProcessInstanceId());
+           //判断是否是岗位申请任务
+           if (variableEntity.getProcDefId().contains("positionApply")){
+               String sn=null;
+               String position=null;
+               //设置查询申请人的参数
+               VariableEntity variableEntity1=new VariableEntity();
+               variableEntity1.setProcInstId(list.get(0).getProcessInstanceId());
+               variableEntity1.setName("applyPerson");
+               //查询申请人
+               sn= variableService.getTextByName(variableEntity1);
+
+
+               //设置查询岗位的参数
+               VariableEntity variableEntity3=new VariableEntity();
+               variableEntity3.setProcInstId(list.get(0).getProcessInstanceId());
+               variableEntity3.setName("position");
+               //查询申请的岗位
+               position=variableService.getTextByName(variableEntity3);
+
+               //设置查询用户的参数
+               UserEntity userEntity=new UserEntity();
+               userEntity.setSn(sn);
+               //根据sn获取用户信息
+               UserEntity userEntity1=userService.getUserByProperty(userEntity);
+               //获取岗位id
+               String positionId=positionService.getPositionByName(position);
+
+               //设置为用户添加岗位的参数
+               PositionEntity positionEntity=new PositionEntity();
+               positionEntity.setUserId(userEntity1.getId());
+               positionEntity.setPositionId(positionId);
+
+               //执行用户关联岗位的add方法
+               int iden=positionService.addUserPosition(positionEntity);
+               //添加成功
+               if (iden !=0){
+                   log.info("=========================="+sn+"授权"+position+"成功!");
+               }
+           }
+           System.out.println("完成任务：任务ID：" + list.get(0).getId());
+       }catch (Exception e){
+           e.printStackTrace();
+       }
         return "/audit";
     }
 

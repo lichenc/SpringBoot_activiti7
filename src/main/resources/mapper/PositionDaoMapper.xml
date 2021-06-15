@@ -14,4 +14,36 @@
 	    where
 	        iup.USER_ID=#{userId}
     </select>
+	<!--获取所有岗位-->
+	<select id="findAll" resultType="com.example.tquan.entity.PositionEntity">
+		SELECT
+			*
+		FROM
+			im_position
+	</select>
+	<!--根据岗位名称获取岗位id-->
+	<select id="getPositionByName" parameterType="java.lang.String" resultType="java.lang.String">
+		SELECT
+			id
+		FROM
+			im_position
+		WHERE
+		NAME = #{name}
+	</select>
+	<!--添加用户与岗位关联-->
+	<insert id="addUserPosition" parameterType="com.example.tquan.entity.PositionEntity">
+		INSERT INTO im_user_position ( USER_ID, POSITION_ID,ORG_ID)
+		VALUES
+		(#{userId},#{positionId},1606960422556626)
+	</insert>
+	<!--查询用户是否存在某个岗位-->
+	<select id="getInfo" parameterType="com.example.tquan.entity.PositionEntity" resultType="com.example.tquan.entity.PositionEntity">
+
+		SELECT
+			*
+		FROM
+			im_user_position
+		WHERE
+			USER_ID = #{userId} and POSITION_ID=#{positionId}
+	</select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.example.tquan.entity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by chenjin on 2021/6/1 21:16
@@ -12,6 +13,46 @@ public class PositionEntity {
     private String remark;
     private Date createTime;
     private  String companySn;
+
+    //辅助字段：岗位id，用户id   用来添加用户与岗位的关联
+    private String userId;
+    private String positionId;
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getPositionId() {
+        return positionId;
+    }
+
+    public void setPositionId(String positionId) {
+        this.positionId = positionId;
+    }
+
+    private List<PositionEntity> positionEntityList;
+    private String userSn;
+
+    public List<PositionEntity> getPositionEntityList() {
+        return positionEntityList;
+    }
+
+    public void setPositionEntityList(List<PositionEntity> positionEntityList) {
+        this.positionEntityList = positionEntityList;
+    }
+
+    public String getUserSn() {
+        return userSn;
+    }
+
+    public void setUserSn(String userSn) {
+        this.userSn = userSn;
+    }
 
     public String getId() {
         return id;

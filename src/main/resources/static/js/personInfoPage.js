@@ -68,7 +68,7 @@ $(document).ready(function(){
                     +"<td><input type='text' value='"+groupList[i].sn+"'  class='layui-input' style='border:none;'></td>"
                     +"<td><input type='text' value='"+groupList[i].name+"' class='layui-input' style='border:none;'></td>"
                     +" <td><input type='text' value='"+groupList[i].remark+"' class='layui-input' style='border:none;'></td>"
-                    +"  <td></td>"
+                    +"<td></td>"
                     +" </tr>";
             }
 

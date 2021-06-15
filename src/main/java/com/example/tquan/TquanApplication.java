@@ -20,17 +20,17 @@ import java.io.FileNotFoundException;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @SpringBootApplication(exclude = {org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration.class, DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
 public class TquanApplication {
-  /* ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();*/
+  ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
     public static void main(String[] args) {
         SpringApplication.run(TquanApplication.class, args);
     }
-
-   /* public void testCreateProcessEngine() {
+@Test
+  public void testCreateProcessEngine() {
         ProcessEngineConfiguration cfg = ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
-        cfg.setJdbcDriver("com.mysql.jdbc.Driver");
-        cfg.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/iam");
+        cfg.setJdbcDriver("com.mysql.cj.jdbc.Drivers");
+        cfg.setJdbcUrl("jdbc:mysql://192.168.23.1:3306/iam");
         cfg.setJdbcUsername("root");
-        cfg.setJdbcPassword("P@ssw0rd");
+        cfg.setJdbcPassword("root");
         //配置建表策略
         cfg.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
         ProcessEngine engine = cfg.buildProcessEngine();
@@ -41,9 +41,10 @@ public class TquanApplication {
         ProcessEngineConfiguration cfg = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml");
         ProcessEngine engine = cfg.buildProcessEngine();
     }
+
     @Test
     public void deployProcess() throws FileNotFoundException {
-        String bpmnPath = "D:/idea/tquan/src/main/resources/bpmn/apply.xml";
+        String bpmnPath = "E:/idea/tongquan/src/main/resources/bpmn/apply.xml";
         //读取资源作为一个输入流
         FileInputStream bpmnfileInputStream = new FileInputStream(bpmnPath);
         RepositoryService repositoryService = processEngine.getRepositoryService();
@@ -52,5 +53,5 @@ public class TquanApplication {
         builder.addInputStream(name,bpmnfileInputStream);
         //builder.addClasspathResource("apply.xml");
         builder.deploy();
-    }*/
+    }
 }

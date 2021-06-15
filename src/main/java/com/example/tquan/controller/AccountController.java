@@ -41,17 +41,21 @@ public class AccountController {
     @PostMapping("/updateAccount")
     public int updateAccount(String id, String loginPwd) {
         int iden = 0;
-        //初始化对象，设置修改需要的参数
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setId(id);
-        accountEntity.setLoginPwd(UIM.encode(loginPwd));
-        //执行修改
-        iden = accountService.updateAccountById(accountEntity);
-        if (iden != 0) {
-            log.info("==========================账号ID:" + id + "的账号密码修改成功");
-        } else {
-            log.info("==========================账号ID:" + id + "的账号密码修改失败");
-        }
+         try {
+             //初始化对象，设置修改需要的参数
+             AccountEntity accountEntity = new AccountEntity();
+             accountEntity.setId(id);
+             accountEntity.setLoginPwd(UIM.encode(loginPwd));
+             //执行修改
+             iden = accountService.updateAccountById(accountEntity);
+             if (iden != 0) {
+                 log.info("==========================账号ID:" + id + "的账号密码修改成功");
+             } else {
+                 log.info("==========================账号ID:" + id + "的账号密码修改失败");
+             }
+         }catch (Exception e){
+            e.printStackTrace();
+         }
         return iden;
     }
 
@@ -122,13 +126,17 @@ public class AccountController {
      * @return
      */
     @RequestMapping("/waitTryAgain")
-    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpSession session){
+    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpServletRequest request){
         TaskEntity taskEntity1=new TaskEntity();
-        List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
-        if(taskEntities.size()>0){
-            taskEntity1.setTaskEntities(taskEntities);
-            taskEntity1.setTaskCount(taskEntities.size());
-        }
+       try {
+           List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
+           if(taskEntities.size()>0){
+               taskEntity1.setTaskEntities(taskEntities);
+               taskEntity1.setTaskCount(taskEntities.size());
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
         return taskEntity1;
     }
 
@@ -139,12 +147,17 @@ public class AccountController {
      */
     @PostMapping("/taskRetry")
     public int taskRetry(String id){
-        int iden=taskService.updateTask(id);
-        if (iden!=0){
-            log.info("==========================taskID:" + id + "任务重试成功！");
-        }else {
-            log.info("==========================taskID:" + id + "任务重试失败！");
-        }
+        int iden=0;
+       try {
+            iden=taskService.updateTask(id);
+           if (iden!=0){
+               log.info("==========================taskID:" + id + "任务重试成功！");
+           }else {
+               log.info("==========================taskID:" + id + "任务重试失败！");
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
         return iden;
     }
 
