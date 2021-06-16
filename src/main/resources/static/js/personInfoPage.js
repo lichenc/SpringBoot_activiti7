@@ -51,27 +51,31 @@ $(document).ready(function(){
             //获取用户岗位集合
             var positionList=data.positionEntityList;
             var positionStr;
-            //循环遍历岗位集合，拼接成串
-            for(var i=0;i<positionList.length;i++){
-                positionStr=positionStr+"<tr>"
-                    +"<td><input type='text' value='"+positionList[i].sn+"'  class='layui-input' style='border:none;'></td>"
-                    +"<td><input type='text' value='"+positionList[i].name+"' class='layui-input' style='border:none;'></td>"
-                    +" <td><input type='text' value='"+positionList[i].remark+"' class='layui-input' style='border:none;'></td>"
-                    +"  <td></td>"
-                    +" </tr>";
+            if(positionList!=null){
+                //循环遍历岗位集合，拼接成串
+                for(var i=0;i<positionList.length;i++){
+                    positionStr=positionStr+"<tr>"
+                        +"<td><input type='text' value='"+positionList[i].sn+"'  class='layui-input' style='border:none;'></td>"
+                        +"<td><input type='text' value='"+positionList[i].name+"' class='layui-input' style='border:none;'></td>"
+                        +" <td><input type='text' value='"+positionList[i].remark+"' class='layui-input' style='border:none;'></td>"
+                        +"  <td></td>"
+                        +" </tr>";
+                }
             }
+
             //获取用户组集合
             var groupList=data.groupEntities;
             var groupStr;
-            for(var i=0;i<groupList.length;i++){
-                groupStr=groupStr+"<tr>"
-                    +"<td><input type='text' value='"+groupList[i].sn+"'  class='layui-input' style='border:none;'></td>"
-                    +"<td><input type='text' value='"+groupList[i].name+"' class='layui-input' style='border:none;'></td>"
-                    +" <td><input type='text' value='"+groupList[i].remark+"' class='layui-input' style='border:none;'></td>"
-                    +"<td></td>"
-                    +" </tr>";
+            if(groupList!=null){
+                for(var i=0;i<groupList.length;i++){
+                    groupStr=groupStr+"<tr>"
+                        +"<td><input type='text' value='"+groupList[i].sn+"'  class='layui-input' style='border:none;'></td>"
+                        +"<td><input type='text' value='"+groupList[i].name+"' class='layui-input' style='border:none;'></td>"
+                        +" <td><input type='text' value='"+groupList[i].remark+"' class='layui-input' style='border:none;'></td>"
+                        +"<td></td>"
+                        +" </tr>";
+                }
             }
-
             //渲染分页
             layui.use('laypage', function () {
                 var laypage = layui.laypage;
@@ -80,16 +84,20 @@ $(document).ready(function(){
                     elem: 'accountPage'
                     , count: data.accountCount //数据总数，从服务端得到
                 });
-                //岗位Tab分页
-                laypage.render({
-                    elem: 'positionPage'
-                    , count: data.positionCount //数据总数，从服务端得到
-                })
-                //用户组Tab分页
-                laypage.render({
-                    elem: 'groupPage'
-                    , count: data.groupCount //数据总数，从服务端得到
-                })
+                if(data.positionCount!=null){
+                    //岗位Tab分页
+                    laypage.render({
+                        elem: 'positionPage'
+                        , count: data.positionCount //数据总数，从服务端得到
+                    })
+                }
+                if(ata.groupCount!=null){
+                    //用户组Tab分页
+                    laypage.render({
+                        elem: 'groupPage'
+                        , count: data.groupCount //数据总数，从服务端得到
+                    })
+                }
             });
             //给表格追加账号tr
             $("#accountList").append(accountstr);

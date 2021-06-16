@@ -21,8 +21,7 @@ function getPositionList() {
             endTime:endTime
         },
         success: function (data) {
-            //$("#positionList").append(positionStr);
-            //$(".tbody").html(positionStr);
+            if(data!=null){
                 var laypage = layui.laypage;
                 //账号Tab分页
                 laypage.render({
@@ -33,7 +32,7 @@ function getPositionList() {
                         //模拟渲染
                         document.getElementById('positionList').innerHTML = function(){
                             var arr =[]
-                                thisData =data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                            thisData =data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                             layui.each(thisData, function(index, item){
                                 var positionStr= "<tr>"
                                     +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;'></td>"
@@ -53,8 +52,7 @@ function getPositionList() {
                     }
                 });
             }
-
-
+        }
     });
 });
 }
@@ -66,7 +64,6 @@ function getPositionList() {
  */
 function positionApply() {
     $('.select option').remove();
-    var positionStr=null;
     document.getElementById("applyReason").value=null;
     layui.use('form', function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
@@ -97,9 +94,9 @@ function positionApply() {
                 if(data!=null){
                     var positionList=data.positionEntityList;
                     for(var i=0;i<positionList.length;i++){
-                        positionStr=positionStr + "<option  value='"+positionList[i].name+"'>"+positionList[i].name+"</option>";
+                        var positionStro=  "<option value='0'>请选择岗位</option><option  value='"+positionList[i].name+"'>"+positionList[i].name+"</option>";
                     }
-                    $('#position').append(positionStr);
+                    $('#position').append(positionStro);
                     document.getElementById("applyPerson").value=data.userSn;
                     form.render();
                 }

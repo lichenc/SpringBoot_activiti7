@@ -64,36 +64,44 @@ public class PositionController {
     @RequestMapping("/addPositionProcess")
     public int addPositionProcess(String position, String applyReason, HttpSession session, HttpServletRequest request){
         int iden=0;
-        String userId=session.getAttribute("UserId").toString();
-        //查询申请的岗位id
-        String positionId=positionService.getPositionByName(position);
 
-        //为用户查询岗位设置参数
-        PositionEntity positionEntity=new PositionEntity();
-        positionEntity.setUserId(userId);
-        positionEntity.setPositionId(positionId);
+        //非空判断，防止越过前端非空验证
+        if(position != null && applyReason != null && applyReason != "" && position != ""){
 
-        //查询用户岗位
-       PositionEntity positionEntity1= positionService.getInfo(positionEntity);
+            String userId=session.getAttribute("UserId").toString();
+            //查询申请的岗位id
+            String positionId=positionService.getPositionByName(position);
+            //为用户查询岗位设置参数
+            PositionEntity positionEntity=new PositionEntity();
+            positionEntity.setUserId(userId);
+            positionEntity.setPositionId(positionId);
 
-       //用户未拥有申请的岗位
-       if (positionEntity1==null){
-           RuntimeService runtimeService = processEngine.getRuntimeService();
-           String sn = (String) session.getAttribute("userSn");
-           Map<String,Object> map = new HashMap<String,Object>();
-           map.put("applyPerson",sn);
-           map.put("position",position);
-           map.put("applyReason",applyReason);
-           map.put("taskType","岗位申请");
-           map.put("approvedPerson","001");  //审批人员，未确定，先使用默认001
-           ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
-           log.info("=========================="+sn+"申请了"+position+"岗位申请");
-           iden=2;
+            //查询用户岗位
+            PositionEntity positionEntity1= positionService.getInfo(positionEntity);
 
-           //用户已拥有申请的岗位
-       }else{
-            iden=1;
-       }
+            //用户未拥有申请的岗位
+            if (positionEntity1==null){
+                RuntimeService runtimeService = processEngine.getRuntimeService();
+                String sn = (String) session.getAttribute("userSn");
+                Map<String,Object> map = new HashMap<String,Object>();
+                map.put("applyPerson",sn);
+                map.put("position",position);
+                map.put("applyReason",applyReason);
+                map.put("taskType","岗位申请");
+                map.put("approvedPerson","001");  //审批人员，未确定，先使用默认001
+                ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
+                log.info("=========================="+sn+"申请了"+position+"岗位申请");
+                iden=2;
+
+                //用户已拥有申请的岗位
+            }else{
+                iden=1;
+            }
+        }else{
+            log.info("==========================申请岗位或申请原因为空，添加失败！");
+        }
+
+
 
        /* //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
