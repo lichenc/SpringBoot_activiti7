@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
-    <script type="text/javascript" src="../js/retry.js"></script>
+
 </head>
 <style>
     body {
@@ -28,37 +28,44 @@
         margin:9px 0 0 0;
     }
 </style>
+
 <body>
 <br>
 <div class="cBody">
     <div class="console">
+        <form class="layui-form" >
             <div class="layui-form-item">
                 <div class="main">
+
                 </div>
                 <div class="au layui-input-inline">
                     <span class="span">申请人</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="applyPerson" id="applyPerson"   placeholder="申请人" autocomplete="off" class="layui-input">
+                    <input type="text" name="name"   placeholder="申请人" autocomplete="off" class="layui-input">
                 </div>
                 <div class="au layui-input-inline">
                     <span class="span">审批人</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
+                    <input type="text" class="layui-input" id="time" placeholder="审批人">
                 </div>
                 <div class="layui-input-inline">
-                     <button class="layui-btn" onclick="selectTaskList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
-                     <button class="layui-btn"  onclick="reset()">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                     <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                     <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
                 </div>
 
             </div>
+        </form>
     </div>
     <br>
+    &nbsp;&nbsp;
+    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重试&nbsp;&nbsp;</button>
+    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
     <!--事件列表-->
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
-                <table class="layui-table" id="table">
+                <table class="layui-table">
                     <colgroup>
                         <col width="150">
                         <col width="200">
@@ -68,16 +75,15 @@
                     <tr>
                         <th>事件标识</th>
                         <th>事件类型</th>
-                        <th>申请人</th>
-                        <th>审批人</th>
+                        <th>申请人标识</th>
+                        <th>审批人标识</th>
                         <th>任务类型</th>
                         <th>操作</th>
                     </tr>
                     </thead>
-                    <tbody class="tbody" id="eventList">
-                        <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
-                    </tbody>
+                    <tbody id="eventList">
 
+                    </tbody>
                 </table>
                 <div id="eventPage" style="text-align: center"></div>
             </div>

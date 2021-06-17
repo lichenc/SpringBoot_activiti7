@@ -5,6 +5,19 @@ window.onload=function(){
     var close_1=document.getElementsByClassName("close_1");
     var dialog=document.getElementsByClassName("dialog");
     var form_1=document.getElementsByClassName("form_1");
+
+  /*   var btn_xg=document.getElementById("btn_xg");
+     var form_xg=document.getElementsByClassName("form_xg");
+     var close_xg=document.getElementsByClassName("close_xg");
+     btn_xg.addEventListener('click',function(){
+         form_xg[0].className="form_xg open";
+     })
+     close_xg[0].addEventListener('click',function(){
+         form_xg[0].className="form_xg";
+     })
+*/
+
+
     btn_1.addEventListener('click',function(){
         form_1[0].className="form_1 open";
     })
@@ -19,13 +32,13 @@ window.onload=function(){
     })
 }
 
-document.getElementById('zhezhao').style.display="none";
+/*document.getElementById('zhezhao').style.display="none";
 function dianwo(){
     document.getElementById('zhezhao').style.display="";
 }
 function hidder(){
     document.getElementById('zhezhao').style.display="none";
-}
+}*/
 
 
 layui.use(['laypage', 'layer'], function() {
@@ -34,14 +47,22 @@ layui.use(['laypage', 'layer'], function() {
 
     //总页数大于页码总数
     laypage.render({
-        elem: 'customPages'
-        ,count: 100
-        ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
-        ,jump: function(obj){
-            console.log(obj)
-        }
+            elem: 'customPages',
+            count: 100,//总数
+            limit:limit,//每页多少条数据
+            //url:"/selectApplyTast",
+            page:true,
+            layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+            ,jump: function(obj){
+                if(!first){
+                    current_page=obj.curr; //当前页
+                    limit=obj.limit; //得到每页显示的条数
+                }
+                console.log(obj.curr+obj.limit);
+            }
     });
 });
+
 
 layui.use('form', function() {
     var form = layui.form;

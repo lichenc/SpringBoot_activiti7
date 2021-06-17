@@ -24,4 +24,14 @@ public class ImAppService {
 
         return imAppDao.findAll();
     }
+    /**
+     * 查询申请的应用id
+     *
+     * @param
+     * @return
+     */
+    public List<ImApp> findApply(String name) {
+
+        return imAppDao.findApply(name);
+    }
 }

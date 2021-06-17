@@ -46,25 +46,22 @@
                     <a>自助服务</a>
                     <dl class="layui-nav-child">
                         <dd><a class="huanzi-menu" th:data-id="personInfo" th:data-url="personInfoPage">个人信息</a></dd>
-                        <dd><a  class="huanzi-menu" th:data-id="activi" th:data-url="activi">申请</a></dd>
-                        <dd><a  class="huanzi-menu" th:data-id="position" th:data-url="position">岗位</a></dd>
+                        <dd><a  class="huanzi-menu" th:data-id="selectApplyTast" th:data-url="selectApplyTast">申请</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a>我的任务</a>
                     <dl class="layui-nav-child">
-                        <dd><a class="huanzi-menu" th:data-id="audit" th:data-url="audit">待审批</a></dd>
-
+                        <dd><a th:data-id="audit" th:data-url="audit" class="huanzi-menu">待审批</a></dd>
                         <dd><a class="huanzi-menu">待授权</a></dd>
                         <dd><a class="huanzi-menu" th:data-id="waitTryAgainPage" th:data-url="waitTryAgainPage">待重试</a></dd>
                         <dd><a class="huanzi-menu">待分配</a></dd>
-                        <dd><a  class="huanzi-menu" th:data-id="completeRecordsTask" th:data-url="completeRecordsTask">任务记录</a></dd>
+                        <dd><a href="completeRecordsTask" class="huanzi-menu">任务记录</a></dd>
                     </dl>
                 </li>
             </ul>
         </div>
     </div>
-
     <!-- 内容主体区域 -->
     <div class="layui-body" style="overflow-y: hidden;">
         <!--   动态选项卡   -->

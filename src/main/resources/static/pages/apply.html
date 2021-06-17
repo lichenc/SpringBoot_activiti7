@@ -17,9 +17,9 @@
     <link rel="stylesheet" type="text/css" href="../css/audit/iconfont.css">
     <link rel="stylesheet" type="text/css" href="../css/audit/base_fontSize.css">
     <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
-
+    <!--<script src="../js/audit/cframe.js"></script>-->
     <script src="../js/audit/app.js"></script>
-    <script type="text/javascript" src="../js/audit/jquery-1.11.3.min.js"></script>
+    <script type="text/javascript" src="../js/jquery-1.8.3.min.js"></script>
     <script type="text/javascript" src="../js/audit/base.js"></script>
     <script src="../js/audit/html5shiv.min.js"></script>
     <script src="../js/audit/respond.min.js"></script>
@@ -79,16 +79,17 @@
             <td th:text="${task.assignee}"></td>
             <td th:text="${task.processInstanceId}"></td>
             <td>
-                <button id="btn_3" class="layui-btn layui-btn-xs">修改</button>
+                <!--onclick="loadXMLDoc(105015)" id="btn_xg"<a id="btn_xg" href="/updateFind?id=105015" onclick="loadXMLDoc()" class="layui-btn layui-btn-xs">修改</a>-->
+                <button id="btn_xg"  type="button"   class="layui-btn layui-btn-xs">修改</button>
                 <button id="btn" class="layui-btn layui-btn-xs">基本信息</button>
+                <a href="/withdraw"  class="layui-btn layui-btn-xs">撤回</a>
+                <a href="/deleteTask"  class="layui-btn layui-btn-xs">删除</a>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <!-- layUI 分页模块 -->
-    <div class="h_55"></div>
-    <div id="customPages" class="customPages"></div>
+
 </div>
 
 <div class="form_1">
@@ -97,24 +98,35 @@
         <hr>
         <div class="input_1"><span>申请者</span><input type="text" required name="name" placeholder="&nbsp;申请者"></div>
         <div class="input_1"><span>任务类型</span><input type="type" required name="type" placeholder="&nbsp;任务类型"></div>
-        <div class="input_1"><span>系统资源</span><select th:each="appList:${appList}" required name="app">
-            <option></option>
-            <option th:text="${appList.name}"></option>
-        </select></div>
-        <div class="input_1"><span>审批人</span><select th:each="appList:${appList}" required name="proposer">
-            <option></option>
-            <option >001</option>
-        </select></div>
+       <div class="input_1"><span>系统资源</span>
+           <select th:each="appList:${appList}" required name="app">
+           <option ></option>
+            <option th:text="${appList.name}" ></option>
+        </select>
+       </div>
+        <div class="input_1"><span>应用账号</span><input type="type" required name="account" placeholder="&nbsp;账号"></div>
+      <div class="input_1"><span>审批人</span>
+          <select th:each="audits:${audits}" required name="proposer">
+            <option th:text="${audits.audit}"></option>
+          </select>
+      </div>
         <div class="input_1"><span>基本角色</span><select required name="role">
             <option>审批角色</option>
             <option></option>
         </select></div>
         <div class="input_1"><span>申请理由</span><textarea required name="description"></textarea></div>
-
         <div class="input_1" id="submit"><input class="close_1"   value="取&nbsp;消">&nbsp;&nbsp;&nbsp;&nbsp;<input class="submit_1" οnclick="addOrder()" type="submit" value="提&nbsp;交"></div>
     </form>
 </div>
 
+
+
+<!-- layUI 分页模块 -->
+<div class="h_55"></div>
+<div id="customPages" class="customPages"></div>
+    <div id="pages2">
+
+    </div>
 
 <!--查询申请单信息
 <div class="form_2">
@@ -127,32 +139,74 @@
     <div class="input_1"><span>申请理由</span><textarea disabled name="description"></textarea></div>
 </div>
 
-&lt;!&ndash;修改申请单信息&ndash;&gt;
-<div class="form_3">
-    <div class="input_1"><div class="login_logo">基本信息</div><div class="close_3">X</div></div>
-    <hr>
-    <div class="input_1"><span>申请者</span><input required type="text"  name="name" ></div>
-    <div class="input_1"><span>任务类型</span><input required type="type"  name="type" ></div>
-    <div class="input_1"><span>系统资源</span><select required name="app">
-      &lt;!&ndash;  <c:forEach items="${appList}" var="appList">&ndash;&gt;
-            <option>请选择</option>
-            <option >${appList.name}</option>
-        &lt;!&ndash;</c:forEach>&ndash;&gt;
-    </select></div>
-    <div class="input_1"><span>系统资源</span><select required name="proposer">
-        &lt;!&ndash;  <c:forEach items="${appList}" var="appList">&ndash;&gt;
-        <option>001</option>
-        <option >${appList.name}</option>
-        &lt;!&ndash;</c:forEach>&ndash;&gt;
-    </select></div>
-    <div class="input_1"><span>基本角色</span><select required name="role">
-        &lt;!&ndash; <c:forEach items="${appList}" var="appList">&ndash;&gt;
-        <option>请选择</option>
-        <option>${appList.name}</option>
-        &lt;!&ndash; </c:forEach>&ndash;&gt;
-    </select></div>
-    <div class="input_1"><span>申请理由</span><textarea required name="description"></textarea></div>
-</div>-->
-</body>
+-->
 
+
+
+
+</body>
+<script>
+
+
+   /* function loadXMLDoc(id) {
+
+        $.ajax({
+            type:"post",
+            url:"/updateFind",
+            data:{"id":id},
+            dataType:"application/json",
+            success:function (datas) {
+               /!* console.log("sssss")
+                console.log(datas+"11111111");*!/
+                //var data=JSON.stringify(datas);
+               /!* var tbhtml = "<tr><th>姓名</th><th>年龄</th><th>性别</th></tr>";*!/
+                for(var i = 0;i<datas.length;i++){
+                    var da="<div class='input_1'><span>申请者</span><input type='text' required name='name' placeholder='申请者'>"+datas[i].name+"</div>";
+                    $('.form_1').html(da);
+                }
+
+
+            }
+        })
+
+    }*/
+
+/*
+        layui.use(['laypage', 'layer'], function() {
+            var laypage = layui.laypage,
+                layer = layui.layer;
+
+            //总页数大于页码总数
+            laypage.render({
+                elem: 'pages2',//标签id  不带#号
+                count: 100,//总数
+                limit:limit,//每页多少条数据
+                url:"/selectApplyTast",
+                page:true,
+                //layout: ['prev', 'page', 'next', 'limit', 'skip'],//limit 每页显示的数量  //page页码
+                jump: function(obj,first) {
+                    if(!first){
+                        current_page=obj.curr //当前页
+                        limit=obj.limit; //得到每页显示的条数
+                    }
+
+                }
+            });
+        });*/
+
+   /* layui.use(['laypage', 'layer'], function() {
+        var laypage = layui.laypage,
+            layer = layui.layer;
+
+        //总页数大于页码总数
+        laypage.render({
+            elem: 'customPages'
+            ,count: 100
+            ,layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
+            ,jump: function(obj){
+                console.log(obj)
+            }
+        });
+    });*/
+</script>
 </html>

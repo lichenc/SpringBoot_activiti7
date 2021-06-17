@@ -7,4 +7,10 @@
         from im_app
     </select>
 
+    <select id="findApply" resultType="com.example.tquan.entity.ImApp">
+        select app.id
+        from im_app app
+        where app.NAME = #{name}
+
+    </select>
 </mapper>

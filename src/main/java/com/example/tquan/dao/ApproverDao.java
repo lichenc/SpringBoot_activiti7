@@ -1,5 +1,28 @@
 package com.example.tquan.dao;
 
-public interface ApproverDao {
+import com.example.tquan.entity.ApplyEntity;
+import com.example.tquan.entity.Approver;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Map;
+
+@Mapper
+@Repository
+public interface ApproverDao {
+        /**
+         * 查询审核人
+         *
+         * @param
+         * @return
+         */
+        List<Approver> audit(String login_name);
+        /**
+         * 查询申请人信息
+         *
+         * @param
+         * @return
+         */
+        List<ApplyEntity> apply(String login_name);
 }

@@ -73,22 +73,21 @@
             <td th:text="${applicationForm.assignee}"></td>
             <td th:text="${applicationForm.processInstanceId}"></td>
             <td>
-                <a  href="pickup" class="layui-btn layui-btn-xs">接收任务</a>
+                <a th:href="@{'pickup?id='+${applicationForm.id}}" class="layui-btn layui-btn-xs">接收任务</a>
                 <a href="repulse" class="layui-btn layui-btn-xs">打回</a>
                 <!--<button id="btn_3"  class="layui-btn layui-btn-xs">同意</button>
                 <button id="btn" class="layui-btn layui-btn-xs">不同意</button>-->
             </td>
         </tr>
-        <tr th:each="pickupTask:${pickupTask}">
+        <tr th:each="pickupTask:${pickupTask}" >
             <td th:text="${pickupTask.id}"></td>
             <td th:text="${pickupTask.name}"></td>
             <td th:text="${pickupTask.createTime}"></td>
             <td th:text="${pickupTask.assignee}"></td>
             <td th:text="${pickupTask.processInstanceId}"></td>
             <td>
-                <!--<a href="AuditTask" class="layui-btn layui-btn-xs">审批任务</a>-->
-                <a href="AuditTask"  class="layui-btn layui-btn-xs">同意</a>
-                <button  class="layui-btn layui-btn-xs">不同意</button>
+               <!-- <button id="btn_1">审批任务</button>-->
+                <a th:href="@{'AuditTask?id='+${pickupTask.id}}" class="layui-btn layui-btn-xs">审批任务</a>
             </td>
         </tr>
         </tbody>
@@ -99,6 +98,31 @@
     <div id="customPages" class="customPages"></div>
 </div>
 
-</body>
 
+<div class="form_1">
+    <form action="/activi" method="post">
+        <div class="input_1"><div class="login_logo">未审核任务</div><div class="close">X</div></div>
+        <hr>
+        <div class="input_1"><span>事件类型标识</span><input type="text" required name="name" placeholder="&nbsp;申请者"></div>
+        <div class="input_1"><span>事件类型</span><input type="type" required name="type" placeholder="&nbsp;任务类型"></div>
+        <div class="input_1"><span>申请人</span></div>
+
+        <div class="input_1"><span>任务类型</span>
+            <select th:each="audits:${audits}" required name="proposer">
+                <option th:text="${audits.audit}"></option>
+            </select>
+        </div>
+        <div class="input_1" id="submit">
+            <input class="close_1"   value="不同意">&nbsp;&nbsp;&nbsp;&nbsp;<input class="submit_1" οnclick="addOrder()" type="submit" value="同&nbsp;意"></div>
+    </form>
+</div>
+
+</body>
+<script type="text/javascript">
+        function test(){
+                var f = document.getElementsByTagName("form")[0];
+                f.action=f.action+"id="+document.getElementById("input").value;
+                alert(f.action);
+        }
+</script>
 </html>

@@ -20,4 +20,16 @@ public interface ImAppDao {
      */
 
     List<ImApp> findAll();
+    /**
+     * 分页查询
+     * @return
+     */
+    List selectPage();
+    /**
+     * 查询申请的应用Id
+     *
+     * @param
+     * @return
+     */
+    List<ImApp> findApply(String name);
 }
