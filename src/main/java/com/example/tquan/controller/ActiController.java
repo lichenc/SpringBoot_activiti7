@@ -4,11 +4,14 @@ package com.example.tquan.controller;
 
 import com.beust.jcommander.internal.Lists;
 import com.example.tquan.entity.*;
+import com.example.tquan.service.*;
 import com.example.tquan.util.PwdNum;
 import com.example.tquan.util.RsaUtil;
 /*import net.sf.json.JSONObject;*/
 import com.ninghang.core.util.StringUtils;
 import net.sf.json.JSONObject;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -24,8 +27,6 @@ import org.apache.http.util.EntityUtils;
 /*import net.sf.json.JSONObject;*/
 
 
-import com.example.tquan.service.ApproverService;
-import com.example.tquan.service.ImAppService;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
@@ -105,6 +106,14 @@ public class ActiController{
      * 会默认按照Resources目录下的activiti.cfg.xml创建流程引擎
      */
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+    @Autowired
+    private VariableService variableService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PositionService positionService;
+
+    private Log log = LogFactory.getLog(getClass());
 
 
     /**
@@ -355,6 +364,48 @@ public class ActiController{
             result.add(tk.getCreateTime());*/
             /*result.set(4,tk.getId());*/
         }
+        //如果申请为岗位申请，审批通过之后需要授权申请的岗位
+        VariableEntity variableEntity=variableService.getTaskDefByProcInstId(list.get(0).getProcessInstanceId());
+        //判断是否是岗位申请任务
+        if (variableEntity.getProcDefId().contains("positionApply")){
+            String sn=null;
+            String position=null;
+            //设置查询申请人的参数
+            VariableEntity variableEntity1=new VariableEntity();
+            variableEntity1.setProcInstId(list.get(0).getProcessInstanceId());
+            variableEntity1.setName("applyPerson");
+            //查询申请人
+            sn= variableService.getTextByName(variableEntity1);
+
+
+            //设置查询岗位的参数
+            VariableEntity variableEntity3=new VariableEntity();
+            variableEntity3.setProcInstId(list.get(0).getProcessInstanceId());
+            variableEntity3.setName("position");
+            //查询申请的岗位
+            position=variableService.getTextByName(variableEntity3);
+
+            //设置查询用户的参数
+            UserEntity userEntity=new UserEntity();
+            userEntity.setSn(sn);
+            //根据sn获取用户信息
+            UserEntity userEntity1=userService.getUserByProperty(userEntity);
+            //获取岗位id
+            String positionId=positionService.getPositionByName(position);
+
+            //设置为用户添加岗位的参数
+            PositionEntity positionEntity=new PositionEntity();
+            positionEntity.setUserId(userEntity1.getId());
+            positionEntity.setPositionId(positionId);
+
+            //执行用户关联岗位的add方法
+            int iden=positionService.addUserPosition(positionEntity);
+            //添加成功
+            if (iden !=0){
+                log.info("=========================="+sn+"授权"+position+"成功!");
+            }
+        }
+        System.out.println("完成任务：任务ID：" + list.get(0).getId());
         //返回所有任务
       /*  System.out.println(result.get(1));*/
         request.setAttribute("pickupTask",list);
