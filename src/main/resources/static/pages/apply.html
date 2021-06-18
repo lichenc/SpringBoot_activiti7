@@ -96,20 +96,24 @@
     <form action="/activi" method="post">
         <div class="input_1"><div class="login_logo">账号与基本角色申请</div><div class="close">X</div></div>
         <hr>
-        <div class="input_1"><span>申请者</span><input type="text" required name="name" placeholder="&nbsp;申请者"></div>
-        <div class="input_1"><span>任务类型</span><input type="type" required name="type" placeholder="&nbsp;任务类型"></div>
-       <div class="input_1"><span>系统资源</span>
-           <select th:each="appList:${appList}" required name="app">
-           <option ></option>
-            <option th:text="${appList.name}" ></option>
-        </select>
-       </div>
-        <div class="input_1"><span>应用账号</span><input type="type" required name="account" placeholder="&nbsp;账号"></div>
-      <div class="input_1"><span>审批人</span>
-          <select th:each="audits:${audits}" required name="proposer">
-            <option th:text="${audits.audit}"></option>
-          </select>
-      </div>
+        <div class="input_1"><span>申请者</span><input type="text" th:value="${session.userName}" disabled required name="name" ></div>
+        <div class="input_1"><span>任务类型</span>
+            <select  required name="type">
+                <option th:each="taskType:${taskType}" th:if="${taskType.name ='帐号新增'}" >账号新增</option>
+
+            </select>
+        </div>
+        <div class="input_1"><span>系统资源</span>
+            <select  required name="app">
+                <option th:each="appList:${appList}" th:text="${appList.name}" ></option>
+            </select>
+        </div>
+        <div class="input_1"><span>应用账号</span><input type="type" th:value="${session.userSn}" required name="account" ></div>
+        <div class="input_1"><span>审批人</span>
+            <select required name="proposer">
+                <option th:each="audits:${audits}" th:text="${audits.audit}"></option>
+            </select>
+        </div>
         <div class="input_1"><span>基本角色</span><select required name="role">
             <option>审批角色</option>
             <option></option>

@@ -102,6 +102,8 @@ public class ActiController{
 
     @Autowired
     private ApproverService approverService ;
+    @Autowired
+    private TaskTypeService taskTypeService;
     /**
      * 会默认按照Resources目录下的activiti.cfg.xml创建流程引擎
      */
@@ -234,14 +236,15 @@ public class ActiController{
                 .list();
                /* .listPage(firstResult, maxResults);*/
         request.setAttribute("task",list);
-       // ImAppController apply=new ImAppController();
-
+        //查询所有应用
         List appList = imAppService.findAll();
         request.setAttribute("appList",appList);
-        String login_name = (String) session.getAttribute("userSn");
-        login_name="tmm";
+        //查询审批人
         List audits=approverService.audit(login_name);
         request.setAttribute("audits",audits);
+        //查询任务类型
+        List taskType=taskTypeService.accountTask();
+        request.setAttribute("taskType",taskType);
         if (list != null && list.size() > 0) {
             for (Task task : list) {
                 System.out.println("任务ID:" + task.getId());

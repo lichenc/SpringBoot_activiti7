@@ -7,18 +7,18 @@ import com.fasterxml.jackson.databind.deser.std.StringArrayDeserializer;
  * Created by tangmiaomiao on 2021/5/20 11:45
  */
 public class ImApp {
-    private Integer id;
+    private String id;
     private String sn;
     private String name;
     public ImApp(){
 
     }
-    public ImApp(Integer id,String sn,String name){
+    public ImApp(String id,String sn,String name){
         this.id = id;
         this.sn = sn;
         this.name = name;
     }
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -30,7 +30,7 @@ public class ImApp {
         this.name = name;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
