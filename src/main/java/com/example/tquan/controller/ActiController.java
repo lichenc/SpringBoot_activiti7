@@ -160,7 +160,7 @@ public class ActiController{
         String sn = (String) session.getAttribute("userSn");
         Map<String,Object> map = new HashMap<String,Object>();
         System.out.println("当前申请人账号："+sn);
-        map.put("userId",sn);
+        map.put("applyPerson",sn);
         String name=activiti.getProposer();
         System.out.println(name);
         String quStr=name.substring(name.indexOf("(")+1,name.indexOf(")"));
@@ -172,14 +172,14 @@ public class ActiController{
 
         map.put("user",quStr);
         map.put("name", activiti.getName());
-        map.put("type", activiti.getType());
+        map.put("taskType", activiti.getType());
         map.put("app", activiti.getApp());
         map.put("appId", list.get(0).getId());
         map.put("role", activiti.getRole());
         map.put("account", activiti.getAccount());
         map.put("status", account.getStatus());
-        map.put("usersId", apply.get(0).getUserId());
-        map.put("description", activiti.getDescription());
+        map.put("approvedPerson", apply.get(0).getUserId());
+        map.put("applyReason", activiti.getDescription());
 
         ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("myProcess_1",map);
         //String name=activiti.getProposer();
@@ -223,13 +223,13 @@ public class ActiController{
      * @return
      */
     @RequestMapping(value = "/selectApplyTast")
-    public String findTasks(/*Integer firstResult, Integer maxResults, */String name, HttpServletRequest request, HttpServletRequest requests, HttpSession session) {
+    public String findTasks(/*Integer firstResult, Integer maxResults, */HttpServletRequest request, HttpServletRequest requests, HttpSession session) {
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
-        name="002";
         /*firstResult=0;
         maxResults=2;*/
+        String name = (String) session.getAttribute("userSn");
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 //.processInstanceBusinessKey("myProcess_1")
