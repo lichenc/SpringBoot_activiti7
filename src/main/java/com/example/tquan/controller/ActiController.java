@@ -170,7 +170,7 @@ public class ActiController{
         //查询申请的应用id
         List<ImApp> list=imAppService.findApply(activiti.getApp());
 
-        map.put("user",quStr);
+        map.put("approvedPerson",quStr);
         map.put("name", activiti.getName());
         map.put("taskType", activiti.getType());
         map.put("app", activiti.getApp());
@@ -178,7 +178,7 @@ public class ActiController{
         map.put("role", activiti.getRole());
         map.put("account", activiti.getAccount());
         map.put("status", account.getStatus());
-        map.put("approvedPerson", apply.get(0).getUserId());
+        map.put("usersId", apply.get(0).getUserId());
         map.put("applyReason", activiti.getDescription());
 
         ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("myProcess_1",map);
