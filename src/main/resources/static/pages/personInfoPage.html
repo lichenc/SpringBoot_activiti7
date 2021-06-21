@@ -15,6 +15,8 @@
     <title>个人信息</title>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/index.js"></script>
+    <script type="text/javascript" src="../js/personInfoPage.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
 
 </head>
@@ -22,55 +24,147 @@
     body {
         background-color: white;
     }
+    hr {/*透明渐变水平线*/
+        width:80%;
+        margin:0 auto;
+        border: 0;
+        height: 2px;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    }
 </style>
 
 <body>
-<script type="text/javascript" src="../js/personInfoPage.js"></script>
 <div class="layui-row layui-col-space15">
     <!-- 操作表单 -->
     <div class="layui-col-md12">
         <div class="layui-card">
             <div class="layui-card-body">
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">用户标识</label>
-                    <div class="layui-input-block">
-                        <input type="text" autocomplete="off" id="sn"
-                               class="layui-input">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">唯一标识</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="id"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="sn"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="sex"
+                                   class="layui-input" style="width: 300px">
+                        </div>
                     </div>
                 </div>
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">用户名</label>
-                    <div class="layui-input-block">
-                        <input type="text"  autocomplete="off" id="name"
-                               class="layui-input">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">组织机构</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="orgName"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="name"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="idCard"
+                                   class="layui-input" style="width: 300px">
+                        </div>
                     </div>
                 </div>
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">组织机构</label>
-                    <div class="layui-input-block">
-                        <input type="text"  autocomplete="off" id="orgName"
-                               class="layui-input">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户类型</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="userTypeId"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="telephone"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">邮件</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="email"
+                                   class="layui-input" style="width: 300px">
+                        </div>
                     </div>
                 </div>
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">性别</label>
-                    <div class="layui-input-block">
-                        <input type="text"  autocomplete="off" id="sex"
-                               class="layui-input">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="createTime"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
                     </div>
-                </div>
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">职级</label>
-                    <div class="layui-input-block">
-                        <input type="text" autocomplete="off" id="zhiji"
-                               class="layui-input">
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="status"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
                     </div>
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">操作管理员</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="optUser"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="layui-form-item  layui-form-text">
-                    <label class="layui-form-label">身份证号</label>
-                    <div class="layui-input-block">
-                        <input type="text" autocomplete="off" id="idCard"
-                               class="layui-input">
+
+                <div style="text-align: center" ><a style="color: #999999;font-size: 20px" onclick="changeShow();"  id="span">查看↓↓↓↓</a></div>
+                <hr>
+                <br>
+                <div class="layui-form-item" id="block" style="display: none">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="createTime"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">职级</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="zhiji"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">离职时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="suspendTime"
+                                   class="layui-input" style="width: 300px">
+                        </div>
                     </div>
                 </div>
                 <br>
@@ -122,7 +216,6 @@
                                     <th>岗位标识</th>
                                     <th>岗位名称</th>
                                     <th>备注</th>
-                                    <th>创建时间</th>
                                     <th>操作</th>
                                 </tr>
                                 </thead>
@@ -230,7 +323,6 @@
         </form>
     </div>
 </div>
-<script type="text/javascript" src="../js/index.js"></script>
 </body>
 
 

@@ -7,14 +7,34 @@ import java.util.List;
  * Created by chenjin on 2021/6/4 11:15
  */
 public class TaskEntity {
+    private String id;
     private String event;
     private String eventType;
     private String applyPerson;
     private String approvedPerson;
     private String taskType;
+    private String applyReason;
+
+
 
     private List<TaskEntity> taskEntities;
     private int taskCount;
+
+    public String getApplyReason() {
+        return applyReason;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setApplyReason(String applyReason) {
+        this.applyReason = applyReason;
+    }
 
     public List<TaskEntity> getTaskEntities() {
         return taskEntities;

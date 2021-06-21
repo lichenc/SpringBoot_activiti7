@@ -23,10 +23,10 @@ public class TaskService {
 
     /**
      * 修改任务状态
-     * @param id
+     * @param taskEntity
      * @return
      */
-    public int updateTask(String id){
-        return taskDao.updateTask(id);
+    public int updateTask(TaskEntity taskEntity){
+        return taskDao.updateTask(taskEntity);
     }
 }

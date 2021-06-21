@@ -17,7 +17,16 @@ public class PositionEntity {
     //辅助字段：岗位id，用户id   用来添加用户与岗位的关联
     private String userId;
     private String positionId;
+    private List<Approver> approverList;    //审批人集合
 
+
+    public List<Approver> getApproverList() {
+        return approverList;
+    }
+
+    public void setApproverList(List<Approver> approverList) {
+        this.approverList = approverList;
+    }
 
     public String getUserId() {
         return userId;

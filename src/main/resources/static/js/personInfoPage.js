@@ -6,6 +6,7 @@ $(document).ready(function(){
         url: "/getAccountList",
         type: "POST",
         success: function (data) {
+            $("#id").val(data.id);
             $("#sn").val(data.sn);
             $("#name").val(data.name);
             $("#orgName").val(data.orgName);
@@ -14,7 +15,16 @@ $(document).ready(function(){
             }else{
                 $("#sex").val("女");
             }
-
+            if(data.status==1){
+                $("#status").val("在职");
+            }else{
+                $("#status").val("离职");
+            }
+            $("#userTypeId").val(data.userTypeId);
+            $("#telephone").val(data.telephone);
+            $("#email").val(data.email);
+            $("#createTime").val(data.createTime);
+            $("#optUser").val(data.optUser);
             //获取账号集合
             var accountlist=data.accountEntities;
             var accountstr;
@@ -91,7 +101,7 @@ $(document).ready(function(){
                         , count: data.positionCount //数据总数，从服务端得到
                     })
                 }
-                if(ata.groupCount!=null){
+                if(data.groupCount!=null){
                     //用户组Tab分页
                     laypage.render({
                         elem: 'groupPage'
@@ -236,3 +246,19 @@ layui.use(['form', 'jquery', function () {
     var form = layui.form;
     $ = layui.jquery;
 }]);
+
+/**
+ * 折叠模块收起展开事件
+ */
+function changeShow(){
+
+    var span=$("#span").html();
+
+    if(span=="查看↓↓↓↓"){
+        $("#span").html("收起↑↑↑↑");
+        document.getElementById("block").style.display="block";
+    }else{
+        $("#span").html("查看↓↓↓↓");
+        document.getElementById("block").style.display="none";
+    }
+}

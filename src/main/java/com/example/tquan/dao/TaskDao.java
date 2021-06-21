@@ -18,8 +18,8 @@ public interface TaskDao {
 
     /**
      * 修改任务的状态
-     * @param id
+     * @param taskEntity
      * @return
      */
-    int updateTask(String id);
+    int updateTask(TaskEntity taskEntity);
 }

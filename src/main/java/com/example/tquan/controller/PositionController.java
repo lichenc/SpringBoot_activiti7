@@ -1,7 +1,9 @@
 package com.example.tquan.controller;
 
+import com.example.tquan.entity.Approver;
 import com.example.tquan.entity.PositionEntity;
 import com.example.tquan.entity.VariableEntity;
+import com.example.tquan.service.ApproverService;
 import com.example.tquan.service.PositionService;
 import com.example.tquan.service.UserService;
 import com.example.tquan.service.VariableService;
@@ -36,6 +38,8 @@ public class PositionController {
     private VariableService variableService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private ApproverService approverService;
 
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
@@ -47,12 +51,16 @@ public class PositionController {
      */
     @RequestMapping("/getPositionList")
     public PositionEntity getpositionList(HttpSession session){
+       String userSn= String.valueOf(session.getAttribute("userSn"));
         PositionEntity positionEntity=new PositionEntity();
         //获取所有岗位
         List<PositionEntity> positionEntityList= positionService.findAll();
-
         positionEntity.setPositionEntityList(positionEntityList);
-        positionEntity.setUserSn(String.valueOf(session.getAttribute("userSn")));
+        positionEntity.setUserSn(userSn);
+
+        //查询审批人集合
+        List<Approver> approvers=approverService.audit(userSn);
+        positionEntity.setApproverList(approvers);
 
         return positionEntity;
     }
@@ -62,11 +70,13 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/addPositionProcess")
-    public int addPositionProcess(String position, String applyReason, HttpSession session, HttpServletRequest request){
+    public int addPositionProcess(String position, String applyReason,String approvedPerson, HttpSession session, HttpServletRequest request){
         int iden=0;
 
         //非空判断，防止越过前端非空验证
-        if(position != null && applyReason != null && applyReason != "" && position != ""){
+        if(position != null && applyReason != null && applyReason != "" && position != "" && approvedPerson != null && approvedPerson != ""){
+
+            String approvedPersonStr=approvedPerson.substring(approvedPerson.indexOf("(")+1,approvedPerson.indexOf(")"));
 
             String userId=session.getAttribute("UserId").toString();
             //查询申请的岗位id
@@ -88,9 +98,9 @@ public class PositionController {
                 map.put("position",position);
                 map.put("applyReason",applyReason);
                 map.put("taskType","岗位申请");
-                map.put("approvedPerson","001");  //审批人员，未确定，先使用默认001
+                map.put("approvedPerson",approvedPersonStr);
                 ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
-                log.info("=========================="+sn+"申请了"+position+"岗位申请");
+                log.info("=========================="+sn+"申请了"+position+"岗位申请！");
                 iden=2;
 
                 //用户已拥有申请的岗位
@@ -133,7 +143,9 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/getPositionParamList")
-    public List<VariableEntity> getPositionParamList(String startTime,String endTime){
+    public List<VariableEntity> getPositionParamList(String startTime,String endTime,HttpSession session){
+        String sn=session.getAttribute("userSn").toString();
+
         VariableEntity variableEntity4=new VariableEntity();
         variableEntity4.setProcDefId("positionApply");
         //按日期区间查找
@@ -147,60 +159,19 @@ public class PositionController {
         //获取岗位流程的实例ID
         List<VariableEntity> variableEntities=variableService.getProcessParamByName(variableEntity4);
         List<VariableEntity> variableEntityList=new ArrayList<>();
-        //为查询text设置参数
-        VariableEntity variableEntity=new VariableEntity();
-        //接收查询text的参数
-       String text=null;
 
         //循环获取申请岗位参数
         for(VariableEntity variableEntity1:variableEntities){
             VariableEntity variableEntity3=new VariableEntity();
-            variableEntity.setProcInstId(variableEntity1.getProcInstId());
-             for(int i=0;i<5;i++){
-                 //设置审批人参数
-                 if(i==0){
-                     variableEntity.setName("approvedPerson");
-                 }
-                 //设置任务类型参数
-                 if (i==1){
-                     variableEntity.setName("taskType");
-                 }
-                 //设置申请原因参数
-                 if (i==2){
-                     variableEntity.setName("applyReason");
-                 }
-                 //设置岗位参数
-                 if (i==3){
-                     variableEntity.setName("position");
-                 }
-                 //设置申请人参数
-                 if (i==4){
-                     variableEntity.setName("applyPerson");
-                 }
-                  //获取参数对应的值
-                 text=variableService.getTextByName(variableEntity);
-                 //添加审批人对应的值
-                 if (i==0){
-                     variableEntity3.setApprovedPerson(text);
-                 }
-                 //添加任务类型对应的值
-                 if(i==1){
-                    variableEntity3.setTaskType(text);
-                 }
-                 //添加申请原因对应的值
-                 if(i==2){
-                    variableEntity3.setApplyReason(text);
-                 }
-                 //添加岗位对应的值
-                 if(i==3){
-                    variableEntity3.setPosition(text);
-                 }
-                 //添加申请人对应的值
-                 if(i==4){
-                    variableEntity3.setApplyPerson(text);
-                 }
+            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
+            for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                variableEntity3.setApplyPerson(variables.get("applyPerson").toString());
+                variableEntity3.setApplyReason(variables.get("applyReason").toString());
+                variableEntity3.setTaskType(variables.get("taskType").toString());
+                variableEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
+                variableEntity3.setPosition(variables.get("position").toString());
+            }
 
-              }
             variableEntity3.setProcInstId(variableEntity1.getProcInstId());
             variableEntity3.setApplyCreateTime(variableEntity1.getApplyCreateTime());
             //最终list集合

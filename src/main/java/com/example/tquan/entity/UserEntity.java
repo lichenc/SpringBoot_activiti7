@@ -12,7 +12,7 @@ public class UserEntity {
     private String sn;
     private String sex;
     private String name;
-    private Integer userTypeId;
+    private String userTypeId;
     private String telephone;
     private String email;
     private Integer status;
@@ -20,6 +20,10 @@ public class UserEntity {
     private Date updateTime;
     private String optTime;
     private String companySn;
+    private String optUser;
+
+
+
 
     //辅助字段：组织名称
     private String orgName;
@@ -37,6 +41,14 @@ public class UserEntity {
     private int groupCount;
     //辅助字段：用户组集合
     private List<GroupEntity> groupEntities;
+
+    public String getOptUser() {
+        return optUser;
+    }
+
+    public void setOptUser(String optUser) {
+        this.optUser = optUser;
+    }
 
     public int getGroupCount() {
         return groupCount;
@@ -94,11 +106,11 @@ public class UserEntity {
         this.name = name;
     }
 
-    public Integer getUserTypeId() {
+    public String getUserTypeId() {
         return userTypeId;
     }
 
-    public void setUserTypeId(Integer userTypeId) {
+    public void setUserTypeId(String userTypeId) {
         this.userTypeId = userTypeId;
     }
 

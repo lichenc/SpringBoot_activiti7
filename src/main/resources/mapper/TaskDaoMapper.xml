@@ -20,7 +20,7 @@
             and REV_ =2
         </where>
     </select>
-    <update id="updateTask" parameterType="java.lang.String">
-         update  act_ru_task set REV_=1 where ID_=#{id}
+    <update id="updateTask" parameterType="com.example.tquan.entity.TaskEntity">
+         update  act_ru_task set REV_=1,ASSIGNEE_=#{approvedPerson} where ID_=#{id}
     </update>
 </mapper>

@@ -8,7 +8,7 @@ function selectTaskList(){
         //清空之前的列表记录
         $('.tbody tr').remove();
         //获取申请人
-        var applyPerson = document.getElementById("applyPerson").value;
+       var applyPerson = document.getElementById("applyPerson").value;
         //获取审批人
         var approvedPerson = document.getElementById("approvedPerson").value;
         $.ajax({
@@ -37,9 +37,10 @@ function selectTaskList(){
                                         "<tr>"
                                         + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value=''  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='"+item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.applyReason + "'  class='layui-input' style='border:none;'></td>"
                                         + " <td>"
                                         + "<button value='" + item.event + "' class='layui-btn' id='retry'>重试</button>"
                                         + "</td>"
@@ -54,8 +55,8 @@ function selectTaskList(){
                     });
 
                 } else {
-                    var prompt = document.getElementById("prompt");
-                    prompt.style.display = "block";
+                   /* var prompt = document.getElementById("prompt");
+                    prompt.style.display = "block";*/
                 }
 
             }

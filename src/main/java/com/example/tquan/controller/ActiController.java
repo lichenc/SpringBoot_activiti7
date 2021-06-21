@@ -66,7 +66,6 @@ import javax.servlet.http.HttpSession;
 
 @Controller
 
-
 //@RequestMapping("/audit")
 public class ActiController{
     /**
@@ -160,7 +159,7 @@ public class ActiController{
         String sn = (String) session.getAttribute("userSn");
         Map<String,Object> map = new HashMap<String,Object>();
         System.out.println("当前申请人账号："+sn);
-        map.put("applyPerson",sn);
+        map.put("userId",sn);
         String name=activiti.getProposer();
         System.out.println(name);
         String quStr=name.substring(name.indexOf("(")+1,name.indexOf(")"));
@@ -178,6 +177,7 @@ public class ActiController{
         map.put("role", activiti.getRole());
         map.put("account", activiti.getAccount());
         map.put("status", account.getStatus());
+        map.put("applyPerson", sn);
         map.put("usersId", apply.get(0).getUserId());
         map.put("applyReason", activiti.getDescription());
 
@@ -200,7 +200,7 @@ public class ActiController{
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 .taskAssignee(name)//指定个人任务查询
                 .list();
-                /*.listPage(firstResult, maxResults);*/
+        /*.listPage(firstResult, maxResults);*/
         request.setAttribute("task",list);
         CompleteTask(list.get(0).getId());
        /* if (list != null && list.size() > 0) {
@@ -223,19 +223,20 @@ public class ActiController{
      * @return
      */
     @RequestMapping(value = "/selectApplyTast")
-    public String findTasks(/*Integer firstResult, Integer maxResults, */HttpServletRequest request, HttpServletRequest requests, HttpSession session) {
+    public String findTasks(/*Integer firstResult, Integer maxResults, */String name, HttpServletRequest request, HttpServletRequest requests, HttpSession session) {
+        String login_name=session.getAttribute("userSn").toString();
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
+        name="002";
         /*firstResult=0;
         maxResults=2;*/
-        String name = (String) session.getAttribute("userSn");
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 //.processInstanceBusinessKey("myProcess_1")
                 .taskAssignee(name)//指定个人任务查询
                 .list();
-               /* .listPage(firstResult, maxResults);*/
+        /* .listPage(firstResult, maxResults);*/
         request.setAttribute("task",list);
         //查询所有应用
         List appList = imAppService.findAll();
@@ -290,7 +291,7 @@ public class ActiController{
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
-       /* HttpSession session = sessionRequest.getSession();*/
+        /* HttpSession session = sessionRequest.getSession();*/
         String name = (String) session.getAttribute("userSn");
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
@@ -328,7 +329,7 @@ public class ActiController{
 
         Task task = taskService.createTaskQuery().taskId(list.get(0).getId()).singleResult();
         taskService.setAssignee(list.get(0).getId(),null);//归还候选任务
-       /* taskService.setAssignee(list.get(0).getId(),"wukong");//交办*/
+        /* taskService.setAssignee(list.get(0).getId(),"wukong");//交办*/
         return "/audit";
     }
 
@@ -368,6 +369,31 @@ public class ActiController{
             result.add(tk.getCreateTime());*/
             /*result.set(4,tk.getId());*/
         }
+
+        System.out.println("完成任务：任务ID：" + list.get(0).getId());
+        //返回所有任务
+        /*  System.out.println(result.get(1));*/
+        request.setAttribute("pickupTask",list);
+        return "/audit";
+    }
+
+
+
+    /**
+     * 审核人完成任务审核
+     *
+     * @return
+     */
+    @RequestMapping("/AuditTask")
+    public String AuditTask(@RequestParam("id") String id, HttpSession session, String uuid) throws Exception {
+        //1:得到ProcessEngine对象
+        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+        //2：得到TaskService对象
+        TaskService taskService=processEngine.getTaskService();
+        String name = (String) session.getAttribute("userSn");
+        List<Task> list = taskService.createTaskQuery()
+                .taskAssignee(name)
+                .list();
         //如果申请为岗位申请，审批通过之后需要授权申请的岗位
         VariableEntity variableEntity=variableService.getTaskDefByProcInstId(list.get(0).getProcessInstanceId());
         //判断是否是岗位申请任务
@@ -408,76 +434,49 @@ public class ActiController{
             if (iden !=0){
                 log.info("=========================="+sn+"授权"+position+"成功!");
             }
-        }
-        System.out.println("完成任务：任务ID：" + list.get(0).getId());
-        //返回所有任务
-      /*  System.out.println(result.get(1));*/
-        request.setAttribute("pickupTask",list);
-        return "/audit";
-    }
-
-
-
-    /**
-     * 审核人完成任务审核
-     *
-     * @return
-     */
-    @RequestMapping("/AuditTask")
-    public String AuditTask(@RequestParam("id") String id, HttpSession session, String uuid) throws Exception {
-        //1:得到ProcessEngine对象
-        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
-        //2：得到TaskService对象
-        TaskService taskService=processEngine.getTaskService();
-        String name = (String) session.getAttribute("userSn");
-        List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
-                .list();
-        System.out.println("审核通过的任务id："+list.get(0).getId());
-        System.out.println("审核通过的任务id："+id);
-        //账号属性查询
-        Task task = taskService.createTaskQuery().taskId(id).singleResult();
-        System.out.println(id+"任务拾取成功");
-        String processInstanceId = task.getProcessInstanceId();
-        Map<String, Object> variables = processEngine.getRuntimeService().getVariables(processInstanceId);
-        for (Map.Entry<String, Object> entry : variables.entrySet()) {
-            System.out.println(entry+"Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }
-
-        processEngine.getTaskService()// 与正在执行任务相关的Service
-                .complete(id);
-        System.out.println("完成任务：任务ID：" + list.get(0).getId());
-        System.out.println(variables.get("account").toString());
-        System.out.println(variables.get("appId").toString());
-        System.out.println(variables.get("usersId").toString());
-        System.out.println(variables.get("status").toString());
-        //开通账号
-        oauth(uuid);
-        if(StringUtils.isEmpty(oauth(uuid).toString())) {
-            System.out.println("uuid为空，认证失败，无法开通账号");
-        }else {
-            String pwds="";
-            if(account.getRandomSwitch().equals("true")&&!account.getImmobilizationSwitch().equals("true")){
-                //随机数
-                PwdNum pwd=new PwdNum();
-                pwds=pwd.Pwd(account.getPwdRank(),account.getStrLength(),pwds);
-
-            }else if (account.getImmobilizationSwitch().equals("true")&&!account.getRandomSwitch().equals("true")){
-                pwds=account.getPwdDefault();
-            }else {
-                pwds="000000";
+        }else{
+            System.out.println("审核通过的任务id："+list.get(0).getId());
+            System.out.println("审核通过的任务id："+id);
+            //账号属性查询
+            Task task = taskService.createTaskQuery().taskId(id).singleResult();
+            System.out.println(id+"任务拾取成功");
+            String processInstanceId = task.getProcessInstanceId();
+            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(processInstanceId);
+            for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                System.out.println(entry+"Key = " + entry.getKey() + ", Value = " + entry.getValue());
             }
-            System.out.println("密码:"+pwds);
-            List<NameValuePair> params = Lists.newArrayList();
-            params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid).toString()));
-            params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
-            params.add(new BasicNameValuePair("loginPwd", pwds));
-            params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
-            params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
-            params.add(new BasicNameValuePair("status", variables.get("status").toString()));
-            //转换为键值对
-            String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-            post(str);
+
+            processEngine.getTaskService()// 与正在执行任务相关的Service
+                    .complete(id);
+            System.out.println("完成任务：任务ID：" + list.get(0).getId());
+            //开通账号
+            oauth(uuid);
+            if(StringUtils.isEmpty(oauth(uuid).toString())) {
+                System.out.println("uuid为空，认证失败，无法开通账号");
+            }else {
+                String pwds="";
+                if(account.getRandomSwitch().equals("true")&&!account.getImmobilizationSwitch().equals("true")){
+                    //随机数
+                    PwdNum pwd=new PwdNum();
+                    pwds=pwd.Pwd(account.getPwdRank(),account.getStrLength(),pwds);
+
+                }else if (account.getImmobilizationSwitch().equals("true")&&!account.getRandomSwitch().equals("true")){
+                    pwds=account.getPwdDefault();
+                }else {
+                    pwds="000000";
+                }
+                System.out.println("密码:"+pwds);
+                List<NameValuePair> params = Lists.newArrayList();
+                params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid).toString()));
+                params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
+                params.add(new BasicNameValuePair("loginPwd", pwds));
+                params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
+                params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
+                params.add(new BasicNameValuePair("status", variables.get("status").toString()));
+                //转换为键值对
+                String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+                post(str);
+            }
         }
         return "/audit";
     }
@@ -530,7 +529,7 @@ public class ActiController{
                 .taskAssignee("tmm2").singleResult();//审核人
         System.out.println(task.getId());
         if(task==null) {
-           /// throw new ServiceException("流程未启动或已执行完成，无法撤回");
+            /// throw new ServiceException("流程未启动或已执行完成，无法撤回");
             System.out.println("流程未启动或已执行完成，无法撤回");
         }else {
             System.out.println("可以撤回");
@@ -546,11 +545,11 @@ public class ActiController{
         String myTaskId = null;
         HistoricTaskInstance myTask = null;
         for(HistoricTaskInstance hti : htiList) {
-           /* if(loginUser.getUsername().equals(hti.getAssignee())) {*/
-                myTaskId = hti.getId();
-                myTask = hti;
-                break;
-           /* }*/
+            /* if(loginUser.getUsername().equals(hti.getAssignee())) {*/
+            myTaskId = hti.getId();
+            myTask = hti;
+            break;
+            /* }*/
         }
         if(null==myTaskId) {
             System.out.println("该任务非当前用户提交，无法撤回");
@@ -565,7 +564,7 @@ public class ActiController{
         BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
 
         //变量
-		Map<String, VariableInstance> variables = runtimeService.getVariableInstances(task.getExecutionId());
+        Map<String, VariableInstance> variables = runtimeService.getVariableInstances(task.getExecutionId());
         String myActivityId = null;
         List<HistoricActivityInstance> haiList = historyService.createHistoricActivityInstanceQuery()
                 .executionId(myTask.getExecutionId()).finished().list();
@@ -597,7 +596,7 @@ public class ActiController{
         newSequenceFlow.setTargetFlowElement(myFlowNode);
         newSequenceFlowList.add(newSequenceFlow);
         flowNode.setOutgoingFlows(newSequenceFlowList);
-/*        String name="002";//撤回人*/
+        /*        String name="002";//撤回人*/
         Authentication.setAuthenticatedUserId(name);
         taskService.addComment(task.getId(), task.getProcessInstanceId(), "撤回");
         Map<String,Object> currentVariables = new HashMap<String,Object>();
@@ -666,7 +665,7 @@ public class ActiController{
                 .finished()
                 .list();
         for (HistoricTaskInstance task : taskList) {
-           /* Task leaveTask = new LeaveTask();*/
+            /* Task leaveTask = new LeaveTask();*/
             System.out.println(task.getId());
             System.out.println(task.getName());
             System.out.println(task.getProcessDefinitionId());
@@ -683,7 +682,7 @@ public class ActiController{
      * @return
      * @throws Exception
      */
-/*   @RequestMapping("/loginUser")*/
+    /*   @RequestMapping("/loginUser")*/
     public String oauth(String uuid)
             throws Exception {
         PublicKey publicKey = RsaUtil.string2PublicKey(iam.getKey());
@@ -736,7 +735,7 @@ public class ActiController{
     /**
      * post请求
      */
-  /*  @RequestMapping("/accountOpen")*/
+    /*  @RequestMapping("/accountOpen")*/
     public void post(String str) throws Exception {
         System.out.println(str);
         HttpClient httpclient = new DefaultHttpClient();
@@ -757,21 +756,21 @@ public class ActiController{
                     result.append(str2).append("\r\n");
                 }
                 br.close();
-              JSONObject resultJson = JSONObject.fromObject(result.toString());
+                JSONObject resultJson = JSONObject.fromObject(result.toString());
                 if (resultJson.get("success").toString().equals("true")) {
-                    System.out.println("msg:" + resultJson.get("msg"));
-                   /* return new ResultCode(SUCCESS,resultJson.get("message").toString());*/
+                    System.out.println("新增账号结果:" + resultJson.get("msg"));
+                    /* return new ResultCode(SUCCESS,resultJson.get("message").toString());*/
                 } else {
                     System.out.println("======= 新增账号结果："+ resultJson.get("msg"));
-                   /* return new ResultCode(FAIL,resultJson.get("message").toString());*/
+                    /* return new ResultCode(FAIL,resultJson.get("message").toString());*/
                 }
             }
         } catch (ClientProtocolException e) {
-           /* return new ResultCode(FAIL, e.getMessage());*/
+            /* return new ResultCode(FAIL, e.getMessage());*/
         } catch (IOException e) {
             /*return new ResultCode(FAIL, e.getMessage());*/
         }
-       /* return new ResultCode(FAIL, "新增账号请求失败");*/
+        /* return new ResultCode(FAIL, "新增账号请求失败");*/
     }
 
 

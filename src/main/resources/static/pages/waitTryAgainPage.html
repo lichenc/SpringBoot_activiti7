@@ -16,6 +16,7 @@
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/retry.js"></script>
 
 </head>
 <style>
@@ -42,13 +43,13 @@
                     <span class="span">申请人</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="name"   placeholder="申请人" autocomplete="off" class="layui-input">
+                    <input type="text" name="name"  id="applyPerson" placeholder="申请人" autocomplete="off" class="layui-input">
                 </div>
                 <div class="au layui-input-inline">
                     <span class="span">审批人</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input" id="time" placeholder="审批人">
+                    <input type="text" class="layui-input" id="approvedPerson" placeholder="审批人">
                 </div>
                 <div class="layui-input-inline">
                      <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
@@ -59,9 +60,6 @@
         </form>
     </div>
     <br>
-    &nbsp;&nbsp;
-    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重试&nbsp;&nbsp;</button>
-    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
     <!--事件列表-->
         <div class="layui-tab-content">
             <div class="layui-tab-item layui-show">
@@ -75,9 +73,10 @@
                     <tr>
                         <th>事件标识</th>
                         <th>事件类型</th>
-                        <th>申请人标识</th>
-                        <th>审批人标识</th>
+                        <th>申请人</th>
+                        <th>审批人</th>
                         <th>任务类型</th>
+                        <th>申请原因</th>
                         <th>操作</th>
                     </tr>
                     </thead>

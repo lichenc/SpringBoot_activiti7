@@ -73,7 +73,7 @@ function positionApply() {
             layer.open({
                 type: 1,
                 title: "岗位申请",   //标题
-                area: ['400px', '400px'],    //弹窗大小
+                area: ['400px', '450px'],    //弹窗大小
                 shadeClose: false,      //禁止点击空白关闭
                 scrollbar: false,      //禁用滚动条
                 move: false,       //禁用移动
@@ -91,15 +91,26 @@ function positionApply() {
             type: "POST",
             dataType: "json",
             success: function (data) {
-                if(data!=null){
-                    var positionList=data.positionEntityList;
-                    for(var i=0;i<positionList.length;i++){
-                        var positionStro=  "<option value='0'>请选择岗位</option><option  value='"+positionList[i].name+"'>"+positionList[i].name+"</option>";
+                var po  ="<option value='0'>请选择岗位</option>";
+                if(data.positionEntityList!=null){
+                    var positionStro=data.positionEntityList;
+                    for(var i=0;i<positionStro.length;i++){
+                        po=po+  "<option  value='"+positionStro[i].name+"'>"+positionStro[i].name+"</option>";
                     }
-                    $('#position').append(positionStro);
+                    $('#position').append(po);
                     document.getElementById("applyPerson").value=data.userSn;
-                    form.render();
                 }
+                var approverStr  ="<option value='0'>请选择审批人</option>";
+                if(data.approverList!=null){
+                    var approverList=data.approverList;
+                    for(var i=0;i<approverList.length;i++){
+                        approverStr=approverStr+ "<option  value='"+approverList[i].audit+"'>"+approverList[i].audit+"</option>";
+                    }
+                    $('#approvedPerson').append(approverStr);
+
+                }
+                //渲染select，不然无法显示值
+                form.render();
             }
         });
 
@@ -113,6 +124,8 @@ function addPosition() {
     var position=document.getElementById("position").value;
     //申请原因
     var applyReason=document.getElementById("applyReason").value;
+    //审批人
+    var approvedPerson=document.getElementById("approvedPerson").value;
     if (position==0){
         layer.alert("请选择岗位!")
         return false;
@@ -121,14 +134,19 @@ function addPosition() {
         layer.alert("输入申请理由!")
         return false;
     }
-    if(position!=0 &&position!=null&& applyReason!=null && applyReason!="") {
+    if(approvedPerson==0){
+        layer.alert("请选择审批人!")
+        return false;
+    }
+    if(position != 0 && position !=null && applyReason != null && applyReason!="" && approvedPerson !=0 && approvedPerson != null) {
         $.ajax({
             url: "/addPositionProcess",
             type: "POST",
             dataType: "json",
             data: {
                 position: position,
-                applyReason: applyReason
+                applyReason: applyReason,
+                approvedPerson:approvedPerson
             },
             success: function (data) {
                 if(data==1){
@@ -150,6 +168,12 @@ function reset() {
     document.getElementById("startTime").value=null;
     document.getElementById("endTime").value=null;
 }
+
+/**
+ * 日期转换
+ * @param date
+ * @returns {string}
+ */
 function formatDate(date) {
     console.log(date);
 // date = new Date();
