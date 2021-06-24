@@ -5,7 +5,9 @@
     <select id="getProcessParamByName" parameterType="com.example.tquan.entity.VariableEntity" resultType="com.example.tquan.entity.VariableEntity">
        SELECT DISTINCT
 	        var.PROC_INST_ID_ AS procInstId,
-	        task.CREATE_TIME_ as applyCreateTime
+	        task.CREATE_TIME_ as applyCreateTime,
+            task.ID_ as id,
+            task.NAME_ as processName
         FROM
 	        act_ru_task task
 	    LEFT JOIN act_ru_variable var ON var.PROC_INST_ID_ = task.PROC_INST_ID_
@@ -37,6 +39,14 @@
         FROM
 	        act_ru_task
         WHERE
-	        PROC_INST_ID_ = #{procInstId}
+	        ID_ = #{procInstId}
     </select>
+    <!--修改task参数-->
+    <update id="updateTaskParam" parameterType="com.example.tquan.entity.VariableEntity">
+        UPDATE act_ru_variable
+        SET TEXT_ = #{text}
+        WHERE
+	        PROC_INST_ID_ =#{procInstId}
+	    AND NAME_=#{name}
+    </update>
 </mapper>

@@ -43,4 +43,13 @@ public class VariableService {
     public VariableEntity getTaskDefByProcInstId(String procInstId){
         return variableDao.getTaskDefByProcInstId(procInstId);
     }
+
+    /**
+     * 修改task流程参数
+     * @param variableEntity
+     * @return
+     */
+    public int updateTaskParam(VariableEntity variableEntity){
+        return variableDao.updateTaskParam(variableEntity);
+    }
 }

@@ -4,6 +4,7 @@ package com.example.tquan.entity;
  * Created by chenjin on 2021/6/9 22:08
  */
 public class VariableEntity {
+    private String id;
     private String procInstId;
     private String applyPerson;
     private String applyCreateTime;
@@ -15,12 +16,29 @@ public class VariableEntity {
     private String text;
     private String name;
     private String procDefId;
+    private String processName;  //结点名称
 
 
     //辅助参数：按条件查找
     private String startTime;
     private String endTime;
 
+
+    public String getProcessName() {
+        return processName;
+    }
+
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getProcDefId() {
         return procDefId;
@@ -116,5 +134,13 @@ public class VariableEntity {
 
     public void setApplyReason(String applyReason) {
         this.applyReason = applyReason;
+    }
+
+    public VariableEntity(String procInstId, String name) {
+        this.procInstId = procInstId;
+        this.name = name;
+    }
+    public VariableEntity() {
+
     }
 }

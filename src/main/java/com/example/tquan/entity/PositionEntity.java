@@ -20,6 +20,34 @@ public class PositionEntity {
     private List<Approver> approverList;    //审批人集合
 
 
+    private String applyReason;
+    private String approvedPerson;
+    private String position;
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getApprovedPerson() {
+        return approvedPerson;
+    }
+
+    public void setApprovedPerson(String approvedPerson) {
+        this.approvedPerson = approvedPerson;
+    }
+
+    public String getApplyReason() {
+        return applyReason;
+    }
+
+    public void setApplyReason(String applyReason) {
+        this.applyReason = applyReason;
+    }
+
     public List<Approver> getApproverList() {
         return approverList;
     }

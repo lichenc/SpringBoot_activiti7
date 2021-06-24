@@ -53,7 +53,7 @@
                 <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
             </div>-->
             <div class="layui-input-inline">
-                <button class="layui-btn" onclick="getPositionList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                <button class="layui-btn" id="selectTask" onclick="getPositionList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
                 <button class="layui-btn"  onclick="reset()">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
             </div>
 
@@ -79,6 +79,7 @@
                     <th>审批者</th>
                     <th>标题</th>
                     <th>申请理由</th>
+                    <th>操作</th>
                 </tr>
                 </thead>
                 <tbody class="tbody" id="positionList">
@@ -145,6 +146,64 @@
             <div class="layui-input-block">
                 <button lay-filter="setmypass" href="" class="layui-btn" onclick="addPosition();">确定
             </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--岗位修改弹窗-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="positionUpdate1">
+    <div class="layui-form" lay-filter="" id="form1">
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请者
+            </label>
+            <div class="layui-input-inline">
+                <input id="applyPersonUpdate" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text"  readonly="readonly">
+            </div>
+            <div class="layui-form-mid layui-word-aux"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                任务类型：
+            </label>
+            <div class="layui-input-inline">
+                <input id="taskTypeUpdate" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text" value="岗位申请" readonly="readonly">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                岗位：
+            </label>
+            <div class="layui-input-inline">
+                <select lay-verify="required" id="positionUpdate" class="select">
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                审批人：
+            </label>
+            <div class="layui-input-inline">
+                <input id="approvedPersonUpdate" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                       type="text"  readonly="readonly">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请理由：
+            </label>
+            <div class="layui-input-inline">
+                <textarea  id="applyReasonUpdate"  autocomplete="off" class="layui-textarea"
+                           placeholder="申请理由" maxlength="50"></textarea>
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button lay-filter="setmypass" href="" class="layui-btn" onclick="updatePosition();">确定
+                </button>
             </div>
         </div>
     </div>

@@ -5,6 +5,7 @@
     <select id="getTaskListByProperty" resultType="com.example.tquan.entity.TaskEntity" parameterType="com.example.tquan.entity.TaskEntity">
         SELECT
 	        ID_ AS event,
+             PROC_INST_ID_ as id,
 	        NAME_ as eventType,
 	        ASSIGNEE_ as approvedPerson,
 	        PROC_INST_ID_  taskType

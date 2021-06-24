@@ -30,4 +30,11 @@ public interface VariableDao {
      * @return
      */
     VariableEntity getTaskDefByProcInstId(String procInstId);
+
+    /**
+     * 修改流程参数
+     * @param variableEntity
+     * @return
+     */
+    int updateTaskParam(VariableEntity variableEntity);
 }

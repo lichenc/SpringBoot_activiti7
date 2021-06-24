@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,6 +61,7 @@ public class LoginController {
                     session.setAttribute("UserId",accountEntity1.getUserId());
                     session.setAttribute("userName",userEntity.getName());
                     session.setAttribute("userSn",userEntity.getSn());
+                    session.setMaxInactiveInterval(3600);
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");
@@ -77,19 +79,7 @@ public class LoginController {
         }
     }
 
-    /**
-     * 退出登录
-     *
-     * @return
-     */
-    @PostMapping("/logout")
-    public String logout(HttpServletRequest request,HttpSession session) {
-        request.removeAttribute("userEntity");
-        session.removeAttribute("UserId");
-        session.removeAttribute("userName");
-        session.removeAttribute("userSn");
-        return "/loginPage";
-    }
+
 
     /**
      * 用户注册
@@ -107,6 +97,19 @@ public class LoginController {
             log.info("==========================" + accountEntity.getLoginName() + "注册成功");
 
         }
+    }
+    /**
+     * 退出登录
+     *
+     * @return
+     */
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,HttpSession session) {
+        request.removeAttribute("userEntity");
+        session.removeAttribute("UserId");
+        session.removeAttribute("userName");
+        session.removeAttribute("userSn");
+        return "/loginPage";
     }
 
 }

@@ -15,7 +15,6 @@
     <title>个人信息</title>
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
-    <script type="text/javascript" src="../js/index.js"></script>
     <script type="text/javascript" src="../js/personInfoPage.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
 
@@ -44,7 +43,7 @@
                         <label class="layui-form-label">唯一标识</label>
                         <div class="layui-input-inline">
                             <input type="text" autocomplete="off" id="id"
-                                   class="layui-input" style="width: 300px"/>
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
                         </div>
                     </div>
 
@@ -119,7 +118,7 @@
                         <label class="layui-form-label">创建时间</label>
                         <div class="layui-input-inline">
                             <input type="text"  autocomplete="off" id="createTime"
-                                   class="layui-input" style="width: 300px"/>
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
                         </div>
                     </div>
                     <div class="layui-inline" style="padding-left: 250px">
@@ -133,39 +132,15 @@
                         <label class="layui-form-label">操作管理员</label>
                         <div class="layui-input-inline">
                             <input type="text"  autocomplete="off" id="optUser"
-                                   class="layui-input" style="width: 300px"/>
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
                         </div>
                     </div>
 
                 </div>
 
                 <div style="text-align: center" ><a style="color: #999999;font-size: 20px" onclick="changeShow();"  id="span">查看↓↓↓↓</a></div>
-                <hr>
                 <br>
                 <div class="layui-form-item" id="block" style="display: none">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">创建时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text"  autocomplete="off" id="createTime"
-                                   class="layui-input" style="width: 300px"/>
-                        </div>
-                    </div>
-
-                    <div class="layui-inline" style="padding-left: 250px">
-                        <label class="layui-form-label">职级</label>
-                        <div class="layui-input-inline">
-                            <input type="text" autocomplete="off" id="zhiji"
-                                   class="layui-input" style="width: 300px">
-                        </div>
-                    </div>
-
-                    <div class="layui-inline" style="padding-left: 250px">
-                        <label class="layui-form-label">离职时间</label>
-                        <div class="layui-input-inline">
-                            <input type="text" autocomplete="off" id="suspendTime"
-                                   class="layui-input" style="width: 300px">
-                        </div>
-                    </div>
                 </div>
                 <br>
 
@@ -323,6 +298,7 @@
         </form>
     </div>
 </div>
+<script type="text/javascript" src="../js/index.js"></script>
 </body>
 
 

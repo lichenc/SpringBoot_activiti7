@@ -21,7 +21,7 @@ public class UserEntity {
     private String optTime;
     private String companySn;
     private String optUser;
-
+    private StringBuilder extended;
 
 
 
@@ -80,6 +80,14 @@ public class UserEntity {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public StringBuilder getExtended() {
+        return extended;
+    }
+
+    public void setExtended(StringBuilder extended) {
+        this.extended = extended;
     }
 
     public String getSn() {

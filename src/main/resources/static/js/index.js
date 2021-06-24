@@ -35,8 +35,7 @@ layui.use('element', function () {
 function logout() {
     var r = confirm("确定要退出登录吗？");
     if (r == true) {
-        var logout = document.getElementsByClassName("logout")[0];
-        logout.setAttribute("href", "/logout");
+        document.getElementById("submit_from").submit();
     } else {
 
     }

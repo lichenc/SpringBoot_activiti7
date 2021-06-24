@@ -114,6 +114,7 @@ $(document).ready(function(){
             //给表格追加岗位tr
             $("#positionList").append(positionStr)
             $("#groupList").append(groupStr)
+            getExtraAttrs();
         }, error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.status);
         }
@@ -121,6 +122,47 @@ $(document).ready(function(){
     });
 
 });
+
+/**
+ * 获取扩展字段
+ */
+function getExtraAttrs() {
+    $.ajax({
+        url: "/getExtraAttrs",
+        type: "POST",
+        success: function (data) {
+            //转换为json对象
+            var last= JSON.parse(data);
+            var extraAttrs=last.extraAttrs;
+            var extraAttrsStr="";
+            var iden=0;
+            //循环遍历岗位集合，拼接成串
+            for(var key in extraAttrs){
+                     extraAttrsStr =extraAttrsStr+"<div class='layui-inline' id='jian"+iden+"'>"
+                        + "<label class='layui-form-label' id='iden"+iden+"'></label>"
+                        + "<div class='layui-input-inline'>"
+                        + "<input type='text'  autocomplete='off' id='createTime'"
+                        + " class='layui-input' style='width: 300px' value='"+extraAttrs[key]+"'/>"
+                        + "</div>"
+                        + " </div>";
+                     iden++;
+
+            }
+            $("#block").append(extraAttrsStr);
+            var iden1=0;
+            for(var key in extraAttrs){
+                document.getElementById("iden"+iden1).innerText=key;
+                if (iden1!=0){
+                    $('#jian'+iden1).attr('style', 'padding-left: 250px');
+                }
+
+                iden1++;
+
+            }
+
+        }
+    });
+}
 var accountID;
 /**
  * 打开修改密码弹窗

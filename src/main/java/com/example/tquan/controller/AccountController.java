@@ -1,12 +1,28 @@
 package com.example.tquan.controller;
 
+import com.beust.jcommander.internal.Lists;
 import com.example.tquan.entity.*;
 import com.example.tquan.service.*;
+import com.example.tquan.util.RsaUtil;
 import com.ninghang.core.security.UIM;
+import com.ninghang.core.util.StringUtils;
+import net.sf.json.JSONObject;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.apache.commons.logging.Log;
+import org.apache.http.Consts;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +59,12 @@ public class AccountController {
     private TaskService taskService;
     @Autowired
     private ApproverService approverService;
+    @Autowired
+    private IamOauthEntity iam;
+    @Autowired
+    private IamAccountEntity account;
+    @Autowired
+    private  IamUserEntity user;
 
     private Log log = LogFactory.getLog(getClass());
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -85,7 +113,7 @@ public class AccountController {
      * @param request
      */
     @PostMapping("/getAccountList")
-    public UserEntity getAccountList(HttpSession session, HttpServletRequest request) throws Exception{
+    public UserEntity getAccountList(HttpSession session, HttpServletRequest request,String uuid) throws Exception{
         //获取存在session里的用户id
         String userId=session.getAttribute("UserId").toString();
         log.info("==========================当前登录用户id"+userId);
@@ -125,15 +153,44 @@ public class AccountController {
             userEntity1.setGroupCount(groupEntityList.size());
         }
         return userEntity1;
+    }
 
+    /**
+     * 获取扩展字段
+     * @param uuid
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/getExtraAttrs")
+    public StringBuilder getExtraAttrs(String uuid,HttpSession session) throws Exception{
+        String userId=session.getAttribute("UserId").toString();
+
+        StringBuilder stringBuilder=new StringBuilder();
+        //调用统权的接口，获取扩展字段
+        //开通账号
+        oauth(uuid);
+        if(StringUtils.isEmpty(oauth(uuid))) {
+            log.info("==========================uuid为空！");
+        }else {
+            List<NameValuePair> params = Lists.newArrayList();
+            params.add(new BasicNameValuePair("id", userId));
+            params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid)));
+            //转换为键值对
+            String userStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+            stringBuilder=post(userStr);
+        }
+       return stringBuilder;
 
     }
+
     /**
      *查询待重试的流程
      * @return
      */
     @RequestMapping("/waitTryAgain")
-    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpServletRequest request){
+    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpServletRequest request,HttpSession session){
+        String sn=session.getAttribute("userSn").toString();
         TaskEntity taskEntity1=new TaskEntity();
        try {
            List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
@@ -141,14 +198,16 @@ public class AccountController {
            for(TaskEntity taskEntity2:taskEntities){
                TaskEntity taskEntity3=new TaskEntity();
                Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity2.getTaskType());
-               taskEntity3.setApplyPerson(variables.get("applyPerson").toString());
-               taskEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
-               taskEntity3.setTaskType(variables.get("taskType").toString());
-               taskEntity3.setApplyReason(variables.get("applyReason").toString());
-               taskEntity3.setEvent(taskEntity2.getEvent());
-               taskEntity3.setEventType(taskEntity2.getEventType());
+               if (variables.get("applyPerson").equals(sn)||variables.get("applyPerson")==sn)
+                   taskEntity3.setApplyPerson(variables.get("applyPerson").toString());
+                   taskEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
+                   taskEntity3.setTaskType(variables.get("taskType").toString());
+                   taskEntity3.setApplyReason(variables.get("applyReason").toString());
+                   taskEntity3.setEvent(taskEntity2.getEvent());
+                   taskEntity3.setEventType(taskEntity2.getEventType());
+                  taskEntity3.setId(taskEntity2.getId());
 
-               taskEntities1.add(taskEntity3);
+                   taskEntities1.add(taskEntity3);
            }
                taskEntity1.setTaskEntities(taskEntities1);
 
@@ -186,6 +245,104 @@ public class AccountController {
        }
         return iden;
     }
+
+
+
+    /**
+     * 获取token
+     * @return
+     * @throws Exception
+     */
+    public String oauth(String uuid)
+            throws Exception {
+        PublicKey publicKey = RsaUtil.string2PublicKey(iam.getKey());
+
+        //用公钥加密
+        byte[] publicEncrypt = RsaUtil.publicEncrypt(iam.getPassword().getBytes(), publicKey);
+
+        //加密后的内容为Base64编码
+        String rsa = RsaUtil.byte2Base64(publicEncrypt);
+
+        log.info("==========================加密的结果:" +rsa);
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(iam.getAddr());
+        StringBuilder result = new StringBuilder();
+
+        //组装数据
+        List<NameValuePair> params = Lists.newArrayList();
+        params.add(new BasicNameValuePair("username", iam.getUsername()));
+        params.add(new BasicNameValuePair("password", rsa));
+
+        //转换为键值对
+        String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+
+        httppost.setEntity(new StringEntity(str, Charset.forName("UTF-8")));
+        httppost.addHeader("Content-type", iam.getType()+iam.getCharset());
+
+        HttpResponse response=httpclient.execute(httppost);
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            InputStream instream = entity.getContent();
+            BufferedReader br = new BufferedReader(new InputStreamReader(
+                    instream));
+
+            String temp = "";
+            while ((temp = br.readLine()) != null) {
+                String str2 = new String(temp.getBytes(), "utf-8");
+                result.append(str2).append("\r\n");
+            }
+
+            if (br!=null){
+                br.close();
+            }
+
+            log.info("==========================获取到的uid信息:" +result);
+            JSONObject resultJson = JSONObject.fromObject(result.toString());
+            if(resultJson.get("success").toString().equals("true")){
+                log.info("==========================msg:" +resultJson.get("msg"));
+                uuid=resultJson.get("msg").toString();
+                return uuid;
+            }else {
+                log.info("==========================msg:" +resultJson.get("msg"));
+                return uuid;
+            }
+        }
+        return uuid;
+    }
+    /**
+     * 获取用户扩展字段
+     */
+    public StringBuilder post(String str) throws Exception {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(user.getAddr());
+        StringBuilder result = new StringBuilder();
+
+        httppost.setEntity(new StringEntity(str, Charset.forName("UTF-8")));
+        httppost.addHeader("Content-type", user.getType());
+        HttpResponse response;
+        try {
+            response = httpclient.execute(httppost);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream instream = entity.getContent();
+                BufferedReader br = new BufferedReader(new InputStreamReader(instream));
+                String temp = "";
+                while ((temp = br.readLine()) != null) {
+                    String str2 = new String(temp.getBytes(), "utf-8");
+                    result.append(str2).append("\r\n");
+                }
+                if (br!=null){
+                    br.close();
+                }
+            }
+        } catch (ClientProtocolException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
 
 }
 

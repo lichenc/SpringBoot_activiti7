@@ -7,21 +7,29 @@ import com.example.tquan.service.ApproverService;
 import com.example.tquan.service.PositionService;
 import com.example.tquan.service.UserService;
 import com.example.tquan.service.VariableService;
-import org.activiti.engine.ProcessEngine;
-import org.activiti.engine.ProcessEngines;
-import org.activiti.engine.RuntimeService;
-import org.activiti.engine.TaskService;
-import org.activiti.engine.impl.persistence.entity.ExecutionEntity;
-import org.activiti.engine.impl.persistence.entity.VariableScopeImpl;
+import com.ninghang.core.util.StringUtils;
+import org.activiti.bpmn.model.BpmnModel;
+import org.activiti.bpmn.model.FlowNode;
+import org.activiti.bpmn.model.SequenceFlow;
+import org.activiti.engine.*;
+import org.activiti.engine.history.HistoricActivityInstance;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.impl.identity.Authentication;
+import org.activiti.engine.impl.persistence.entity.*;
+import org.activiti.engine.runtime.Execution;
+import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import sun.plugin2.message.Message;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +49,7 @@ public class PositionController {
     @Autowired
     private ApproverService approverService;
 
+
     ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
 
     private Log log = LogFactory.getLog(getClass());
@@ -50,7 +59,7 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/getPositionList")
-    public PositionEntity getpositionList(HttpSession session){
+    public PositionEntity getpositionList(HttpSession session,String type,String id){
        String userSn= String.valueOf(session.getAttribute("userSn"));
         PositionEntity positionEntity=new PositionEntity();
         //获取所有岗位
@@ -58,9 +67,24 @@ public class PositionController {
         positionEntity.setPositionEntityList(positionEntityList);
         positionEntity.setUserSn(userSn);
 
-        //查询审批人集合
-        List<Approver> approvers=approverService.audit(userSn);
-        positionEntity.setApproverList(approvers);
+
+        positionEntity.setApproverList(approverService.audit(userSn));
+
+        //修改岗位申请，回显数据
+        if (type!=null){
+            VariableEntity variableEntity=new VariableEntity(id,"applyReason");
+            VariableEntity variableEntity1=new VariableEntity(id,"approvedPerson");
+            VariableEntity variableEntity2=new VariableEntity(id,"position");
+            //查询申请原因
+           String applyReason= variableService.getTextByName(variableEntity);
+           //查询审批人
+           String approvedPerson=variableService.getTextByName(variableEntity1);
+           //查询申请岗位
+            String position=variableService.getTextByName(variableEntity2);
+           positionEntity.setApplyReason(applyReason);
+           positionEntity.setApprovedPerson(approvedPerson);
+            positionEntity.setPosition(position);
+        }
 
         return positionEntity;
     }
@@ -103,6 +127,8 @@ public class PositionController {
                 log.info("=========================="+sn+"申请了"+position+"岗位申请！");
                 iden=2;
 
+                findTask(/*firstResult,maxResults,*/sn,request);
+
                 //用户已拥有申请的岗位
             }else{
                 iden=1;
@@ -113,8 +139,8 @@ public class PositionController {
 
 
 
-       /* //1:得到ProcessEngine对象
-        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+        //1:得到ProcessEngine对象
+       /* ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
@@ -136,6 +162,181 @@ public class PositionController {
             }
         }*/
        return iden;
+    }
+    /**
+     * 查询任务
+     */
+    public HttpServletRequest findTask(/*int firstResult,int maxResults,*/ String name,HttpServletRequest request) {
+        //1:得到ProcessEngine对象
+        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+        //2：得到TaskService对象
+        TaskService taskService=processEngine.getTaskService();
+        List<Task> list = taskService.createTaskQuery()//创建任务查询对象
+                .taskAssignee(name)//指定个人任务查询
+                .list();
+        /*.listPage(firstResult, maxResults);*/
+        request.setAttribute("task",list);
+        reSubmit1(list.get(0).getId());
+       /* if (list != null && list.size() > 0) {
+            for (Task task : list) {
+                System.out.println("任务ID:" + task.getId());
+                System.out.println("任务名称:" + task.getName());
+                System.out.println("任务的创建时间:" + task.getCreateTime());
+                System.out.println("任务的办理人:" + task.getAssignee());
+                System.out.println("流程实例ID：" + task.getProcessInstanceId());
+                System.out.println("执行对象ID:" + task.getExecutionId());
+                System.out.println("流程定义ID:" + task.getProcessDefinitionId());
+
+            }
+        }*/
+        return request;
+    }
+    /**
+     * 申请人完成申请任务
+     * @param id
+     */
+    @RequestMapping("/reSubmit")
+    public int reSubmit(String id) {
+        if (id!=null){
+
+
+            /*HashMap<String, Object> variables = new HashMap<>();
+            variables.put("days", days);*///userKey在上文的流程变量中指定了
+            // taskService.claim(taskid,"ZJ2");//指定办理人
+            //taskService.setAssignee(taskid, null);//回退为组任务状态
+            /*taskId="72507";*/
+            processEngine.getTaskService()// 与正在执行任务相关的Service
+                    .complete(id);
+            System.out.println("完成任务：任务ID：" + id);
+        }
+        return 1;
+    }
+
+    public int reSubmit1(String id) {
+        if (id!=null){
+
+
+            /*HashMap<String, Object> variables = new HashMap<>();
+            variables.put("days", days);*///userKey在上文的流程变量中指定了
+            // taskService.claim(taskid,"ZJ2");//指定办理人
+            //taskService.setAssignee(taskid, null);//回退为组任务状态
+            /*taskId="72507";*/
+            processEngine.getTaskService()// 与正在执行任务相关的Service
+                    .complete(id);
+            System.out.println("完成任务：任务ID：" + id);
+        }
+        return 1;
+    }
+    /**
+     * 申请人撤回未审批的任务
+     *
+     * @return
+     */
+    @RequestMapping("/backProcess")
+    public int withdraw (@RequestParam("id") String id, HttpSession session) throws Exception{
+        int iden=1;
+        log.info("---------------------------------"+id);
+        //1:得到ProcessEngine对象
+        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+        //2：得到TaskService对象
+        TaskService taskService=processEngine.getTaskService();
+        //2：得到HistoryService对象
+        HistoryService historyService=processEngine.getHistoryService();
+        //2：得到RuntimeService对象
+        String name = (String) session.getAttribute("userSn");
+        //获取当前用户的审批人
+        List<Approver> approvers= approverService.audit(name);
+        String approverPerson=approvers.get(0).toString();
+        String approvedPersonStr=approverPerson.substring(approverPerson.indexOf("(")+1,approverPerson.indexOf(")"));
+
+
+        RuntimeService  runtimeService=processEngine.getRuntimeService();
+       /* Task task = taskService.createTaskQuery()
+                .taskAssignee(approvedPersonStr).singleResult();*/
+        Task task=taskService.createTaskQuery().processInstanceId(id).singleResult();//审核人
+        System.out.println(task.getId());
+        if(task==null) {
+            /// throw new ServiceException("流程未启动或已执行完成，无法撤回");
+            System.out.println("流程未启动或已执行完成，无法撤回");
+            iden=2;
+        }else {
+            System.out.println("可以撤回");
+        }
+
+        //LoginUser loginUser = SessionContext.getLoginUser();
+
+        List<HistoricTaskInstance> htiList = historyService.createHistoricTaskInstanceQuery()
+               /* .taskAssignee(name)//撤回人*/
+                .processInstanceId(id)
+                .orderByTaskCreateTime()
+                .asc()
+                .list();
+        String myTaskId = null;
+        HistoricTaskInstance myTask = null;
+        for(HistoricTaskInstance hti : htiList) {
+            /* if(loginUser.getUsername().equals(hti.getAssignee())) {*/
+            myTaskId = hti.getId();
+            myTask = hti;
+            break;
+            /* }*/
+        }
+        if(null==myTaskId) {
+            iden=2;
+            System.out.println("该任务非当前用户提交，无法撤回");
+        }else {
+            System.out.println("可以撤回");
+        }
+        System.out.println(myTaskId);
+
+        RepositoryService repositoryService =processEngine.getRepositoryService();
+        String processDefinitionId = myTask.getProcessDefinitionId();
+        ProcessDefinitionEntity processDefinitionEntity = (ProcessDefinitionEntity) repositoryService.createProcessDefinitionQuery().processDefinitionId(processDefinitionId).singleResult();
+        BpmnModel bpmnModel = repositoryService.getBpmnModel(processDefinitionId);
+
+        //变量
+        Map<String, VariableInstance> variables = runtimeService.getVariableInstances(task.getExecutionId());
+        String myActivityId = null;
+        List<HistoricActivityInstance> haiList = historyService.createHistoricActivityInstanceQuery()
+                .executionId(myTask.getExecutionId()).finished().list();
+        for(HistoricActivityInstance hai : haiList) {
+            if(myTaskId.equals(hai.getTaskId())) {
+                myActivityId = hai.getActivityId();
+                break;
+            }
+        }
+
+        FlowNode myFlowNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(myActivityId);
+        Execution execution = runtimeService.createExecutionQuery().executionId(task.getExecutionId()).singleResult();
+        String activityId = execution.getActivityId();
+        System.out.println(activityId);
+        //logger.warn("------->> activityId:" + activityId);
+        FlowNode flowNode = (FlowNode) bpmnModel.getMainProcess().getFlowElement(activityId);
+
+        //记录原活动方向
+        List<SequenceFlow> oriSequenceFlows = new ArrayList<SequenceFlow>();
+        oriSequenceFlows.addAll(flowNode.getOutgoingFlows());
+
+        //清理活动方向
+        flowNode.getOutgoingFlows().clear();
+        //建立新方向
+        List<SequenceFlow> newSequenceFlowList = new ArrayList<SequenceFlow>();
+        SequenceFlow newSequenceFlow = new SequenceFlow();
+        newSequenceFlow.setId("newSequenceFlowId");
+        newSequenceFlow.setSourceFlowElement(flowNode);
+        newSequenceFlow.setTargetFlowElement(myFlowNode);
+        newSequenceFlowList.add(newSequenceFlow);
+        flowNode.setOutgoingFlows(newSequenceFlowList);
+        /*        String name="002";//撤回人*/
+        Authentication.setAuthenticatedUserId(name);
+        taskService.addComment(task.getId(), task.getProcessInstanceId(), "撤回");
+        Map<String,Object> currentVariables = new HashMap<String,Object>();
+        currentVariables.put("applier", name);
+        //完成任务
+        taskService.complete(task.getId(),currentVariables);
+        //恢复原方向
+        flowNode.setOutgoingFlows(oriSequenceFlows);
+
+        return iden;
     }
 
     /**
@@ -164,20 +365,74 @@ public class PositionController {
         for(VariableEntity variableEntity1:variableEntities){
             VariableEntity variableEntity3=new VariableEntity();
             Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
+
             for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                variableEntity3.setApplyPerson(variables.get("applyPerson").toString());
-                variableEntity3.setApplyReason(variables.get("applyReason").toString());
-                variableEntity3.setTaskType(variables.get("taskType").toString());
-                variableEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
-                variableEntity3.setPosition(variables.get("position").toString());
+                if (variables.get("applyPerson")==sn||variables.get("applyPerson").equals(sn)){
+                    variableEntity3.setApplyPerson(variables.get("applyPerson").toString());
+                    variableEntity3.setApplyReason(variables.get("applyReason").toString());
+                    variableEntity3.setTaskType(variables.get("taskType").toString());
+                    variableEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
+                    variableEntity3.setPosition(variables.get("position").toString());
+                    variableEntity3.setProcInstId(variableEntity1.getProcInstId());
+                    variableEntity3.setApplyCreateTime(variableEntity1.getApplyCreateTime());
+                    variableEntity3.setId(variableEntity1.getId());
+                    variableEntity3.setProcessName(variableEntity1.getProcessName());
+                }
             }
-
-            variableEntity3.setProcInstId(variableEntity1.getProcInstId());
-            variableEntity3.setApplyCreateTime(variableEntity1.getApplyCreateTime());
-            //最终list集合
-            variableEntityList.add(variableEntity3);
+                //最终list集合
+                variableEntityList.add(variableEntity3);
         }
-
         return variableEntityList;
     }
+
+    /**
+     * 修改岗位信息
+     * @return
+     */
+    @RequestMapping("/updatePosition")
+    public int updatePosition(String position, String applyReason,String id,HttpSession session){
+        int iden=0;
+
+        //非空判断，防止越过前端非空验证
+        if(position != null && applyReason != null && applyReason != "" && position != "" ){
+
+            String userId=session.getAttribute("UserId").toString();
+            //查询申请的岗位id
+            String positionId=positionService.getPositionByName(position);
+            //为用户查询岗位设置参数
+            PositionEntity positionEntity=new PositionEntity();
+            positionEntity.setUserId(userId);
+            positionEntity.setPositionId(positionId);
+
+            //查询用户岗位
+            PositionEntity positionEntity1= positionService.getInfo(positionEntity);
+
+            //用户未拥有申请的岗位
+            if (positionEntity1==null){
+                //修改申请岗位
+                VariableEntity variableEntity=new VariableEntity();
+                variableEntity.setProcInstId(id);
+                variableEntity.setName("position");
+                variableEntity.setText(position);
+                variableService.updateTaskParam(variableEntity);
+                //修改申请原因
+                VariableEntity variableEntity1=new VariableEntity();
+                variableEntity1.setProcInstId(id);
+                variableEntity1.setName("applyReason");
+                variableEntity1.setText(applyReason);
+                variableService.updateTaskParam(variableEntity1);
+
+                iden=2;
+                //用户已拥有申请的岗位
+            }else{
+                iden=1;
+            }
+        }else{
+            log.info("==========================岗位修改失败！");
+        }
+        return iden;
+    }
 }
+
+
+

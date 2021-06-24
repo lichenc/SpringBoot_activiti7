@@ -392,92 +392,97 @@ public class ActiController{
         TaskService taskService=processEngine.getTaskService();
         String name = (String) session.getAttribute("userSn");
         List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
+                .processInstanceId(id)
                 .list();
+      /*  System.out.println("审核通过的任务id："+list.get(0).getId());*/
+        System.out.println("审核通过的任务id："+id);
+        //账号属性查询
+        Task task = taskService.createTaskQuery().taskId(id).singleResult();
+        System.out.println(id+"任务拾取成功");
+        String processInstanceId = task.getProcessInstanceId();
+        Map<String, Object> variables = processEngine.getRuntimeService().getVariables(processInstanceId);
+        for (Map.Entry<String, Object> entry : variables.entrySet()) {
+            System.out.println(entry+"Key = " + entry.getKey() + ", Value = " + entry.getValue());
+        }
+
+
+      /*  System.out.println("完成任务：任务ID：" + list.get(0).getId());*/
+
+
         //如果申请为岗位申请，审批通过之后需要授权申请的岗位
-        VariableEntity variableEntity=variableService.getTaskDefByProcInstId(list.get(0).getProcessInstanceId());
-        //判断是否是岗位申请任务
-        if (variableEntity.getProcDefId().contains("positionApply")){
-            String sn=null;
-            String position=null;
-            //设置查询申请人的参数
-            VariableEntity variableEntity1=new VariableEntity();
-            variableEntity1.setProcInstId(list.get(0).getProcessInstanceId());
-            variableEntity1.setName("applyPerson");
-            //查询申请人
-            sn= variableService.getTextByName(variableEntity1);
+        VariableEntity variableEntity=variableService.getTaskDefByProcInstId(id);
+        if(variableEntity!=null) {
+            //判断是否是岗位申请任务
+            if (variableEntity.getProcDefId().contains("positionApply")) {
+                String sn = null;
+                String position = null;
+                //设置查询申请人的参数
+                VariableEntity variableEntity1 = new VariableEntity();
+                variableEntity1.setProcInstId(processInstanceId);
+                variableEntity1.setName("applyPerson");
+                //查询申请人
+                sn = variableService.getTextByName(variableEntity1);
 
 
-            //设置查询岗位的参数
-            VariableEntity variableEntity3=new VariableEntity();
-            variableEntity3.setProcInstId(list.get(0).getProcessInstanceId());
-            variableEntity3.setName("position");
-            //查询申请的岗位
-            position=variableService.getTextByName(variableEntity3);
+                //设置查询岗位的参数
+                VariableEntity variableEntity3 = new VariableEntity();
+                variableEntity3.setProcInstId(processInstanceId);
+                variableEntity3.setName("position");
+                //查询申请的岗位
+                position = variableService.getTextByName(variableEntity3);
 
-            //设置查询用户的参数
-            UserEntity userEntity=new UserEntity();
-            userEntity.setSn(sn);
-            //根据sn获取用户信息
-            UserEntity userEntity1=userService.getUserByProperty(userEntity);
-            //获取岗位id
-            String positionId=positionService.getPositionByName(position);
+                //设置查询用户的参数
+                UserEntity userEntity = new UserEntity();
+                userEntity.setSn(sn);
+                //根据sn获取用户信息
+                UserEntity userEntity1 = userService.getUserByProperty(userEntity);
+                //获取岗位id
+                String positionId = positionService.getPositionByName(position);
 
-            //设置为用户添加岗位的参数
-            PositionEntity positionEntity=new PositionEntity();
-            positionEntity.setUserId(userEntity1.getId());
-            positionEntity.setPositionId(positionId);
+                //设置为用户添加岗位的参数
+                PositionEntity positionEntity = new PositionEntity();
+                positionEntity.setUserId(userEntity1.getId());
+                positionEntity.setPositionId(positionId);
 
-            //执行用户关联岗位的add方法
-            int iden=positionService.addUserPosition(positionEntity);
-            //添加成功
-            if (iden !=0){
-                log.info("=========================="+sn+"授权"+position+"成功!");
-            }
-        }else{
-            System.out.println("审核通过的任务id："+list.get(0).getId());
-            System.out.println("审核通过的任务id："+id);
-            //账号属性查询
-            Task task = taskService.createTaskQuery().taskId(id).singleResult();
-            System.out.println(id+"任务拾取成功");
-            String processInstanceId = task.getProcessInstanceId();
-            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(processInstanceId);
-            for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                System.out.println(entry+"Key = " + entry.getKey() + ", Value = " + entry.getValue());
-            }
-
-            processEngine.getTaskService()// 与正在执行任务相关的Service
-                    .complete(id);
-            System.out.println("完成任务：任务ID：" + list.get(0).getId());
-            //开通账号
-            oauth(uuid);
-            if(StringUtils.isEmpty(oauth(uuid).toString())) {
-                System.out.println("uuid为空，认证失败，无法开通账号");
-            }else {
-                String pwds="";
-                if(account.getRandomSwitch().equals("true")&&!account.getImmobilizationSwitch().equals("true")){
-                    //随机数
-                    PwdNum pwd=new PwdNum();
-                    pwds=pwd.Pwd(account.getPwdRank(),account.getStrLength(),pwds);
-
-                }else if (account.getImmobilizationSwitch().equals("true")&&!account.getRandomSwitch().equals("true")){
-                    pwds=account.getPwdDefault();
-                }else {
-                    pwds="000000";
+                //执行用户关联岗位的add方法
+                int iden = positionService.addUserPosition(positionEntity);
+                //添加成功
+                if (iden != 0) {
+                    log.info("==========================" + sn + "授权" + position + "成功!");
                 }
-                System.out.println("密码:"+pwds);
-                List<NameValuePair> params = Lists.newArrayList();
-                params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid).toString()));
-                params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
-                params.add(new BasicNameValuePair("loginPwd", pwds));
-                params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
-                params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
-                params.add(new BasicNameValuePair("status", variables.get("status").toString()));
-                //转换为键值对
-                String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-                post(str);
+            } else {
+                //开通账号
+                oauth(uuid);
+                if (StringUtils.isEmpty(oauth(uuid).toString())) {
+                    System.out.println("uuid为空，认证失败，无法开通账号");
+                } else {
+                    String pwds = "";
+                    if (account.getRandomSwitch().equals("true") && !account.getImmobilizationSwitch().equals("true")) {
+                        //随机数
+                        PwdNum pwd = new PwdNum();
+                        pwds = pwd.Pwd(account.getPwdRank(), account.getStrLength(), pwds);
+
+                    } else if (account.getImmobilizationSwitch().equals("true") && !account.getRandomSwitch().equals("true")) {
+                        pwds = account.getPwdDefault();
+                    } else {
+                        pwds = "000000";
+                    }
+                    System.out.println("密码:" + pwds);
+                    List<NameValuePair> params = Lists.newArrayList();
+                    params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid).toString()));
+                    params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
+                    params.add(new BasicNameValuePair("loginPwd", pwds));
+                    params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
+                    params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
+                    params.add(new BasicNameValuePair("status", variables.get("status").toString()));
+                    //转换为键值对
+                    String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+                    post(str);
+                }
             }
         }
+        processEngine.getTaskService()// 与正在执行任务相关的Service
+                .complete(id);
         return "/audit";
     }
 
@@ -527,7 +532,7 @@ public class ActiController{
         RuntimeService  runtimeService=processEngine.getRuntimeService();
         Task task = taskService.createTaskQuery()
                 .taskAssignee("tmm2").singleResult();//审核人
-        System.out.println(task.getId());
+        /*System.out.println(task.getId());*/
         if(task==null) {
             /// throw new ServiceException("流程未启动或已执行完成，无法撤回");
             System.out.println("流程未启动或已执行完成，无法撤回");
