@@ -1,6 +1,6 @@
 window.onload=function(){
-    var btn_1=document.getElementById("btn_1");
-    var btn_2=document.getElementById("btn_2");
+   // var btn_1=document.getElementById("btn_1");
+    //var btn_2=document.getElementById("btn_2");
     var close=document.getElementsByClassName("close");
     var close_1=document.getElementsByClassName("close_1");
     var dialog=document.getElementsByClassName("dialog");
@@ -18,15 +18,15 @@ window.onload=function(){
 */
 
 
-    btn_1.addEventListener('click',function(){
-        form_1[0].className="form_1 open";
-    })
+   // btn_1.addEventListener('click',function(){
+      //  form_1[0].className="form_1 open";
+   // })
     close[0].addEventListener('click',function(){
         form_1[0].className="form_1";
     })
-    btn_2.addEventListener('click',function(){
-        dialog[0].style.visibility='visible';
-    })
+   // btn_2.addEventListener('click',function(){
+       // dialog[0].style.visibility='visible';
+    //})
     close_1[0].addEventListener('click',function(){
         dialog[0].style.visibility='hidden';
     })
@@ -49,16 +49,16 @@ layui.use(['laypage', 'layer'], function() {
     laypage.render({
             elem: 'customPages',
             count: 100,//总数
-            limit:limit,//每页多少条数据
+            limit:10,//每页多少条数据
             //url:"/selectApplyTast",
             page:true,
             layout: ['count', 'prev', 'page', 'next', 'limit', 'skip']
             ,jump: function(obj){
-                if(!first){
+               // if(!first){
                     current_page=obj.curr; //当前页
                     limit=obj.limit; //得到每页显示的条数
-                }
-                console.log(obj.curr+obj.limit);
+                //}
+                //console.log(obj.curr+obj.limit);
             }
     });
 });
@@ -94,6 +94,7 @@ layui.use(['form', 'laydate'], function() {
         max: nowTime //min/max - 最小/大范围内的日期时间值
     });
 });
+/*
 layui.use(['laypage', 'layer'], function() {
     var laypage = layui.laypage,
         layer = layui.layer;
@@ -108,3 +109,4 @@ layui.use(['laypage', 'layer'], function() {
         }
     });
 });
+*/

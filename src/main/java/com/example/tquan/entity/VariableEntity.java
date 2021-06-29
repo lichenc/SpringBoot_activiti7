@@ -23,6 +23,15 @@ public class VariableEntity {
     private String startTime;
     private String endTime;
 
+    private String repulseReason; //打回原因
+
+    public String getRepulseReason() {
+        return repulseReason;
+    }
+
+    public void setRepulseReason(String repulseReason) {
+        this.repulseReason = repulseReason;
+    }
 
     public String getProcessName() {
         return processName;

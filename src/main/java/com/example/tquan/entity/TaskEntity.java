@@ -14,8 +14,34 @@ public class TaskEntity {
     private String approvedPerson;
     private String taskType;
     private String applyReason;
+    private String repulseReason;
+    private String createTime;
+    private int rev;
 
 
+    public int getRev() {
+        return rev;
+    }
+
+    public void setRev(int rev) {
+        this.rev = rev;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getRepulseReason() {
+        return repulseReason;
+    }
+
+    public void setRepulseReason(String repulseReason) {
+        this.repulseReason = repulseReason;
+    }
 
     private List<TaskEntity> taskEntities;
     private int taskCount;

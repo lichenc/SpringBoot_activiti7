@@ -8,7 +8,8 @@
              PROC_INST_ID_ as id,
 	        NAME_ as eventType,
 	        ASSIGNEE_ as approvedPerson,
-	        PROC_INST_ID_  taskType
+	        PROC_INST_ID_ as  taskType,
+            CREATE_TIME_ as createTime
         FROM
 	        act_ru_task
         <where>
@@ -16,9 +17,14 @@
                 ASSIGNEE_=#{applyPerson}
             </if>
             <if test="approvedPerson != '' and approvedPerson != null">
-                ASSIGNEE_=#{approvedPerson}
+               and ASSIGNEE_=#{approvedPerson}
             </if>
-            and REV_ =2
+            <if test="rev != null and rev != ''">
+                and REV_ =#{rev}
+            </if>
+            <if test="taskType != null and taskType != ''">
+                and NAME_ like  CONCAT('%', #{taskType}, '%')
+            </if>
         </where>
     </select>
     <update id="updateTask" parameterType="com.example.tquan.entity.TaskEntity">

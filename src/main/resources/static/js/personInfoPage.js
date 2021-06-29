@@ -27,37 +27,59 @@ $(document).ready(function(){
             $("#optUser").val(data.optUser);
             //获取账号集合
             var accountlist=data.accountEntities;
-            var accountstr;
+            //var accountstr;
             //循环遍历账号集合
-            for(var i=0;i<accountlist.length;i++){
-                //将状态Code换成对应的值
-                if(accountlist[i].status==1){
-                    accountlist[i].status="启用";
-                }else{
-                    accountlist[i].status="禁用";
-                }
-                if(accountlist[i].acctType=="1"){
-                    accountlist[i].acctType="一般账号";
-                }else if(accountlist[i].acctType=="2"){
-                    accountlist[i].acctType="公共账号";
-                }else if(accountlist[i].acctType="3"){
-                    accountlist[i].acctType="接口账号";
-                }
-                //拼接账号串
-                accountstr= accountstr+"<tr>"
-                    +"<td><input type='text' value='"+accountlist[i].appId+"'  class='layui-input' style='border:none;'></td>"
-                    +"<td><input type='text' value='"+accountlist[i].appName+"' class='layui-input' style='border:none;'></td>"
-                    +" <td><input type='text' value='"+accountlist[i].loginName+"' class='layui-input' style='border:none;'></td>"
-                    +" <td><input type='text' value='"+accountlist[i].status+"' class='layui-input' style='border:none;'></td>"
-                    +"  <td><input type='text' value='"+accountlist[i].acctType+"' class='layui-input' style='border:none;'></td>"
-                    +"  <td></td>"
-                    +" <td><button  class='layui-btn'"
-                    +" value='"+accountlist[i].id+"' id='account'>查看账号</button >"
-                    +"   <button  value='"+accountlist[i].id+"' class='layui-btn'"
-                    +"  id='resetPassword'>重置密码</button >"
-                    +"  </td>"
-                    +" </tr>";
-            }
+           // for(var i=0;i<accountlist.length;i++){
+
+            layui.use('laypage', function () {
+                var laypage = layui.laypage;
+                //账号Tab分页
+                laypage.render({
+                    elem: 'accountPage',
+                    count: accountlist.length, //数据总数，从服务端得到
+                    limit:4,
+                    jump: function (obj) {
+                        //模拟渲染
+                        document.getElementById('accountList').innerHTML = function () {
+                            var arr = []
+                            thisData = accountlist.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                            layui.each(thisData, function (index, item) {
+                                //将状态Code换成对应的值
+                                if(item.status==1){
+                                    item.status="启用";
+                                }else{
+                                    item.status="禁用";
+                                }
+                                if(item.acctType=="1"){
+                                    item.acctType="一般账号";
+                                }else if(item.acctType=="2"){
+                                    item.acctType="公共账号";
+                                }else if(item.acctType="3"){
+                                    item.acctType="接口账号";
+                                }
+                                //拼接账号串
+                                var accountstr = "<tr>"
+                                    + "<td><input type='text' value='" + item.appId + "'  class='layui-input' style='border:none;'></td>"
+                                    + "<td><input type='text' value='" + item.appName + "' class='layui-input' style='border:none;'></td>"
+                                    + " <td><input type='text' value='" + item.loginName + "' class='layui-input' style='border:none;'></td>"
+                                    + " <td><input type='text' value='" + item.status + "' class='layui-input' style='border:none;'></td>"
+                                    + "  <td><input type='text' value='" + item.acctType + "' class='layui-input' style='border:none;'></td>"
+                                    + "  <td></td>"
+                                    + " <td><button  class='layui-btn'"
+                                    + " value='" + item.id + "' id='account'>查看账号</button >"
+                                    + "   <button  value='" + item.id + "' class='layui-btn'"
+                                    + "  id='resetPassword'>重置密码</button >"
+                                    + "  </td>"
+                                    + " </tr>";
+                                arr.push(accountstr);
+                            });
+                            return arr.join('');
+                        }();
+                    }
+                });
+            });
+
+           // }
             //获取用户岗位集合
             var positionList=data.positionEntityList;
             var positionStr;
@@ -88,12 +110,12 @@ $(document).ready(function(){
             }
             //渲染分页
             layui.use('laypage', function () {
-                var laypage = layui.laypage;
+               var laypage = layui.laypage;
                 //账号Tab分页
-                laypage.render({
-                    elem: 'accountPage'
-                    , count: data.accountCount //数据总数，从服务端得到
-                });
+                /*  laypage.render({
+                     elem: 'accountPage'
+                     , count: data.accountCount //数据总数，从服务端得到
+                 });*/
                 if(data.positionCount!=null){
                     //岗位Tab分页
                     laypage.render({
@@ -110,7 +132,7 @@ $(document).ready(function(){
                 }
             });
             //给表格追加账号tr
-            $("#accountList").append(accountstr);
+           // $("#accountList").append(accountstr);
             //给表格追加岗位tr
             $("#positionList").append(positionStr)
             $("#groupList").append(groupStr)
@@ -118,6 +140,89 @@ $(document).ready(function(){
         }, error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert(XMLHttpRequest.status);
         }
+
+    });
+
+    /**
+     * 打开修改密码弹窗
+     * */
+    $("body").on("click", "#resetPassword", function (e) {
+        //获取账号ID
+        var accountId = $(this).val();
+        accountID = accountId;
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "重置密码",   //标题
+                area: ['360px', '250px'],    //弹窗大小
+                shadeClose: false,      //禁止点击空白关闭
+                scrollbar: false,      //禁用滚动条
+                move: false,       //禁用移动
+                scrolling: 'no',
+                resize: false,
+                closeBtn: 1,
+                content: $('#updatePassword'),
+                end: function () {
+                    $('#updatePassword').hide();
+                }
+            });
+        });
+        document.getElementById("password").value = null;
+        document.getElementById("repassword").value = null;
+
+    });
+    /**
+     * 查看账号详情
+     */
+    $("body").on("click", "#account", function (e) {
+        //获取账号ID
+        var
+            accountId = $(this).val();
+        $.ajax({
+            url: "/getAccountDetail",
+            type: "POST",
+            data: {
+                id: accountId
+            },
+            success: function (data) {
+                $("#accountName").val(data.loginName);
+                if (data.acctType == 1) {
+                    $("#accountType").val("一般账号");
+                } else if (data.acctType == 2) {
+                    $("#accountType").val("公共账号");
+                } else {
+                    $("#accountType").val("接口账号");
+                }
+                if (data.status == 1) {
+                    $("#accountStatus1").attr("checked", "checked");
+                } else {
+                    $("#accountStatus2").attr("checked", "checked");
+                }
+            }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.status);
+            }
+
+        });
+        //打开账号详情弹窗
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "账号详情",   //标题
+                area: ['360px', '300px'],    //弹窗大小
+                shadeClose: false,      //禁止点击空白关闭
+                scrollbar: false,      //禁用滚动条
+                move: false,       //禁用移动
+                scrolling: 'no',
+                resize: false,
+                closeBtn: 1,
+                content: $('#selectAccount'),
+                end: function () {
+                    $('#selectAccount').hide();
+                }
+            });
+        });
 
     });
 
@@ -164,35 +269,7 @@ function getExtraAttrs() {
     });
 }
 var accountID;
-/**
- * 打开修改密码弹窗
- * */
-$("body").on("click", "#resetPassword", function (e) {
-    //获取账号ID
-    var accountId = $(this).val();
-    accountID = accountId;
-    layui.use('layer', function () {
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: "重置密码",   //标题
-            area: ['360px', '250px'],    //弹窗大小
-            shadeClose: false,      //禁止点击空白关闭
-            scrollbar: false,      //禁用滚动条
-            move: false,       //禁用移动
-            scrolling: 'no',
-            resize: false,
-            closeBtn: 1,
-            content: $('#updatePassword'),
-            end: function () {
-                $('#updatePassword').hide();
-            }
-        });
-    });
-    document.getElementById("password").value = null;
-    document.getElementById("repassword").value = null;
 
-});
 
 /**
  * 修改密码
@@ -230,59 +307,7 @@ function updatePassword() {
     }
 }
 
-/**
- * 查看账号详情
- */
-$("body").on("click", "#account", function (e) {
-    //获取账号ID
-    var
-        accountId = $(this).val();
-    $.ajax({
-        url: "/getAccountDetail",
-        type: "POST",
-        data: {
-            id: accountId
-        },
-        success: function (data) {
-            $("#accountName").val(data.loginName);
-            if (data.acctType == 1) {
-                $("#accountType").val("一般账号");
-            } else if (data.acctType == 2) {
-                $("#accountType").val("公共账号");
-            } else {
-                $("#accountType").val("接口账号");
-            }
-            if (data.status == 1) {
-                $("#accountStatus1").attr("checked", "checked");
-            } else {
-                $("#accountStatus2").attr("checked", "checked");
-            }
-        }, error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert(XMLHttpRequest.status);
-        }
 
-    });
-    //打开账号详情弹窗
-    layui.use('layer', function () {
-        var layer = layui.layer;
-        layer.open({
-            type: 1,
-            title: "账号详情",   //标题
-            area: ['360px', '300px'],    //弹窗大小
-            shadeClose: false,      //禁止点击空白关闭
-            scrollbar: false,      //禁用滚动条
-            move: false,       //禁用移动
-            scrolling: 'no',
-            resize: false,
-            closeBtn: 1,
-            content: $('#selectAccount'),
-            end: function () {
-                $('#selectAccount').hide();
-            }
-        });
-    });
-
-});
 //渲染表单元素
 layui.use(['form', 'jquery', function () {
     var form = layui.form;

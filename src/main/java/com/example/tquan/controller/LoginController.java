@@ -61,7 +61,7 @@ public class LoginController {
                     session.setAttribute("UserId",accountEntity1.getUserId());
                     session.setAttribute("userName",userEntity.getName());
                     session.setAttribute("userSn",userEntity.getSn());
-                    session.setMaxInactiveInterval(3600);
+                    //session.setMaxInactiveInterval(3600);
                     return "/index";
                 } else {
                     log.info("==========================账号没有对应的用户");

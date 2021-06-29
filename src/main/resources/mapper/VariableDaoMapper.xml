@@ -18,6 +18,9 @@
             <if test="endTime != null and endTime != ''">
                and  <![CDATA[   DATE_FORMAT(task.CREATE_TIME_, '%Y-%m-%d') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')   ]]>
             </if>
+            <if test="approvedPerson!=null and approvedPerson!=''">
+                and   task.ASSIGNEE_ =#{approvedPerson}
+            </if>
             and  task.PROC_DEF_ID_ like  CONCAT('%', #{procDefId}, '%')  and var.PROC_INST_ID_ is not null order by task.CREATE_TIME_ desc
         </where>
 
@@ -49,4 +52,21 @@
 	        PROC_INST_ID_ =#{procInstId}
 	    AND NAME_=#{name}
     </update>
+    <!--新增打回原因-->
+    <insert id="addRepulseReason" parameterType="com.example.tquan.entity.VariableAddEntity">
+        INSERT INTO act_ru_variable (ID_,REV_, TYPE_, NAME_, EXECUTION_ID_, PROC_INST_ID_, TEXT_ )
+        VALUES
+	    (#{id},#{rev},#{type},#{name},#{executionId},#{procInstId},#{text} )
+    </insert>
+
+    <!--获取历史流程的参数-->
+    <select id="getHistoryVariables" parameterType="com.example.tquan.entity.TaskEntity" resultType="java.lang.String">
+        SELECT
+	        TEXT_
+        FROM
+	        act_hi_varinst
+        WHERE
+	        PROC_INST_ID_ =#{rev}
+	    AND NAME_ =#{repulseReason}
+    </select>
 </mapper>

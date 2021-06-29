@@ -1,84 +1,34 @@
-
+var value1;
+function over(e){
+    var ca=e;
+    if(ca!=null && ca!=""){
+        layui.use('layer', function () {
+            var layer=layui.layer;
+            layer.tips(e, "#repulseReason",{
+                tips: 1,
+                time: 2000
+            });
+        });
+    }
+}
+function over1(e){
+    var ca=e;
+    if(ca!=null && ca!=""){
+        layui.use('layer', function () {
+            var layer=layui.layer;
+            layer.tips(e, "#applyReason",{
+                tips: 1,
+                time: 2000
+            });
+        });
+    }
+}
 $(document).ready(function(){
     selectTaskList();
 });
-function selectTaskList(){
-    //渲染分页
-    layui.use('laypage', function () {
-        //清空之前的列表记录
-        $('.tbody tr').remove();
-        //获取申请人
-       var applyPerson = document.getElementById("applyPerson").value;
-        //获取审批人
-        var approvedPerson = document.getElementById("approvedPerson").value;
-        $.ajax({
-            url: "/waitTryAgain",
-            type: "POST",
-            data: {
-                applyPerson: applyPerson,
-                approvedPerson: approvedPerson
-            },
-            success: function (data) {
-                var laypage = layui.laypage;
-                //获取任务集合
-                var taskList = data.taskEntities;
-                if (taskList != null) {
-                    laypage.render({
-                        elem: 'eventPage',
-                        count: taskList.length, //数据总数，从服务端得到
-                        limit: 10,
-                        jump: function (obj) {
-                            //模拟渲染
-                            document.getElementById('eventList').innerHTML = function () {
-                                var arr = []
-                                thisData = taskList.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
-                                layui.each(thisData, function (index, item) {
-                                    var taskStr =
-                                        "<tr>"
-                                        + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='"+item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='" + item.applyReason + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value=''  class='layui-input' style='border:none;'></td>"
-                                        + " <td>"
-                                        + "<button value='" + item.event + "' class='layui-btn' id='retry'>重新发起审批</button>"
-                                        + "<button value='" + item.id + "' class='layui-btn' id='update'>编辑</button>"
-                                        + "</td>"
-                                        + "</tr>";
-                                    arr.push(taskStr);
-                                });
-                                return arr.join('');
-
-                            }();
-
-                        }
-                    });
-
-                } else {
-                   /* var prompt = document.getElementById("prompt");
-                    prompt.style.display = "block";*/
-                }
-
-            }
-        });
-    });
-}
-/**
- * 重置查询条件操作
- */
-function reset(){
-    document.getElementById("applyPerson").value="";
-    document.getElementById("approvedPerson").value="";
-}
-var value1;
-/**
- * 重试操作
- */
-$(document).ready(function () {
+$(document).ready(function(){
     $("body").on("click", "#retry", function (e) {
-        var r = confirm("确定要重试吗？");
+        var r = confirm("确定重新发起审批吗？");
         if (r == true) {
             //获取taskId
             var value=  $(this).val();
@@ -92,8 +42,9 @@ $(document).ready(function () {
                     //修改成功
                     if (data != 0) {
                         selectTaskList();
+                        alert("发起审批成功!")
                     } else {
-                        alert("修改失败!")
+                        alert("发起审批失败!")
                     }
                 }
             });
@@ -101,7 +52,7 @@ $(document).ready(function () {
         }
     });
     $("body").on("click", "#update", function (e) {
-         value1=  $(this).val();
+        value1=  $(this).val();
         $('.select option').remove();
 
         layui.use('form', function () {
@@ -130,7 +81,7 @@ $(document).ready(function () {
                 type: "POST",
                 dataType: "json",
                 data:{
-                  type:"修改",
+                    type:"修改",
                     id:value1
                 },
                 success: function (data) {
@@ -162,6 +113,78 @@ $(document).ready(function () {
         });
     });
 });
+function selectTaskList(){
+    //渲染分页
+    layui.use('laypage', function () {
+        //清空之前的列表记录
+        $('.tbody tr').remove();
+        //获取审批人
+        var approvedPerson = document.getElementById("approvedPerson").value;
+        $.ajax({
+            url: "/waitTryAgain",
+            type: "POST",
+            data: {
+                approvedPerson: approvedPerson
+            },
+            success: function (data) {
+                //清空之前的列表记录
+                $('.tbody tr').remove();
+                var laypage = layui.laypage;
+                //获取任务集合
+                var taskList = data.taskEntities;
+                if (taskList != null) {
+                    laypage.render({
+                        elem: 'eventPage',
+                        count: taskList.length, //数据总数，从服务端得到
+                        limit: 10,
+                        limits:[10,20,30],
+                        layout: ['prev', 'page', 'count','next',  'skip'],
+                        jump: function (obj) {
+                            //模拟渲染
+                            document.getElementById('eventList').innerHTML = function () {
+                                var arr = []
+                                thisData = taskList.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                                layui.each(thisData, function (index, item) {
+                                    var taskStr =
+                                        "<tr>"
+                                        + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='"+item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.applyReason + "' id='applyReason'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='"+item.repulseReason+"' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
+                                        + " <td>"
+                                        + "<button value='" + item.event + "' class='layui-btn' id='retry'>重新发起审批</button>"
+                                        + "<button value='" + item.id + "' class='layui-btn' id='update'>编辑</button>"
+                                        + "</td>"
+                                        + "</tr>";
+                                    arr.push(taskStr);
+                                });
+                                return arr.join('');
+
+                            }();
+                        }
+                    });
+                }
+            }
+        });
+    });
+}
+/**
+ * 重置查询条件操作
+ */
+function reset(){
+    document.getElementById("applyPerson").value="";
+    document.getElementById("approvedPerson").value="";
+}
+
+/**
+ * 重试操作
+ */
+
+
+
 
 /**
  * 修改岗位申请

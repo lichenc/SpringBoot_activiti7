@@ -10,6 +10,7 @@ import com.example.tquan.util.RsaUtil;
 /*import net.sf.json.JSONObject;*/
 import com.ninghang.core.util.StringUtils;
 import net.sf.json.JSONObject;
+import org.activiti.engine.history.HistoricVariableInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Consts;
@@ -41,6 +42,7 @@ import org.activiti.engine.task.Task;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -114,6 +116,8 @@ public class ActiController{
     private UserService userService;
     @Autowired
     private PositionService positionService;
+    @Autowired
+    private com.example.tquan.service.TaskService taskService;
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -234,7 +238,7 @@ public class ActiController{
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 //.processInstanceBusinessKey("myProcess_1")
-                .taskAssignee(name)//指定个人任务查询
+                .taskAssignee(login_name)//指定个人任务查询
                 .list();
         /* .listPage(firstResult, maxResults);*/
         request.setAttribute("task",list);
@@ -287,22 +291,34 @@ public class ActiController{
      * @return
      */
     @RequestMapping("/audit")
-    public HttpServletRequest audit(/*String name, */HttpServletRequest request,HttpSession session) {
+    public HttpServletRequest audit(String taskType, HttpServletRequest request,HttpSession session) {
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
         /* HttpSession session = sessionRequest.getSession();*/
         String name = (String) session.getAttribute("userSn");
-        TaskService taskService=processEngine.getTaskService();
-        List<Task> list = taskService.createTaskQuery()//创建任务查询对象
+       // TaskService taskService=processEngine.getTaskService();
+       /* List<Task> list = taskService.createTaskQuery()//创建任务查询对象
                 .taskAssignee(name)//指定个人任务查询
-                .list();
+                .list();*/
+       //设置审批人查询参数
+       TaskEntity taskEntity=new TaskEntity();
+       taskEntity.setApprovedPerson(name);
+       taskEntity.setTaskType(taskType);
+       //查询当前登录人员的审批单
+        List<TaskEntity> list1=taskService.getTaskListByProperty(taskEntity);
+        List<TaskEntity> list2=new  ArrayList<>();
+        for (TaskEntity taskEntity1:list1){
+            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity1.getTaskType());
+            taskEntity1.setTaskType(variables.get("taskType").toString());
+            taskEntity1.setApplyPerson(variables.get("applyPerson").toString());
+            taskEntity1.setApplyReason(variables.get("applyReason").toString());
+            list2.add(taskEntity1);
+        }
 
-
-
-        request.setAttribute("task",list);
-        if (list != null && list.size() > 0) {
-            for (Task task : list) {
+        request.setAttribute("task",list2);
+        //if (list1 != null && list1.size() > 0) {
+           /* for (Task task : list1) {
                 System.out.println(task.getAssignee()+"任务拾取成功");
                 System.out.println(task.getName()+"任务拾取成功");
                 System.out.println(task.getCreateTime()+"任务拾取成功");
@@ -310,27 +326,57 @@ public class ActiController{
                 System.out.println(task.getProcessInstanceId()+"任务拾取成功");
                 System.out.println(task+"任务拾取成功");
 
-            }
-        }
+            }*/
+      //  }
         return request;
     }
 
     //打回任务
     @RequestMapping("/repulse")
-    public String setTaskAssignee(HttpSession session){
-        //1:得到ProcessEngine对象
-        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
-        //2：得到TaskService对象
-        TaskService taskService=processEngine.getTaskService();
-        String name = (String) session.getAttribute("userSn");
-        List<Task> list = taskService.createTaskQuery()
-                .taskAssignee(name)
-                .list();
+    @ResponseBody
+    public int setTaskAssignee(HttpSession session,String id,String repulseReason){
+            //1:得到ProcessEngine对象
+            ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+            //2：得到TaskService对象
+            TaskService taskService=processEngine.getTaskService();
+            String name = (String) session.getAttribute("userSn");
+            List<Task> list = taskService.createTaskQuery()
+                    .processInstanceId(id)
+                    .list();
 
-        Task task = taskService.createTaskQuery().taskId(list.get(0).getId()).singleResult();
-        taskService.setAssignee(list.get(0).getId(),null);//归还候选任务
-        /* taskService.setAssignee(list.get(0).getId(),"wukong");//交办*/
-        return "/audit";
+            Task task = taskService.createTaskQuery().taskId(list.get(0).getId()).singleResult();
+            taskService.setAssignee(task.getId(),null);//归还候选任务
+            /* taskService.setAssignee(list.get(0).getId(),"wukong");//交办*/
+            //查询是否是第一次打回
+            VariableEntity variableEntity=new VariableEntity();
+            variableEntity.setName("repulseReason");
+            variableEntity.setProcInstId(id);
+            String text= variableService.getTextByName(variableEntity);
+
+            //多次打回
+            if(text!=null){
+                VariableEntity variableEntity1=new VariableEntity();
+                variableEntity1.setProcInstId(id);
+                variableEntity1.setName("repulseReason");
+                variableEntity1.setText(repulseReason);
+                variableService.updateTaskParam(variableEntity1);
+                //第一次打回
+            }else{
+                //新增打回原因
+                //设置新增打回原因的参数
+                VariableAddEntity variableAddEntity=new VariableAddEntity();
+                variableAddEntity.setRev(1);
+                int ids= (int)(Math.random()*9000)+1000;
+                variableAddEntity.setId(String.valueOf(ids));
+                variableAddEntity.setType("string");
+                variableAddEntity.setName("repulseReason");
+                variableAddEntity.setExecutionId(id);
+                variableAddEntity.setProcInstId(id);
+                variableAddEntity.setText(repulseReason);
+                variableService.addRepulseReason(variableAddEntity);
+            }
+
+        return 1;
     }
 
     //审核人拾取任务
@@ -648,34 +694,54 @@ public class ActiController{
     }
 
 
-
-
-
-
-
     /**
      * 历史任务查询
      * @return
      */
     @RequestMapping("/completeRecordsTask")
-    public String queryDoneTasks(String assignee, HttpServletRequest request,HttpSession session) {
+    public String queryDoneTasks(String assignee, String taskType,HttpServletRequest request,HttpSession session) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",Locale.US);
         //assignee="001";
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到HistoryService对象
         HistoryService historyService=processEngine.getHistoryService();
         String name = (String) session.getAttribute("userSn");
-        List<HistoricTaskInstance> taskList  = historyService.createHistoricTaskInstanceQuery()
-                .taskAssignee(name)
-                .finished()
-                .list();
-        for (HistoricTaskInstance task : taskList) {
-            /* Task leaveTask = new LeaveTask();*/
-            System.out.println(task.getId());
-            System.out.println(task.getName());
-            System.out.println(task.getProcessDefinitionId());
-            request.setAttribute("completeRecords",taskList);
+        List<HistoricTaskInstance> taskList  =null;
+        //事件类型有值，根据事件类型组合查询
+        if (taskType!="" && taskType!=null){
+            taskList  = historyService.createHistoricTaskInstanceQuery()
+                   .taskName(taskType).taskAssignee(name)
+                    .finished()
+                    .list();
+        }else{
+            taskList  = historyService.createHistoricTaskInstanceQuery()
+                    .taskAssignee(name)
+                    .finished()
+                    .list();
         }
+        List<TaskEntity> taskEntities=new ArrayList<>();
+        //获取申请人，任务类型，等字段
+        for (HistoricTaskInstance task : taskList) {
+            TaskEntity taskEntity=new TaskEntity();
+            taskEntity.setRev(Integer.parseInt(task.getProcessInstanceId()));
+            //查询申请人
+            taskEntity.setRepulseReason("applyPerson");
+            String text= variableService.getHistoryVariables(taskEntity);
+            //查询审批人
+            taskEntity.setRepulseReason("approvedPerson");
+            String text1= variableService.getHistoryVariables(taskEntity);
+
+            taskEntity.setEvent(task.getId());
+            taskEntity.setEventType(task.getName());
+            taskEntity.setApplyPerson(text);
+            taskEntity.setApprovedPerson(text1);
+            taskEntity.setCreateTime(df.format(task.getStartTime()));
+
+            taskEntities.add(taskEntity);
+        }
+
+        request.setAttribute("completeRecords",taskEntities);
         return "completeRecords";
     }
 

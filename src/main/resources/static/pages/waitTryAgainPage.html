@@ -28,6 +28,10 @@
         width:50px;
         margin:9px 0 0 0;
     }
+    .layui-layer {
+        word-break: break-all;
+        word-wrap: break-word;
+    }
 </style>
 
 <body>
@@ -52,7 +56,7 @@
                     <input type="text" class="layui-input" id="approvedPerson" placeholder="审批人">
                 </div>
                 <div class="layui-input-inline">
-                     <button class="layui-btn" lay-submit lay-filter="submitBut" id="selectTask">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                     <button class="layui-btn" lay-submit lay-filter="submitBut" id="selectTask" onclick="selectTaskList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
                      <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
                 </div>
 
@@ -119,6 +123,7 @@
                 </select>
             </div>
         </div>
+
         <div class="layui-form-item">
             <label class="layui-form-label" style="font-size:12px;">
                 审批人：

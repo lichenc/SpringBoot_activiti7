@@ -344,7 +344,7 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/getPositionParamList")
-    public List<VariableEntity> getPositionParamList(String startTime,String endTime,HttpSession session){
+    public List<VariableEntity> getPositionParamList(String startTime,String endTime,String approvedPerson,HttpSession session){
         String sn=session.getAttribute("userSn").toString();
 
         VariableEntity variableEntity4=new VariableEntity();
@@ -356,6 +356,9 @@ public class PositionController {
         if(endTime!=null && endTime != ""){
             variableEntity4.setEndTime(endTime);
         }
+        if (approvedPerson!= null &&approvedPerson!=""){
+            variableEntity4.setApprovedPerson(approvedPerson);
+        }
 
         //获取岗位流程的实例ID
         List<VariableEntity> variableEntities=variableService.getProcessParamByName(variableEntity4);
@@ -363,24 +366,29 @@ public class PositionController {
 
         //循环获取申请岗位参数
         for(VariableEntity variableEntity1:variableEntities){
-            VariableEntity variableEntity3=new VariableEntity();
-            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
 
+            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
+            if (variables.get("applyPerson")==sn||variables.get("applyPerson").equals(sn)){
             for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                if (variables.get("applyPerson")==sn||variables.get("applyPerson").equals(sn)){
-                    variableEntity3.setApplyPerson(variables.get("applyPerson").toString());
-                    variableEntity3.setApplyReason(variables.get("applyReason").toString());
-                    variableEntity3.setTaskType(variables.get("taskType").toString());
-                    variableEntity3.setApprovedPerson(variables.get("approvedPerson").toString());
-                    variableEntity3.setPosition(variables.get("position").toString());
-                    variableEntity3.setProcInstId(variableEntity1.getProcInstId());
-                    variableEntity3.setApplyCreateTime(variableEntity1.getApplyCreateTime());
-                    variableEntity3.setId(variableEntity1.getId());
-                    variableEntity3.setProcessName(variableEntity1.getProcessName());
+
+                variableEntity1.setApplyPerson(variables.get("applyPerson").toString());
+                variableEntity1.setApplyReason(variables.get("applyReason").toString());
+                variableEntity1.setTaskType(variables.get("taskType").toString());
+                variableEntity1.setApprovedPerson(variables.get("approvedPerson").toString());
+                variableEntity1.setPosition(variables.get("position").toString());
+                VariableEntity variableEntity=new VariableEntity();
+                variableEntity.setName("repulseReason");
+                String text=variableService.getTextByName(variableEntity);
+                if (text!=null){
+                    variableEntity1.setRepulseReason(variables.get("repulseReason").toString());
+                }else {
+                    variableEntity1.setRepulseReason("");
                 }
             }
                 //最终list集合
-                variableEntityList.add(variableEntity3);
+                variableEntityList.add(variableEntity1);
+            }
+
         }
         return variableEntityList;
     }

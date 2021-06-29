@@ -11,49 +11,58 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>申请单</title>
 
-    <link rel="stylesheet" type="text/css" href="../css/audit/layui.css">
-    <link rel="stylesheet" type="text/css" href="../css/audit/laydate.css">
+   <!-- <link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
     <link rel="stylesheet" type="text/css" href="../css/audit/base.css">
     <link rel="stylesheet" type="text/css" href="../css/audit/iconfont.css">
     <link rel="stylesheet" type="text/css" href="../css/audit/base_fontSize.css">
+    <link rel="stylesheet" type="text/css" href="../css/audit/laydate.css">
     <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
 
-    <script src="../js/audit/app.js"></script>
     <script type="text/javascript" src="../js/audit/jquery-1.11.3.min.js"></script>
-    <script type="text/javascript" src="../js/audit/base.js"></script>
-    <script src="../js/audit/html5shiv.min.js"></script>
+ <!--   <script src="../js/audit/html5shiv.min.js"></script>-->
     <script src="../js/audit/respond.min.js"></script>
-    <script type="text/javascript" src="../js/audit/layui.js"></script>
+  <!--  <script type="text/javascript" src="../js/audit/layui.js"></script>-->
+   <!-- <script type="text/javascript" src="../js/lay/modules/layer.js"></script>-->
     <script type="text/javascript" src="../js/audit/laydate.js"></script>
-    <script type="text/javascript" src="../js/audit/laypage.js"></script>
+<!--    <script type="text/javascript" src="../js/audit/laypage.js"></script>-->
     <script src="../js/audit/cframe.js"></script>
     <script src="../js/audit/printThis.js"></script>
+
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
+    <script src="../js/audit/app.js"></script>
+    <script type="text/javascript" src="../js/audit/base.js"></script>
 </head>
 
 <body>
 
 <div class="cBody">
     <div class="console">
-        <form class="layui-form" >
+        <form class="layui-form" method="post" action="/audit">
             <div class="layui-form-item">
 
                 <div class="au layui-input-inline">
                     <span class="span">事件类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="name"   placeholder="事件类型" autocomplete="off" class="layui-input">
+                    <input type="text" name="taskType" id="taskType"  placeholder="事件类型" autocomplete="off" class="layui-input">
                 </div>
-                <div class="au layui-input-inline">
+               <!-- <div class="au layui-input-inline">
                     <span class="span">任务类型</span>
                 </div>
                 <div class="layui-input-inline">
                     <input type="text" name="name"   placeholder="任务类型" autocomplete="off" class="layui-input">
-                </div>
+                </div>-->
                 <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
+                <button class="layui-btn" onclick="reset();">重置</button>
             </div>
         </form>
 
     </div>
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
     <table class="layui-table">
         <thead>
         <tr>
@@ -62,19 +71,23 @@
             <th>申请人</th>
             <th>审批人</th>
             <th>任务类型</th>
+            <th>申请原因</th>
+            <th>申请时间</th>
             <th>操作</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="applicationForm:${task}">
-            <td name="taskId" th:text="${applicationForm.id}"></td>
-            <td th:text="${applicationForm.name}"></td>
+            <td name="taskId" th:text="${applicationForm.event}"></td>
+            <td th:text="${applicationForm.eventType}"></td>
+            <td th:text="${applicationForm.applyPerson}"></td>
+            <td th:text="${applicationForm.approvedPerson}"></td>
+            <td th:text="${applicationForm.taskType}"></td>
+            <td th:text="${applicationForm.applyReason}"></td>
             <td th:text="${applicationForm.createTime}"></td>
-            <td th:text="${applicationForm.assignee}"></td>
-            <td th:text="${applicationForm.processInstanceId}"></td>
             <td>
-                <a th:href="@{'pickup?id='+${applicationForm.id}}" class="layui-btn layui-btn-xs">接收任务</a>
-                <a href="repulse" class="layui-btn layui-btn-xs">打回</a>
+                <a th:href="@{'AuditTask?id='+${applicationForm.event}}" class="layui-btn">审批通过</a>
+                <button th:value="${applicationForm.id}" id="repulse" class="layui-btn">打回</button>
                 <!--<button id="btn_3"  class="layui-btn layui-btn-xs">同意</button>
                 <button id="btn" class="layui-btn layui-btn-xs">不同意</button>-->
             </td>
@@ -92,6 +105,8 @@
         </tr>
         </tbody>
     </table>
+        </div>
+    </div>
 
     <!-- layUI 分页模块 -->
     <div class="h_55"></div>
@@ -116,13 +131,95 @@
             <input class="close_1"   value="不同意">&nbsp;&nbsp;&nbsp;&nbsp;<input class="submit_1" οnclick="addOrder()" type="submit" value="同&nbsp;意"></div>
     </form>
 </div>
-
+<!--查看账号-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="repulseReasonDiv">
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="font-size:12px;">
+            打回原因：
+        </label>
+        <div class="layui-input-inline">
+                <textarea  id="repulseReason"  autocomplete="off" class="layui-textarea"
+                           placeholder="打回原因" maxlength="50" style="width: 300px" ></textarea>
+        </div>
+    </div>
+    <div height="100px;"></div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button lay-filter="setmypass" href="" class="layui-btn" onclick="repulse();">确定
+            </button>
+        </div>
+    </div>
+</div>
 </body>
 <script type="text/javascript">
         function test(){
                 var f = document.getElementsByTagName("form")[0];
                 f.action=f.action+"id="+document.getElementById("input").value;
                 alert(f.action);
+        }
+var taskId;
+        /**
+         * 打回任务
+         */
+        $("body").on("click", "#repulse", function (e) {
+
+             taskId = $(this).val();
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.open({
+                    type: 1,
+                    title: "打回",   //标题
+                    area: ['450px', '260px'],    //弹窗大小
+                    shadeClose: false,      //禁止点击空白关闭
+                    scrollbar: false,      //禁用滚动条
+                    move: false,       //禁用移动
+                    scrolling: 'no',
+                    resize: false,
+                    closeBtn: 1,
+                    content: $('#repulseReasonDiv'),
+                    end: function () {
+                        $('#repulseReasonDiv').hide();
+                    }
+                });
+            });
+        });
+
+        /**
+         * 打回操作
+         */
+        function repulse() {
+            var repulseReason=document.getElementById("repulseReason").value;
+            if (repulseReason==""||repulseReason==null){
+                alert("打回原因不能为空!");
+            }else{
+                $.ajax({
+                    url: "/repulse",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id: taskId,
+                        repulseReason: repulseReason
+                    },
+                    success: function (data) {
+                        if (data == 1) {
+                            alert("打回成功！");
+                            layer.close(layer.index - 1);
+                            location.reload();
+                        } else {
+                            alert("打回失败！");
+                        }
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.status);
+                    }
+                });
+            }
+        }
+
+        /**
+         * 重置操作
+         */
+        function reset() {
+            document.getElementById("taskType").value=null;
         }
 </script>
 </html>

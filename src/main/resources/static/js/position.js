@@ -1,8 +1,34 @@
 var value1;
+
+function over(e){
+    var ca=e;
+    if(ca!=null && ca!=""){
+        layui.use('layer', function () {
+            var layer=layui.layer;
+            layer.tips(e, "#repulseReason",{
+                tips: 1,
+                time: 2000
+            });
+        });
+    }
+}
+function over1(e){
+    var ca=e;
+    if(ca!=null && ca!=""){
+        layui.use('layer', function () {
+            var layer=layui.layer;
+            layer.tips(e, "#applyReason",{
+                tips: 1,
+                time: 2000
+            });
+        });
+    }
+}
 /**
  * 加载岗位申请列表
  * */
 $(document).ready(function(){
+
     getPositionList();
     $("body").on("click", "#update", function (e) {
         value1=  $(this).val();
@@ -119,12 +145,14 @@ function getPositionList() {
     $('.tbody tr').remove()
     var startTime=document.getElementById("startTime").value;
     var endTime=document.getElementById("endTime").value;
+    var approvedPerson=document.getElementById("approvedPerson").value;
     $.ajax({
         url: "/getPositionParamList",
         type: "POST",
         data:{
             startTime:startTime,
-            endTime:endTime
+            endTime:endTime,
+            approvedPerson:approvedPerson
         },
         success: function (data) {
             if(data!=null){
@@ -134,6 +162,8 @@ function getPositionList() {
                     elem: 'positionPage',
                     count: data.length, //数据总数，从服务端得到
                     limit:10,
+                    limits:[10,20,30],
+                    layout: ['prev', 'page', 'count','next',  'skip'],
                     jump: function(obj){
                         //模拟渲染
                         document.getElementById('positionList').innerHTML = function(){
@@ -143,11 +173,12 @@ function getPositionList() {
                                 var positionStr= "<tr>"
                                     +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.applyPerson+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.applyCreateTime+"' class='layui-input' style='border:none;'></td>"
+                                    +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.applyReason+"' class='layui-input' style='border:none;'></td>"
+                                    +"<td><input type='text' value='"+item.applyReason+"' id='applyReason' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
+                                    +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;'></td>"
                                     +"<td>";
 
                                 //如果是待审批的状态，只可以撤回，不可编辑和重新提交
@@ -346,5 +377,6 @@ function addPosition() {
 function reset() {
     document.getElementById("startTime").value=null;
     document.getElementById("endTime").value=null;
+    document.getElementById("approvedPerson").value=null;
 }
 

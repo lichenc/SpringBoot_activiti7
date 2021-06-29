@@ -2,6 +2,8 @@ package com.example.tquan.service;
 
 import com.example.tquan.dao.VariableDao;
 import com.example.tquan.entity.PositionEntity;
+import com.example.tquan.entity.TaskEntity;
+import com.example.tquan.entity.VariableAddEntity;
 import com.example.tquan.entity.VariableEntity;
 import javafx.scene.chart.ValueAxis;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +53,23 @@ public class VariableService {
      */
     public int updateTaskParam(VariableEntity variableEntity){
         return variableDao.updateTaskParam(variableEntity);
+    }
+
+    /**
+     * 新增申请流程参数
+     * @param variableAddEntity
+     * @return
+     */
+    public int addRepulseReason(VariableAddEntity variableAddEntity){
+        return variableDao.addRepulseReason(variableAddEntity);
+    }
+
+    /**
+     * 获取历史流程的参数
+     * @param taskEntity
+     * @return
+     */
+    public String  getHistoryVariables(TaskEntity taskEntity){
+        return variableDao.getHistoryVariables(taskEntity);
     }
 }

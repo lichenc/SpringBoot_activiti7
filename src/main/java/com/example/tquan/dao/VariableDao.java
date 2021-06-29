@@ -1,5 +1,7 @@
 package com.example.tquan.dao;
 
+import com.example.tquan.entity.TaskEntity;
+import com.example.tquan.entity.VariableAddEntity;
 import com.example.tquan.entity.VariableEntity;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -37,4 +39,18 @@ public interface VariableDao {
      * @return
      */
     int updateTaskParam(VariableEntity variableEntity);
+
+    /**
+     * 新增申请流程参数
+     * @param variableAddEntity
+     * @return
+     */
+    int addRepulseReason(VariableAddEntity variableAddEntity);
+
+    /**
+     * 获取历史流程的参数
+     * @param taskEntity
+     * @return
+     */
+    String getHistoryVariables(TaskEntity taskEntity);
 }
