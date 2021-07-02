@@ -17,7 +17,7 @@ function over1(e){
     if(ca!=null && ca!=""){
         layui.use('layer', function () {
             var layer=layui.layer;
-            layer.tips(e, "#applyReason",{
+            layer.tips(e, "#applyReasonlist",{
                 tips: 1,
                 time: 2000
             });
@@ -176,8 +176,8 @@ function getPositionList() {
                                     +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.applyReason+"' id='applyReason' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
+                                  /*  +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"*/
+                                    +"<td><input type='text' value='"+item.applyReason+"' id='applyReasonlist' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
                                     +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;'></td>"
                                     +"<td>";
 
@@ -345,7 +345,7 @@ function addPosition() {
         return false;
     }
     if (applyReason==null||applyReason==""){
-        layer.alert("输入申请理由!")
+        layer.alert("请输入申请理由!")
         return false;
     }
     if(position != 0 && position !=null && applyReason != null && applyReason!="" && approvedPerson !=0 && approvedPerson != null) {
@@ -364,7 +364,7 @@ function addPosition() {
                 }else{
                     layer.alert("申请成功！");
                     layer.close(layer.index - 1);
-                    getPositionList();
+                    document.getElementById("selectTask").click();
                 }
             }
         });

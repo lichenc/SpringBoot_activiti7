@@ -121,7 +121,7 @@ public class PositionController {
                 map.put("applyPerson",sn);
                 map.put("position",position);
                 map.put("applyReason",applyReason);
-                map.put("taskType","岗位申请");
+                map.put("taskType","岗位新增");
                 map.put("approvedPerson",approvedPersonStr);
                 ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
                 log.info("=========================="+sn+"申请了"+position+"岗位申请！");

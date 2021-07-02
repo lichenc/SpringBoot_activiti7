@@ -16,7 +16,7 @@ function over1(e){
     if(ca!=null && ca!=""){
         layui.use('layer', function () {
             var layer=layui.layer;
-            layer.tips(e, "#applyReason",{
+            layer.tips(e, "#applyReasonShow",{
                 tips: 1,
                 time: 2000
             });
@@ -103,7 +103,8 @@ $(document).ready(function(){
                                 $(this).attr("selected","selected");
                             }
                         });
-                    })
+                    });
+                    alert(data.applyReason);
                     document.getElementById("approvedPerson1").value = data.approvedPerson;
                     document.getElementById("applyReason").value = data.applyReason;
                     //渲染select，不然无法显示值
@@ -149,10 +150,10 @@ function selectTaskList(){
                                         "<tr>"
                                         + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='"+item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
-                                        + "<td><input type='text' value='" + item.applyReason + "' id='applyReason'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
+                                        + "<td><input type='text' value='" + item.applyReason + "' id='applyReasonShow'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
                                         + "<td><input type='text' value='"+item.repulseReason+"' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
                                         + " <td>"
                                         + "<button value='" + item.event + "' class='layui-btn' id='retry'>重新发起审批</button>"
@@ -176,7 +177,7 @@ function selectTaskList(){
  */
 function reset(){
     document.getElementById("applyPerson").value="";
-    document.getElementById("approvedPerson").value="";
+    document.getElementById("approvedPerson1").value="";
 }
 
 /**

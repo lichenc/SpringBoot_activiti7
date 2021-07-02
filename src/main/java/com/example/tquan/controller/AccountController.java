@@ -216,10 +216,11 @@ public class AccountController {
                    taskEntity2.setApplyReason(variables.get("applyReason").toString());
                    VariableEntity variableEntity = new VariableEntity();
                    variableEntity.setName("repulseReason");
+                   variableEntity.setProcInstId(taskEntity2.getId());
                    String text = variableService.getTextByName(variableEntity);
                    //查询是否被打回过
                    if (text != null) {
-                       taskEntity2.setRepulseReason(variables.get("repulseReason").toString());
+                       taskEntity2.setRepulseReason(text);
                    } else {
                        taskEntity2.setRepulseReason("");
                    }

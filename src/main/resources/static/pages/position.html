@@ -50,7 +50,7 @@
                 <span class="span">审批人</span>
             </div>
             <div class="layui-input-inline">
-                <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
+                <input type="text" class="layui-input" id="approvedPerson1" name="approvedPerson1" placeholder="审批人">
             </div>
             <div class="layui-input-inline">
                 <button class="layui-btn" id="selectTask" onclick="getPositionList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
@@ -73,11 +73,11 @@
                 <thead>
                 <tr>
                     <th>事件标识</th>
-                    <th>申请者</th>
+                    <th>申请人</th>
                     <th>申请时间</th>
                     <th>岗位</th>
-                    <th>审批者</th>
-                    <th>标题</th>
+                    <th>审批人</th>
+                  <!--  <th>标题</th>-->
                     <th>申请理由</th>
                     <th>审批意见</th>
                     <th>操作</th>
@@ -139,7 +139,7 @@
             </label>
             <div class="layui-input-inline">
                 <textarea  id="applyReason"  autocomplete="off" class="layui-textarea"
-                           placeholder="申请理由" ></textarea>
+                           placeholder="申请理由" maxlength="50"></textarea>
             </div>
         </div>
         <div height="100px;"></div>
