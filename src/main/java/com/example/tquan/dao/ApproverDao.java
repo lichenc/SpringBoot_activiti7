@@ -24,5 +24,19 @@ public interface ApproverDao {
          * @param
          * @return
          */
-        List<ApplyEntity> apply(String login_name);
+        List<ApplyEntity> apply(String sn);
+        /**
+         * 查询用户扩展字段
+         *
+         * @param
+         * @return
+         */
+        List<ApplyEntity> field();
+        /**
+         * 申请人全部信息
+         *
+         * @param
+         * @return
+         */
+        ApplyEntity users(String accout);
 }

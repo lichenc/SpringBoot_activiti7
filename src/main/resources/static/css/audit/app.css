@@ -1,6 +1,15 @@
-body{
+/*body{
     margin: 0,0,0,0;
     overflow: hidden;
+}*/
+
+body {
+    background-color: white;
+}
+.span{
+    float:right;
+    width:60px;
+    margin:9px 0 0 0;
 }
 .main{
     margin: 0,0,0,0;
@@ -31,7 +40,7 @@ button{
     overflow: hidden;
     background-color: white;
     text-align: center;
-    margin-top: -16.5%;
+    margin-top: -17.5%;
     margin-left: 18%;
     border-radius: 10px;
     opacity:0.5;
@@ -68,7 +77,7 @@ button{
     height:30px;
 
 }
-span {
+/*span {
     width:58px;
     text-align-last: justify;
     text-align: justify;
@@ -81,7 +90,7 @@ span {
     float:right;
     width:50px;
     margin:9px 0 0 0;
-}
+}*/
 .au{
     width: 60px;
 }

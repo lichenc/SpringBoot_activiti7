@@ -34,4 +34,8 @@
             </if>
         </where>
     </select>
+    <select id="findAll" parameterType="com.example.tquan.entity.FieldEntity" resultType="java.lang.String">
+        select field.name,field.remark from sys_field field
+    </select>
+
 </mapper>

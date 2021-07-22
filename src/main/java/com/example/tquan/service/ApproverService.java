@@ -29,9 +29,31 @@ public class ApproverService {
      * @param
      * @return
      */
-    public List<ApplyEntity> apply(String login_name) {
+    public List<ApplyEntity> apply(String sn) {
 
-        return approverDao.apply(login_name);
+        return approverDao.apply(sn);
+    }
+    /**
+     * 查询用户扩展字段
+     *
+     * @param
+     * @return
+     */
+    public List<ApplyEntity> field() {
+
+        return approverDao.field();
+    }
+
+
+    /**
+     * 查询申请人全部信息
+     *
+     * @param
+     * @return
+     */
+    public  ApplyEntity users(String accout) {
+
+        return approverDao.users(accout);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.tquan.dao;
 
+import com.example.tquan.entity.ActEntity;
 import com.example.tquan.entity.ImApp;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -31,5 +32,20 @@ public interface ImAppDao {
      * @param
      * @return
      */
-    List<ImApp> findApply(String name);
+    List<ImApp> findApply(String nameApp);
+    /**
+     * 当前用户有禁用账号的应用
+     *
+     * @param
+     * @return
+     */
+    List<ImApp> actAppEn(String usId);
+    /**
+     * 当前用户有启用账号的应用
+     *
+     * @param
+     * @return
+     */
+    List<ImApp>  actAppUp(String usId);
+
 }

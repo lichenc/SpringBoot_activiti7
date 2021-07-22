@@ -1,6 +1,7 @@
 package com.example.tquan.service;
 
 import com.example.tquan.dao.UserDao;
+import com.example.tquan.entity.FieldEntity;
 import com.example.tquan.entity.PositionEntity;
 import com.example.tquan.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +28,14 @@ public class UserService {
         return userEntity;
     }
 
+    /**
+     * 查询全部用户扩展字段
+     *
+     * @param
+     * @return
+     */
 
+    public List<FieldEntity> findAll(){
+        return userDao.findAll();
+    }
 }

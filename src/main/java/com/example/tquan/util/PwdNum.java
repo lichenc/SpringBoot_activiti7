@@ -23,16 +23,6 @@ public class PwdNum {
             pross = (int) ((1 + rm.nextDouble()) * Math.pow(10, accountLength-1));
             pwd=String.valueOf(pross);
         }else if (accountRank==2){
-            /*Random random = new Random();
-            StringBuffer valSb = new StringBuffer();
-            String charStr = "0123456789abcdefghijklmnopqrstuvwxyz";
-            int charLength = charStr.length();
-
-            for (int i = 0; i < account.getStrLength(); i++) {
-                int index = random.nextInt(charLength);
-                valSb.append(charStr.charAt(index));
-            }
-            System.out.println(valSb.toString());*/
             Random random=new Random();
             for(int i=0;i<accountLength;i++){
                 if(i==2){
@@ -48,22 +38,6 @@ public class PwdNum {
             }
             pwd=sb.toString();
         }else if (accountRank==3){
-           /* String val = "";
-            Random random = new Random();
-            for (int i = 0; i < account.getStrLength(); i++) {
-                // 输出字母还是数字
-                String charOrNum = random.nextInt(2) % 2 == 0 ? "char" : "num";
-                // 字符串
-                if ("char".equalsIgnoreCase(charOrNum)) {
-                    // 取得大写字母还是小写字母
-                    int choice = random.nextInt(2) % 2 == 0 ? 65 : 97;
-                    val += (char) (choice + random.nextInt(26));
-                } else if ("num".equalsIgnoreCase(charOrNum)) { // 数字
-                    val += String.valueOf(random.nextInt(10));
-                }
-            }
-            System.out.println(val);*/
-
             Random random=new Random();
             for(int i=0;i<accountLength;i++){
                 if(i==1){

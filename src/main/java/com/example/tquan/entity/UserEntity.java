@@ -25,6 +25,7 @@ public class UserEntity {
 
 
 
+
     //辅助字段：组织名称
     private String orgName;
     //辅助字段：账号个数

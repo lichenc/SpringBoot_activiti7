@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.ActVerDao">
+    <!-- 查询全部业务系统-->
+    <select id="actVer" resultType="com.example.tquan.entity.ActVerEntity">
+    select acc.id from im_app app left join im_account acc on app.ID=acc.APP_ID
+    where app.NAME =#{appName} and acc.USER_ID=#{userId} and acc.LOGIN_NAME=#{appAccount};
+    </select>
+
+</mapper>

@@ -11,58 +11,53 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>申请单</title>
 
-   <!-- <link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
-    <link rel="stylesheet" type="text/css" href="../css/audit/base.css">
-    <link rel="stylesheet" type="text/css" href="../css/audit/iconfont.css">
-    <link rel="stylesheet" type="text/css" href="../css/audit/base_fontSize.css">
-    <link rel="stylesheet" type="text/css" href="../css/audit/laydate.css">
+    <!--<link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
     <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
-
-    <script type="text/javascript" src="../js/audit/jquery-1.11.3.min.js"></script>
- <!--   <script src="../js/audit/html5shiv.min.js"></script>-->
-    <script src="../js/audit/respond.min.js"></script>
-  <!--  <script type="text/javascript" src="../js/audit/layui.js"></script>-->
-   <!-- <script type="text/javascript" src="../js/lay/modules/layer.js"></script>-->
-    <script type="text/javascript" src="../js/audit/laydate.js"></script>
-<!--    <script type="text/javascript" src="../js/audit/laypage.js"></script>-->
-    <script src="../js/audit/cframe.js"></script>
-    <script src="../js/audit/printThis.js"></script>
-
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
-    <link rel="stylesheet" type="text/css" href="../css/layui.css">
     <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
-    <script src="../js/audit/app.js"></script>
-    <script type="text/javascript" src="../js/audit/base.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/aud.js"></script>
 </head>
 
 <body>
+<style>
+    .layui-layer{
+        margin: -24.5% 0;
+    }
+    .element.style {
+        width: 410px;
+    }
+    .layui-form-label{
+        width: 88px;
+    }
+    .layui-laypage select{
+        width: 65px;
+    }
+</style>
 
 <div class="cBody">
     <div class="console">
-        <form class="layui-form" method="post" action="/audit">
+        <form class="layui-form" >
             <div class="layui-form-item">
 
                 <div class="au layui-input-inline">
                     <span class="span">事件类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="taskType" id="taskType"  placeholder="事件类型" autocomplete="off" class="layui-input">
+                    <input type="text" name="name"   placeholder="事件类型" autocomplete="off" class="layui-input">
                 </div>
-               <!-- <div class="au layui-input-inline">
+                <div class="au layui-input-inline">
                     <span class="span">任务类型</span>
                 </div>
                 <div class="layui-input-inline">
                     <input type="text" name="name"   placeholder="任务类型" autocomplete="off" class="layui-input">
-                </div>-->
+                </div>
                 <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
-                <button class="layui-btn" onclick="reset();">重置</button>
             </div>
         </form>
 
     </div>
-    <div class="layui-tab-content">
-        <div class="layui-tab-item layui-show">
     <table class="layui-table">
         <thead>
         <tr>
@@ -71,47 +66,107 @@
             <th>申请人</th>
             <th>审批人</th>
             <th>任务类型</th>
-            <th>申请原因</th>
-            <th>申请时间</th>
             <th>操作</th>
         </tr>
         </thead>
-        <tbody>
-        <tr th:each="applicationForm:${task}">
-            <td name="taskId" th:text="${applicationForm.event}"></td>
-            <td th:text="${applicationForm.eventType}"></td>
-            <td th:text="${applicationForm.applyPerson}"></td>
-            <td th:text="${applicationForm.approvedPerson}"></td>
-            <td th:text="${applicationForm.taskType}"></td>
-            <td th:text="${applicationForm.applyReason}"></td>
-            <td th:text="${applicationForm.createTime}"></td>
-            <td>
-                <a th:href="@{'AuditTask?id='+${applicationForm.event}}" class="layui-btn">审批通过</a>
-                <button th:value="${applicationForm.id}" id="repulse" class="layui-btn">打回</button>
-                <!--<button id="btn_3"  class="layui-btn layui-btn-xs">同意</button>
-                <button id="btn" class="layui-btn layui-btn-xs">不同意</button>-->
-            </td>
-        </tr>
-        <tr th:each="pickupTask:${pickupTask}" >
-            <td th:text="${pickupTask.id}"></td>
-            <td th:text="${pickupTask.name}"></td>
-            <td th:text="${pickupTask.createTime}"></td>
-            <td th:text="${pickupTask.assignee}"></td>
-            <td th:text="${pickupTask.processInstanceId}"></td>
-            <td>
-               <!-- <button id="btn_1">审批任务</button>-->
-                <a th:href="@{'AuditTask?id='+${pickupTask.id}}" class="layui-btn layui-btn-xs">审批任务</a>
-            </td>
-        </tr>
+        <tbody id="auditPositionLists">
+        <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
         </tbody>
     </table>
+    <div id="auditPositionPages" style="text-align: center"></div>
+
+</div>
+
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAudit">
+    <div class="layui-form" lay-filter="" id="form1">
+        <div id="userNames">
+
+        </div>
+        <div id="orgNames">
+
+        </div>
+
+        <div class="taskTapys" id="taskTapys2">
+
+        </div>
+        <div class="types"  id="types2">
+
+        </div>
+        <div class="field" id="field2">
+
+        </div>
+        <div class="aud" id="aud2">
+
+        </div>
+        <div id="roles">
+
+        </div>
+        <div id="applyReasonss">
+
+        </div>
+
+        <div id="approvalOpinions">
+
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                批注：
+            </label>
+            <div class="layui-input-inline">
+                <textarea  id="approvalOpinion" required autocomplete="off" class="layui-textarea"
+                           placeholder="批注" name="description"></textarea>
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div id="but" >
+
         </div>
     </div>
-
-    <!-- layUI 分页模块 -->
-    <div class="h_55"></div>
-    <div id="customPages" class="customPages"></div>
 </div>
+
+
+
+<!--查询表单详细信息-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAudit3">
+    <div class="layui-form" lay-filter="" id="form3">
+        <div id="userNames3">
+
+        </div>
+        <div id="orgNames3">
+
+        </div>
+
+        <div class="taskTapys3" id="taskTapys3">
+
+        </div>
+        <div class="types3"  id="types3">
+
+        </div>
+        <div class="field3" id="field3">
+
+        </div>
+        <div class="aud3" id="aud3">
+
+        </div>
+        <div id="roles3">
+
+        </div>
+        <div id="applyReasonss3">
+
+        </div>
+
+        <div id="approvalOpinions3">
+
+        </div>
+
+    </div>
+</div>
+
+
+
 
 
 <div class="form_1">
@@ -201,7 +256,7 @@ var taskId;
                         repulseReason: repulseReason
                     },
                     success: function (data) {
-                        if (data == 1) {
+                        if (data[0] == 1) {
                             alert("打回成功！");
                             layer.close(layer.index - 1);
                             location.reload();

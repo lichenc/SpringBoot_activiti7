@@ -10,10 +10,25 @@
     </select>
     <!-- 查询申请人用户和组织信息-->
     <select id="apply" resultType="com.example.tquan.entity.ApplyEntity">
-         select us.id userId from im_account acc left join im_user us on acc.user_id=us.id
+         select us.id userId,us.name username,us.sex sex,us.telephone telephone,us.email email from im_account acc left join im_user us on acc.user_id=us.id
         left join im_org_user ou on us.id=ou.user_id left join im_org org on ou.org_id=org.id
         left join im_org orgs on org.PARENT_ID=orgs.id
-        where acc.app_id='100000065' and acc.LOGIN_NAME=#{login_name};
+        where acc.app_id='100000065' and acc.LOGIN_NAME=#{sn};
+    </select>
+    <!--查询用户扩展字段-->
+    <select id="field" resultType="com.example.tquan.entity.ApplyEntity">
+         select TABLE_NAME,COLUMN_NAME,DATA_TYPE,CHARACTER_MAXIMUM_LENGTH
+            from information_schema.columns
+            where table_name='inner_user'
+            ORDER BY ORDINAL_POSITION
+    </select>
+
+    <!-- 查询申请人全部信息-->
+    <select id="users" resultType="com.example.tquan.entity.ApplyEntity">
+         select us.id userId,us.name username,us.sex sex,us.telephone telephone,us.email email from im_account acc left join im_user us on acc.user_id=us.id
+        left join im_org_user ou on us.id=ou.user_id left join im_org org on ou.org_id=org.id
+        left join im_org orgs on org.PARENT_ID=orgs.id
+        where acc.app_id='100000065' and acc.LOGIN_NAME=#{sn};
     </select>
 </mapper>
 

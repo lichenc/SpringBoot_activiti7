@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.DefaultDao">
+
+<select id="defaults" resultType="com.example.tquan.entity.DefaultEntity">
+    select field.remark,field.default_value as defaultValue,field.name,app.name appName from im_app app
+    left join sys_field field on field.OBJ_ID=app.id where app.id=#{appId}
+</select>
+
+    <select id="allDefaults" resultType="com.example.tquan.entity.DefaultEntity">
+    select ${allField} as allField from im_user us left join inner_user inn on us.id=inn.id where us.id=#{usId};
+</select>
+    <!-- 根据选择的应用查询账号属性-->
+    <select id="act" resultType="com.example.tquan.entity.ActEntity">
+       select field.name,field.remark,field.default_value defaultValue,field.is_basic isBasic,
+       field.is_requried isRequried,field.is_insert isInsert,field.is_edit isEdit,field.input_type inputType,
+       field.compant from im_app app left join sys_field field on app.id=field.obj_id
+        where app.name=#{app}
+    </select>
+    <!-- 根据选择的应用查询账号属性-->
+    <select id="actField" resultType="com.example.tquan.entity.ActEntity">
+        select act.id from im_app app left join im_account act on act.app_id=app.id
+        where app.name=#{app} and act.login_name=#{act} and act.status=2;
+    </select>
+    <!-- 当前用户有账号禁用的应用-->
+    <select id="actEnable" resultType="com.example.tquan.entity.DefaultEntity">
+        select act.login_name loName from im_app app left join im_account act on act.app_id=app.id
+        where act.user_id=#{usId} and app.name=#{app} and act.status=2;
+
+    </select>
+    <!-- 当前用户有账号的应用-->
+    <select id="actDisable" resultType="com.example.tquan.entity.DefaultEntity">
+        select act.login_name loginName from im_app app left join im_account act on act.app_id=app.id
+        where act.user_id=#{usId} and app.name=#{app} and act.status=1;
+
+    </select>
+    <!-- 查询当前帐号是否存在-->
+    <select id="actNum" resultType="com.example.tquan.entity.DefaultEntity">
+        select act.status sta from im_app app left join im_account act on act.app_id=app.id
+        where act.login_name=#{accountName} and app.name=#{applyName} ;
+
+    </select>
+
+</mapper>

@@ -1,18 +1,18 @@
 package com.example.tquan.entity;
 
+import org.activiti.engine.task.Comment;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 public class ActivitiEntity {
 
         //private String id;
-    /*   map.put("appId", activiti.getAppId());
-        map.put("role", activiti.getRole());
-        map.put("account", activiti.getAccount());
-        map.put("actPwd", activiti.getActPwd());
-        map.put("status", activiti.getStatus());
-        map.put("userId", activiti.getUserId());*/
         private String name;
         private String type;
         private String app;
-        private String proposer;
+        private String audit;
         private String role;
         private String appId;
         private String account;
@@ -20,15 +20,101 @@ public class ActivitiEntity {
         private String status;
         private String userId;
         private String description;
-    public String getProposer() {
-        return proposer;
+
+        private String taskId;
+        private String taskName;
+        private Date taskCreateTime;
+        private String taskApplyReason;
+        private String taskRole;
+        private String taskAssignee;
+        private String taskOrgName;
+        private String taskProcessInstanceId;
+        private String taskExecutionId;
+        private String taskProcessDefinitionId;
+        private String taskApp;
+        private String taskActType;
+        private String taskAccount;
+        private String taskTypes;
+        private String taskApplyPerson;
+        private String taskApprovedPerson;
+        private List<Comment> comment;
+        private List<DefaultsEntity> textLists;
+        private List<DefaultsEntity> passwordLists;
+        private List<DefaultsEntity> selectLists;
+        private List<DefaultsEntity> dateLists;
+
+    public List<DefaultsEntity> getTextLists() {
+        return textLists;
     }
 
-    public void setProposer(String proposer) {
-        this.proposer = proposer;
+    public void setTextLists(List<DefaultsEntity> textLists) {
+        this.textLists = textLists;
     }
 
-        public String getName() {
+    public List<DefaultsEntity> getPasswordLists() {
+        return passwordLists;
+    }
+
+    public void setPasswordLists(List<DefaultsEntity> passwordLists) {
+        this.passwordLists = passwordLists;
+    }
+
+    public List<DefaultsEntity> getSelectLists() {
+        return selectLists;
+    }
+
+    public void setSelectLists(List<DefaultsEntity> selectLists) {
+        this.selectLists = selectLists;
+    }
+
+    public List<DefaultsEntity> getDateLists() {
+        return dateLists;
+    }
+
+    public void setDateLists(List<DefaultsEntity> dateLists) {
+        this.dateLists = dateLists;
+    }
+
+    public List<Comment> getComment() {
+        return comment;
+    }
+
+    public void setComment(List<Comment> comment) {
+        this.comment = comment;
+    }
+    public String getTaskOrgName() {
+        return taskOrgName;
+    }
+
+    public void setTaskOrgName(String taskOrgName) {
+        this.taskOrgName = taskOrgName;
+    }
+
+    public String getTaskApplyReason() {
+        return taskApplyReason;
+    }
+
+    public void setTaskApplyReason(String taskApplyReason) {
+        this.taskApplyReason = taskApplyReason;
+    }
+
+    public String getTaskRole() {
+        return taskRole;
+    }
+
+    public void setTaskRole(String taskRole) {
+        this.taskRole = taskRole;
+    }
+
+    public String getAudit() {
+        return audit;
+    }
+
+    public void setAudit(String audit) {
+        this.audit = audit;
+    }
+
+    public String getName() {
             return name;
         }
 
@@ -108,13 +194,117 @@ public class ActivitiEntity {
             this.description = description;
         }
 
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
+
+    public Date getTaskCreateTime() {
+        return taskCreateTime;
+    }
+
+    public void setTaskCreateTime(Date taskCreateTime) {
+        this.taskCreateTime = taskCreateTime;
+    }
+
+    public String getTaskAssignee() {
+        return taskAssignee;
+    }
+
+    public void setTaskAssignee(String taskAssignee) {
+        this.taskAssignee = taskAssignee;
+    }
+
+    public String getTaskProcessInstanceId() {
+        return taskProcessInstanceId;
+    }
+
+    public void setTaskProcessInstanceId(String taskProcessInstanceId) {
+        this.taskProcessInstanceId = taskProcessInstanceId;
+    }
+
+    public String getTaskExecutionId() {
+        return taskExecutionId;
+    }
+
+    public void setTaskExecutionId(String taskExecutionId) {
+        this.taskExecutionId = taskExecutionId;
+    }
+
+    public String getTaskProcessDefinitionId() {
+        return taskProcessDefinitionId;
+    }
+
+    public void setTaskProcessDefinitionId(String taskProcessDefinitionId) {
+        this.taskProcessDefinitionId = taskProcessDefinitionId;
+    }
+
+    public String getTaskApp() {
+        return taskApp;
+    }
+
+    public void setTaskApp(String taskApp) {
+        this.taskApp = taskApp;
+    }
+
+    public String getTaskActType() {
+        return taskActType;
+    }
+
+    public void setTaskActType(String taskActType) {
+        this.taskActType = taskActType;
+    }
+
+    public String getTaskAccount() {
+        return taskAccount;
+    }
+
+    public void setTaskAccount(String taskAccount) {
+        this.taskAccount = taskAccount;
+    }
+
+    public String getTaskTypes() {
+        return taskTypes;
+    }
+
+    public void setTaskTypes(String taskTypes) {
+        this.taskTypes = taskTypes;
+    }
+
+    public String getTaskApplyPerson() {
+        return taskApplyPerson;
+    }
+
+    public void setTaskApplyPerson(String taskApplyPerson) {
+        this.taskApplyPerson = taskApplyPerson;
+    }
+
+    public String getTaskApprovedPerson() {
+        return taskApprovedPerson;
+    }
+
+    public void setTaskApprovedPerson(String taskApprovedPerson) {
+        this.taskApprovedPerson = taskApprovedPerson;
+    }
+
     @Override
     public String toString() {
         return "ActivitiEntity{" +
                 "name='" + name + '\'' +
                 ", type='" + type + '\'' +
                 ", app='" + app + '\'' +
-                ", proposer='" + proposer + '\'' +
+                ", audit='" + audit + '\'' +
                 ", role='" + role + '\'' +
                 ", appId='" + appId + '\'' +
                 ", account='" + account + '\'' +
@@ -122,6 +312,27 @@ public class ActivitiEntity {
                 ", status='" + status + '\'' +
                 ", userId='" + userId + '\'' +
                 ", description='" + description + '\'' +
+                ", taskId='" + taskId + '\'' +
+                ", taskName='" + taskName + '\'' +
+                ", taskCreateTime=" + taskCreateTime +
+                ", taskApplyReason='" + taskApplyReason + '\'' +
+                ", taskRole='" + taskRole + '\'' +
+                ", taskAssignee='" + taskAssignee + '\'' +
+                ", taskOrgName='" + taskOrgName + '\'' +
+                ", taskProcessInstanceId='" + taskProcessInstanceId + '\'' +
+                ", taskExecutionId='" + taskExecutionId + '\'' +
+                ", taskProcessDefinitionId='" + taskProcessDefinitionId + '\'' +
+                ", taskApp='" + taskApp + '\'' +
+                ", taskActType='" + taskActType + '\'' +
+                ", taskAccount='" + taskAccount + '\'' +
+                ", taskTypes='" + taskTypes + '\'' +
+                ", taskApplyPerson='" + taskApplyPerson + '\'' +
+                ", taskApprovedPerson='" + taskApprovedPerson + '\'' +
+                ", comment=" + comment +
+                ", textLists=" + textLists +
+                ", passwordLists=" + passwordLists +
+                ", selectLists=" + selectLists +
+                ", dateLists=" + dateLists +
                 '}';
     }
 }
