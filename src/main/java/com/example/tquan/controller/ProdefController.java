@@ -2,16 +2,15 @@ package com.example.tquan.controller;
 
 import com.example.tquan.entity.ProcdefEntity;
 import com.example.tquan.service.TasksService;
-import org.flowable.bpmn.BpmnAutoLayout;
-import org.flowable.engine.*;
+import org.activiti.bpmn.BpmnAutoLayout;
+import org.activiti.engine.*;
+import org.activiti.bpmn.model.BpmnModel;
 
+import org.activiti.engine.history.HistoricActivityInstance;
 
-import org.flowable.engine.history.HistoricActivityInstance;
-
-import org.flowable.engine.task.Task;
-import org.flowable.image.ProcessDiagramGenerator;
+import org.activiti.engine.task.Task;
+import org.activiti.image.ProcessDiagramGenerator;
 import org.apache.commons.logging.Log;
-import org.flowable.bpmn.model.BpmnModel;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,13 +31,7 @@ public class ProdefController {
     @Autowired
     private TasksService tasksService;
 
-
     private Log log = LogFactory.getLog(getClass());
-      RepositoryService repositoryService;
-      TaskService taskService;
-      HistoryService historyService;
-    ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-
     /**
      * 查询所有流程
      * @return
@@ -101,13 +94,13 @@ public class ProdefController {
     public InputStream lookCurrentProcessImage(String taskId) {
         InputStream imageStream1=null;
 
-      // try{
+       try{
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
-        TaskService taskService=processEngine.getTaskService();
-        RepositoryService repositoryService=processEngine.getRepositoryService();
-        HistoryService historyService=processEngine.getHistoryService();
 
-          //ProcessDiagramGenerator processDiagramGenerator=processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
+           TaskService taskService=processEngine.getTaskService();
+           RepositoryService repositoryService=processEngine.getRepositoryService();
+           HistoryService historyService=processEngine.getHistoryService();
+          ProcessDiagramGenerator processDiagramGenerator=processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
            // 获取流程
            Task task=taskService.createTaskQuery().processInstanceId(taskId).singleResult();
 
@@ -120,29 +113,25 @@ public class ProdefController {
            List<String> executedActivityIdList = new ArrayList<String>();
            @SuppressWarnings("unused")
            int index = 1;
-           for (HistoricActivityInstance activityInstance : historicActivityInstanceList) {
-               executedActivityIdList.add(activityInstance.getActivityId());
-               log.info("第[" + index + "]个已执行节点=" + activityInstance.getActivityId() + " : " +activityInstance.getActivityName());
-               index++;
-           }
+               for (HistoricActivityInstance activityInstance : historicActivityInstanceList) {
+                   executedActivityIdList.add(activityInstance.getActivityId());
+                   log.info("第[" + index + "]个已执行节点=" + activityInstance.getActivityId() + " : " +activityInstance.getActivityName());
+                   index++;
+               }
 
            BpmnModel bpmnModel = repositoryService.getBpmnModel(task.getProcessDefinitionId());
            BpmnAutoLayout bpmnAutoLayout = new BpmnAutoLayout(bpmnModel);
-           bpmnAutoLayout.setTaskHeight(120);
-           bpmnAutoLayout.setTaskWidth(120);
+           bpmnAutoLayout.setTaskHeight(90);
+           bpmnAutoLayout.setTaskWidth(200);
            bpmnAutoLayout.execute();
 
-
-            //imageStream1 = diagramGenerator.generateDiagram(bpmnModel, "png", executedActivityIdList,2.0);
-           imageStream1= processEngine.getProcessEngineConfiguration()
-                   .getProcessDiagramGenerator()
-                   .generateDiagram(bpmnModel, "png", executedActivityIdList,2.0);
+           imageStream1= processDiagramGenerator.generateDiagram(bpmnModel, "png", executedActivityIdList,new ArrayList<>(), processEngine.getProcessEngineConfiguration().getActivityFontName(), processEngine.getProcessEngineConfiguration().getLabelFontName(),"宋体",null,1.0);
 
 
-      // }catch (Exception e){
-        //     log.info("==========================查询失败！");
-          //   e.printStackTrace();
-       //}
+       }catch (Exception e){
+             log.info("==========================查询失败！");
+             e.printStackTrace();
+       }
         return imageStream1;
     }
 

@@ -40,7 +40,7 @@ $(document).ready(function(){
                 layer.open({
                     type: 1,
                     title: "查看流程图",   //标题
-                    area: ['400px', '450px'],    //弹窗大小
+                    area: ['800px', '500px'],    //弹窗大小
                     shadeClose: false,      //禁止点击空白关闭
                     scrollbar: false,      //禁用滚动条
                     move: false,       //禁用移动
