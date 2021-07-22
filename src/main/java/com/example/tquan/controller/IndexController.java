@@ -1,5 +1,6 @@
 package com.example.tquan.controller;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -9,10 +10,6 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class IndexController {
-    @GetMapping("/index")
-    public String index() {
-        return "/index";
-    }
 
     @GetMapping("/login")
     public String login() {
@@ -43,4 +40,25 @@ public class IndexController {
     public String position(){
         return "/position";
     }
+
+    @GetMapping("/console")
+    public String console(){
+        return "/console";
+    }
+
+    @GetMapping("/procdefPage")
+    public String procdefPage(){
+        return "/procdefPage";
+    }
+
+    @GetMapping("/addProcdefPage")
+    public String addProcdefPage(){
+        return "/addProcdefPage";
+    }
+
+    @GetMapping("/consoleTaskList")
+    public String consoleTaskList(){
+        return "/consoleTaskList";
+    }
+
 }

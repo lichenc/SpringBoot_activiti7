@@ -10,7 +10,6 @@ import com.example.tquan.util.RsaUtil;
 /*import net.sf.json.JSONObject;*/
 import com.ninghang.core.util.StringUtils;
 import net.sf.json.JSONObject;
-import org.activiti.engine.history.HistoricVariableInstance;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Consts;
@@ -117,7 +116,7 @@ public class ActiController{
     @Autowired
     private PositionService positionService;
     @Autowired
-    private com.example.tquan.service.TaskService taskService;
+    private com.example.tquan.service.TasksService taskService;
 
     private Log log = LogFactory.getLog(getClass());
 

@@ -30,4 +30,91 @@
     <update id="updateTask" parameterType="com.example.tquan.entity.TaskEntity">
          update  act_ru_task set REV_=1,ASSIGNEE_=#{approvedPerson} where ID_=#{id}
     </update>
+    <select id="getTaskCountByProperty" resultType="java.lang.Integer" parameterType="com.example.tquan.entity.TaskEntity">
+        SELECT
+        count( DISTINCT task.PROC_INST_ID_ )
+        FROM
+        act_ru_task task left join act_ru_variable var on var.PROC_INST_ID_=task.PROC_INST_ID_
+        <where>
+            <if test="rev != null and rev != ''">
+                task.REV_ =#{rev}
+            </if>
+            <if test="taskType != '' and taskType != null">
+                and to_days(NOW()) - TO_DAYS(task.CREATE_TIME_)  <![CDATA[  =  ]]> 0
+            </if>
+            <if test="approvedPerson != '' and approvedPerson != null">
+                and  var.NAME_='approvedPerson' and var.TEXT_=#{approvedPerson}
+            </if>
+            <if test="applyPerson != null and applyPerson != ''">
+                and  var.NAME_='applyPerson' and var.TEXT_=#{applyPerson}
+            </if>
+        </where>
+    </select>
+    <!--获取历史流程数-->
+    <select id="getHistoryCount" resultType="java.lang.Integer" parameterType="com.example.tquan.entity.TaskEntity">
+        SELECT
+	        count( DISTINCT task.PROC_INST_ID_ )
+            FROM
+	        act_hi_taskinst task
+	        LEFT JOIN act_hi_varinst var ON task.PROC_INST_ID_ = var.PROC_INST_ID_
+            <where>
+                <if test="name != null and name != ''">
+                    var.NAME_ = 'approvedPerson'
+                    AND var.TEXT_ = #{name}
+                </if>
+                <if test="createTime != null and createTime!= ''">
+                    and to_days(NOW()) - TO_DAYS(task.START_TIME_)  <![CDATA[  =  ]]> 0
+                </if>
+            </where>
+    </select>
+    <!--获取昨日新增-->
+    <select id="getyesTodayCount" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select count(1) from act_ru_task where to_days(NOW()) - TO_DAYS(CREATE_TIME_)  <![CDATA[  <=  ]]> #{count};
+    </select>
+    <!--获取折线图需要的参数-->
+    <select id="getLineChartParam" resultType="com.example.tquan.entity.LineChartEntity">
+        SELECT
+	        DATE_FORMAT( CREATE_TIME_, '%Y-%m-%d' ) AS days,
+	        count( 1 ) AS counts
+        FROM
+	        act_ru_task
+        GROUP BY
+	        DATE_FORMAT( CREATE_TIME_, '%Y-%m-%d' )
+        ORDER BY
+	        CREATE_TIME_ ASC LIMIT 7
+    </select>
+    <select id="getPieChartParam" resultType="com.example.tquan.entity.LineChartEntity">
+        SELECT
+	        substring( NAME_, 3 ) days,
+	        count( 1 ) AS counts
+        FROM
+	        act_ru_task
+        GROUP BY
+        	NAME_
+    </select>
+    <!-- 查询所有流程-->
+    <select id="selectAllProcef" resultType="com.example.tquan.entity.ProcdefEntity" parameterType="com.example.tquan.entity.ProcdefEntity">
+        SELECT
+	        ID_ procdefId,
+	        VERSION_ version,
+	        NAME_ name,
+	        KEY_  keyName,
+	        RESOURCE_NAME_ resourceName,
+	        DEPLOYMENT_ID_ deploymentId,
+	        SUSPENSION_STATE_ status
+        FROM
+	        act_re_procdef
+	    <where>
+            <if test="name != null and name !=''">
+                NAME_  like  CONCAT('%', #{name}, '%')
+            </if>
+            <if test="keyName != null and keyName != ''">
+                and KEY_  like  CONCAT('%', #{keyName}, '%')
+            </if>
+        </where>
+    </select>
+    <!--修改流程状态-->
+    <update id="updateProcdefStatus" parameterType="com.example.tquan.entity.ProcdefEntity">
+        update act_re_procdef set SUSPENSION_STATE_=#{status} where ID_=#{procdefId}
+    </update>
 </mapper>

@@ -36,10 +36,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -58,7 +56,7 @@ public class AccountController {
     @Autowired
     private GroupService groupService;
     @Autowired
-    private TaskService taskService;
+    private TasksService taskService;
     @Autowired
     private ApproverService approverService;
     @Autowired
@@ -103,10 +101,15 @@ public class AccountController {
      */
     @PostMapping("/getAccountDetail")
     public AccountEntity getAccountDetail(String id) {
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setId(id);
-        //查询账号详情
-        List<AccountEntity> accountEntityList = accountService.getByUserId(accountEntity);
+        List<AccountEntity> accountEntityList=null;
+       try {
+           AccountEntity accountEntity = new AccountEntity();
+           accountEntity.setId(id);
+           //查询账号详情
+            accountEntityList = accountService.getByUserId(accountEntity);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
         return accountEntityList.get(0);
 
     }
@@ -118,47 +121,51 @@ public class AccountController {
      */
     @PostMapping("/getAccountList")
     public UserEntity getAccountList(HttpSession session, HttpServletRequest request,String uuid) throws Exception{
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.US);
+        UserEntity userEntity1=new UserEntity();
 
-        //获取存在session里的用户id
-        String userId=session.getAttribute("UserId").toString();
-        log.info("==========================当前登录用户id"+userId);
+       try {
+           //获取存在session里的用户id
+           String userId=session.getAttribute("UserId").toString();
+           log.info("==========================当前登录用户id"+userId);
 
-        //设置查询帐号参数
-        AccountEntity accountEntity=new AccountEntity();
-        accountEntity.setUserId(userId);
-        //获取账号列表
-       List<AccountEntity> accountEntityList= accountService.getByUserId(accountEntity);
+           //设置查询帐号参数
+           AccountEntity accountEntity=new AccountEntity();
+           accountEntity.setUserId(userId);
+           //获取账号列表
+           List<AccountEntity> accountEntityList= accountService.getByUserId(accountEntity);
 
-        //设置查询用户参数
-        UserEntity userEntity=new UserEntity();
-        userEntity.setId(userId);
-        UserEntity userEntity1= userService.getUserByProperty(userEntity);
-        //userEntity1.setCreateTime(df.format(userEntity1.getCreateTime(),toString()));
+           //设置查询用户参数
+           UserEntity userEntity=new UserEntity();
+           userEntity.setId(userId);
+           userEntity1= userService.getUserByProperty(userEntity);
+           //userEntity1.setCreateTime(df.format(userEntity1.getCreateTime(),toString()));
 
-        //获取用户岗位集合
-        List<PositionEntity> positionEntityList=positionService.getPositionByUserId(userId);
+           //获取用户岗位集合
+           List<PositionEntity> positionEntityList=positionService.getPositionByUserId(userId);
 
-        //获取用户组集合
-        List<GroupEntity> groupEntityList=groupService.getGroupByUserId(userId);
+           //获取用户组集合
+           List<GroupEntity> groupEntityList=groupService.getGroupByUserId(userId);
 
-        if(accountEntityList.size()>0){
-            //添加账号记录条数
-            userEntity1.setAccountCount(accountEntityList.size());
-            //添加账号集合
-            userEntity1.setAccountEntities(accountEntityList);
-        }
+           if(accountEntityList.size()>0){
+               //添加账号记录条数
+               userEntity1.setAccountCount(accountEntityList.size());
+               //添加账号集合
+               userEntity1.setAccountEntities(accountEntityList);
+           }
 
-        if(positionEntityList.size()>0){
-            //添加用户岗位集合
-            userEntity1.setPositionEntityList(positionEntityList);
-            userEntity1.setPositionCount(positionEntityList.size());
-        }
+           if(positionEntityList.size()>0){
+               //添加用户岗位集合
+               userEntity1.setPositionEntityList(positionEntityList);
+               userEntity1.setPositionCount(positionEntityList.size());
+           }
 
-        if (groupEntityList.size()>0){
-            userEntity1.setGroupEntities(groupEntityList);
-            userEntity1.setGroupCount(groupEntityList.size());
-        }
+           if (groupEntityList.size()>0){
+               userEntity1.setGroupEntities(groupEntityList);
+               userEntity1.setGroupCount(groupEntityList.size());
+           }
+       }catch (Exception e){
+           e.printStackTrace();
+       }
         return userEntity1;
     }
 
@@ -170,25 +177,70 @@ public class AccountController {
      * @throws Exception
      */
     @RequestMapping("/getExtraAttrs")
-    public StringBuilder getExtraAttrs(String uuid,HttpSession session) throws Exception{
+    public StringBuilder getExtraAttrs(String uuid,HttpSession session){
         String userId=session.getAttribute("UserId").toString();
 
         StringBuilder stringBuilder=new StringBuilder();
-        //调用统权的接口，获取扩展字段
-        //开通账号
-        oauth(uuid);
-        if(StringUtils.isEmpty(oauth(uuid))) {
-            log.info("==========================uuid为空！");
-        }else {
-            List<NameValuePair> params = Lists.newArrayList();
-            params.add(new BasicNameValuePair("id", userId));
-            params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid)));
-            //转换为键值对
-            String userStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-            stringBuilder=post(userStr);
-        }
-       return stringBuilder;
+        try {
 
+            //调用统权的接口，获取扩展字段
+            //开通账号
+            oauth(uuid);
+            if(StringUtils.isEmpty(oauth(uuid))) {
+                log.info("==========================uuid为空！");
+            }else {
+                List<NameValuePair> params = Lists.newArrayList();
+                params.add(new BasicNameValuePair("id", userId));
+                params.add(new BasicNameValuePair("uim-login-user-id", oauth(uuid)));
+                //转换为键值对
+                String userStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+                stringBuilder=post(userStr);
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return stringBuilder;
+    }
+
+    /**
+     * 管理员查询所有流程任务
+     * @param approvedPerson
+     * @return
+     */
+    @RequestMapping("/getAllTaskAdmin")
+    public TaskEntity getAllTaskAdmin(String approvedPerson, TaskEntity taskEntity){
+        //根据审批人员查询
+        if (approvedPerson!=null &&approvedPerson!=""){
+            taskEntity.setApprovedPerson(approvedPerson);
+        }
+        try {
+            List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
+            List<TaskEntity> taskEntities1=new ArrayList<>();
+            for(TaskEntity taskEntity2:taskEntities) {
+
+                Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity2.getTaskType());
+                    taskEntity2.setApplyPerson(variables.get("applyPerson").toString());
+                    taskEntity2.setApprovedPerson(variables.get("approvedPerson").toString());
+                    taskEntity2.setTaskType(variables.get("taskType").toString());
+                    taskEntity2.setApplyReason(variables.get("applyReason").toString());
+                    VariableEntity variableEntity = new VariableEntity();
+                    variableEntity.setName("repulseReason");
+                    variableEntity.setProcInstId(taskEntity2.getId());
+                    String text = variableService.getTextByName(variableEntity);
+                    //查询是否被打回过
+                    if (text != null) {
+                        taskEntity2.setRepulseReason(text);
+                    } else {
+                        taskEntity2.setRepulseReason("");
+                    }
+                    taskEntities1.add(taskEntity2);
+                }
+            taskEntity.setTaskEntities(taskEntities1);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return taskEntity;
     }
 
     /**
@@ -196,13 +248,12 @@ public class AccountController {
      * @return
      */
     @RequestMapping("/waitTryAgain")
-    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpServletRequest request,HttpSession session,String approvedPerson){
+    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpSession session,String approvedPerson){
             if (approvedPerson!=null &&approvedPerson!=""){
             taskEntity.setApprovedPerson(approvedPerson);
         }
         taskEntity.setRev(2);
         String sn=session.getAttribute("userSn").toString();
-        TaskEntity taskEntity1=new TaskEntity();
        try {
            List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
            List<TaskEntity> taskEntities1=new ArrayList<>();
@@ -226,12 +277,12 @@ public class AccountController {
                    }
                    taskEntities1.add(taskEntity2);
                }
-               taskEntity1.setTaskEntities(taskEntities1);
+               taskEntity.setTaskEntities(taskEntities1);
            }
        }catch (Exception e){
            e.printStackTrace();
        }
-        return taskEntity1;
+        return taskEntity;
     }
 
     /**
@@ -359,8 +410,115 @@ public class AccountController {
         }
         return result;
     }
+    @PostMapping("/getAdminCount")
+    public CountEntity getAdminCount(HttpSession session){
+        CountEntity countEntity=new CountEntity();
+        //查询待重试
+        TaskEntity taskEntity=new TaskEntity(null,null,null,2);
+        int waitTryAgainCount=taskService.getTaskCountByProperty(taskEntity);
+        //查询待审批流程
+        TaskEntity taskEntity1=new TaskEntity(null,null,null,1);
+        int approvalCount=taskService.getTaskCountByProperty(taskEntity1);
 
+        //系统总流程
+        int sumCount=waitTryAgainCount+approvalCount;
 
+        //查询今日新增待重试
+        TaskEntity taskEntity5=new TaskEntity(null,null,"today",2);
+        int todayWaitTryAgainCount=taskService.getTaskCountByProperty(taskEntity5);
+        //查询今日新增待审批
+        TaskEntity taskEntity6=new TaskEntity(null,null,"today",1);
+        int todayApprovalCount=taskService.getTaskCountByProperty(taskEntity6);
+
+        //今日总新增
+        int todaySumCount=todayWaitTryAgainCount+todayApprovalCount;
+        //已审批
+        TaskEntity taskEntity2=new TaskEntity(null,null);
+        int historyCount=taskService.getHistoryCount(taskEntity2);
+
+        //查询今日已审批
+        TaskEntity taskEntity3=new TaskEntity("today",null);
+        int todayHistoryCount=taskService.getHistoryCount(taskEntity3);
+
+        //获取折线图参数
+        List<LineChartEntity> lineChartEntities=new ArrayList<>();
+        lineChartEntities=taskService.getLineChartParam();
+
+        //获取饼图参数
+        List<LineChartEntity> pie=new ArrayList<>();
+        pie=taskService.getPieChartParam();
+        countEntity.setPieChartEntityList(pie);
+
+        countEntity.setSumCount(sumCount);
+        countEntity.setApprovalCount(approvalCount);
+        countEntity.setWaitTryAgainCount(waitTryAgainCount);
+
+        countEntity.setTodaySumCount(todaySumCount);
+        countEntity.setTodayApprovalCount(todayApprovalCount);
+        countEntity.setTodayWaitTryAgainCount(todayWaitTryAgainCount);
+
+        countEntity.setHistoryCount(historyCount);
+        countEntity.setTodayHistoryCount(todayHistoryCount);
+        countEntity.setLineChartEntityList(lineChartEntities);
+        return  countEntity;
+    }
+    /**
+     * 首页数据统计
+     */
+    @PostMapping("/getCount")
+    public CountEntity getCount(HttpSession session){
+        CountEntity countEntity=new CountEntity();
+        String userSn=session.getAttribute("userSn").toString();
+
+        //查询待重试
+        TaskEntity taskEntity=new TaskEntity(userSn,null,null,2);
+        int waitTryAgainCount=taskService.getTaskCountByProperty(taskEntity);
+        //查询待审批流程
+        TaskEntity taskEntity1=new TaskEntity(null,userSn,null,1);
+        int approvalCount=taskService.getTaskCountByProperty(taskEntity1);
+
+        //系统总流程
+        int sumCount=waitTryAgainCount+approvalCount;
+
+        //查询今日新增待重试
+        TaskEntity taskEntity5=new TaskEntity(userSn,null,"today",2);
+        int todayWaitTryAgainCount=taskService.getTaskCountByProperty(taskEntity5);
+        //查询今日新增待审批
+        TaskEntity taskEntity6=new TaskEntity(null,userSn,"today",1);
+        int todayApprovalCount=taskService.getTaskCountByProperty(taskEntity6);
+
+        //今日总新增
+        int todaySumCount=todayWaitTryAgainCount+todayApprovalCount;
+        //已审批
+        TaskEntity taskEntity2=new TaskEntity(null,userSn);
+        int historyCount=taskService.getHistoryCount(taskEntity2);
+
+        //查询今日已审批
+        TaskEntity taskEntity3=new TaskEntity("today",userSn);
+        int todayHistoryCount=taskService.getHistoryCount(taskEntity3);
+
+        //获取折线图参数
+        List<LineChartEntity> lineChartEntities=new ArrayList<>();
+        lineChartEntities=taskService.getLineChartParam();
+
+        //获取饼图参数
+        List<LineChartEntity> pie=new ArrayList<>();
+        pie=taskService.getPieChartParam();
+        countEntity.setPieChartEntityList(pie);
+
+        countEntity.setSumCount(sumCount);
+        countEntity.setApprovalCount(approvalCount);
+        countEntity.setWaitTryAgainCount(waitTryAgainCount);
+
+        countEntity.setTodaySumCount(todaySumCount);
+        countEntity.setTodayApprovalCount(todayApprovalCount);
+        countEntity.setTodayWaitTryAgainCount(todayWaitTryAgainCount);
+
+        countEntity.setHistoryCount(historyCount);
+        countEntity.setTodayHistoryCount(todayHistoryCount);
+        countEntity.setLineChartEntityList(lineChartEntities);
+        return countEntity;
+    }
 }
 
 

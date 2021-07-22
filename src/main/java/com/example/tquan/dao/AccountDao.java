@@ -34,6 +34,13 @@ public interface AccountDao {
     AccountEntity findUserByName(String username);
 
     /**
+     * 管理员登录
+     * @param name
+     * @return
+     */
+    AccountEntity adminLogin(String name);
+
+    /**
      * 根据ID修改账号
      *
      * @param accountEntity

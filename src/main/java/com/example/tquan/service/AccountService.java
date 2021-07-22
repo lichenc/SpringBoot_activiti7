@@ -58,6 +58,14 @@ public class AccountService {
     }
 
     /**
+     * 管理员登录
+     * @param name
+     * @return
+     */
+    public AccountEntity  adminLogin(String name){
+        return accountDao.adminLogin(name);
+    }
+    /**
      * 根据ID修改账号
      *
      * @param accountEntity

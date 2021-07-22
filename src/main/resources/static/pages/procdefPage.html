@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>待重试</title>
+    <link rel="stylesheet" type="text/css" href="../css/common.css">
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/procdefPage.js"></script>
+    <script type="text/javascript" src="../js/loading.js"></script>
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+    .span{
+        float:right;
+        width:60px;
+        margin:9px 0 0 0;
+    }
+</style>
+<body>
+<br>
+<div class="cBody">
+    <div class="console">
+        <div class="layui-form-item">
+            <div class="main">
+            </div>
+            <br>
+            <div class="au layui-input-inline">
+                <span class="span">流程名称</span>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" name="name" id="name"   placeholder="流程名称" autocomplete="off" class="layui-input">
+            </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="au layui-input-inline">
+                <span class="span">流程编号</span>
+            </div>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="keyName" name="keyName" placeholder="流程编号">
+            </div>
+            <div class="layui-input-inline">
+                <button class="layui-btn" id="selectTask" onclick="selectProcdefList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                <button class="layui-btn"  onclick="reset()">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <a type="button" class="layui-btn" href="/bpmnjs/dist/index.html" target="_blank">
+            制作流程图
+    </a>
+    <button type="button" class="layui-btn" id="upload" onclick="upload()">
+      上传流程图
+    </button>
+    <!--事件列表-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table" id="table">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>流程标识</th>
+                    <th>版本号</th>
+                    <th>流程名称</th>
+                    <th>流程编号</th>
+                    <th>资源名称</th>
+                    <th>部署编号</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody class="tbody" id="procdefList">
+                </tbody>
+
+            </table>
+            <div id="procdefPage" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefUpload">
+    <form action="/procdefUpload" method="post"  enctype="multipart/form-data" onsubmit="return check()">
+        <div class="layui-form" lay-filter="" id="form1">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="font-size:12px;">
+                    文件
+                </label>
+                <div class="layui-input-inline">
+                    <input  autocomplete="off" name="uploadFile" class="layui-upload-choose"
+                           type="file" id="uploadFile">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                 <p style="color: red">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;下载流程图之后，请改为xml文件后上传</p>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-filter="setmypass" type="submit" class="layui-btn">确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    //非空判断
+    function check(){
+        var file=document.getElementById("uploadFile").value;
+        var ext = file.slice(file.lastIndexOf(".")+1).toLowerCase();
+        if (file==null || file==""){
+            alert("上传文件不能为空！");
+            return false;
+        }
+        if ("xml" != ext){
+            alert("只能上传xml文件！");
+            return false;
+        }
+        return true;
+    }
+    window.onload = function () {
+        var info = '[[${info}]]';
+        if (info != null && info != "") {
+            if (info == "200") {
+                alert("上传成功！");
+            } else if (info == "500") {
+                alert("上传失败！");
+            }
+        }
+
+    }
+</script>
+</body>
+</html>

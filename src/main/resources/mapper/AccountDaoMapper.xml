@@ -34,6 +34,17 @@
             resultType="com.example.tquan.entity.AccountEntity">
         select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1 and APP_ID=100000065
     </select>
+    <!--管理员登录-->
+    <select id="adminLogin" parameterType="java.lang.String" resultType="com.example.tquan.entity.AccountEntity">
+        SELECT
+	        LOGIN_NAME,
+	        LOGIN_PWD
+        FROM
+	        sys_acct
+        WHERE
+        	`STATUS` = 1
+	        AND LOGIN_NAME = #{name}
+    </select>
     <!--根据账号ID修改账号-->
     <update id="updateAccountById" parameterType="com.example.tquan.entity.AccountEntity">
         update im_account

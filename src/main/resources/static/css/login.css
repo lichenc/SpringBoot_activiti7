@@ -1,14 +1,4 @@
 /*登陆表单样式 start*/
-body {
-    width: 100%;
-    height: 60%;
-    background: url("../img/main.jpg");
-    /*background-color: #93D1FF;*/
-    background-size: cover;
-    overflow-x: hidden;
-    overflow-y: hidden;
-}
-
 
 .loginForm {
     margin-left: 35%;

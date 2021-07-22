@@ -25,7 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 //.and()
 
                 .authorizeRequests()    //认证请求
-                .antMatchers( "/login","/loginPage","/pickup","/taskRetry","/logout","/repulse","/waitTryAgain","/apply",  "/css/**", "/js/**", "/img/**", "/font/**")
+                .antMatchers( "/login","/console","/logout",  "/css/**", "/js/**", "/img/**", "/font/**","/components/**")
                 .permitAll()     //除了***能够无认证访问
                 .anyRequest()
                 .authenticated()    //任何请求都需要认证

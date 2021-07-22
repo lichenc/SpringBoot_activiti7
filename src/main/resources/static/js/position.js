@@ -29,7 +29,37 @@ function over1(e){
  * */
 $(document).ready(function(){
 
+
     getPositionList();
+    $("body").on("click", "#history", function (e) {
+        var proId=  $(this).val();
+        layui.use('form', function () {
+            var form = layui.form;
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.open({
+                    type: 1,
+                    title: "查看流程图",   //标题
+                    area: ['400px', '450px'],    //弹窗大小
+                    shadeClose: false,      //禁止点击空白关闭
+                    scrollbar: false,      //禁用滚动条
+                    move: false,       //禁用移动
+                    scrolling: 'no',
+                    resize: false,
+                    closeBtn: 1,
+                    content: $('#procdefPicture'),
+                    end: function () {
+                        $('#procdefPicture').hide();
+                    }
+                });
+            });
+
+        });
+        $("#picture").attr("src","../getProcefPicture?taskId="+proId+"");
+    });
+    /**
+     * 打开修改岗位弹窗
+     */
     $("body").on("click", "#update", function (e) {
         value1=  $(this).val();
         $('.select option').remove();
@@ -190,7 +220,7 @@ function getPositionList() {
                                     positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='update'>编辑</button>"
                                         + "<button value='" + item.id + "' class='layui-btn' id='reSubmit'>重新发起审批</button>";
                                 }
-                                positionStr=positionStr+ "</td>"
+                                positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='history'>历史</button></td>"
                                 +"</tr>";
                                 arr.push(positionStr);
                             });

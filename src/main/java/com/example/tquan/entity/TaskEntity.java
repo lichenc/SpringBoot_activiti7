@@ -17,7 +17,25 @@ public class TaskEntity {
     private String repulseReason;
     private String createTime;
     private int rev;
+    private String taskDefKey;
+    private String name;
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTaskDefKey() {
+        return taskDefKey;
+    }
+
+    public void setTaskDefKey(String taskDefKey) {
+        this.taskDefKey = taskDefKey;
+    }
 
     public int getRev() {
         return rev;
@@ -118,6 +136,19 @@ public class TaskEntity {
         this.taskType = taskType;
     }
 
+    public TaskEntity(String applyPerson, String approvedPerson, String taskType, int rev) {
+        this.applyPerson = applyPerson;
+        this.approvedPerson = approvedPerson;
+        this.taskType = taskType;
+        this.rev = rev;
+    }
+    public TaskEntity(String createTime,String name) {
+        this.createTime = createTime;
+        this.name=name;
+    }
+    public TaskEntity() {
+
+    }
     @Override
     public String toString() {
         return "TaskEntity{" +

@@ -5,9 +5,7 @@ import com.example.tquan.entity.PositionEntity;
 import com.example.tquan.entity.VariableEntity;
 import com.example.tquan.service.ApproverService;
 import com.example.tquan.service.PositionService;
-import com.example.tquan.service.UserService;
 import com.example.tquan.service.VariableService;
-import com.ninghang.core.util.StringUtils;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
@@ -17,7 +15,6 @@ import org.activiti.engine.history.HistoricTaskInstance;
 import org.activiti.engine.impl.identity.Authentication;
 import org.activiti.engine.impl.persistence.entity.*;
 import org.activiti.engine.runtime.Execution;
-import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,11 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import sun.plugin2.message.Message;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +39,6 @@ public class PositionController {
     private PositionService positionService;
     @Autowired
     private VariableService variableService;
-    @Autowired
-    private UserService userService;
     @Autowired
     private ApproverService approverService;
 
@@ -62,29 +55,34 @@ public class PositionController {
     public PositionEntity getpositionList(HttpSession session,String type,String id){
        String userSn= String.valueOf(session.getAttribute("userSn"));
         PositionEntity positionEntity=new PositionEntity();
-        //获取所有岗位
-        List<PositionEntity> positionEntityList= positionService.findAll();
-        positionEntity.setPositionEntityList(positionEntityList);
-        positionEntity.setUserSn(userSn);
+       try{
+           //获取所有岗位
+           List<PositionEntity> positionEntityList= positionService.findAll();
+           positionEntity.setPositionEntityList(positionEntityList);
+           positionEntity.setUserSn(userSn);
 
 
-        positionEntity.setApproverList(approverService.audit(userSn));
+           positionEntity.setApproverList(approverService.audit(userSn));
 
-        //修改岗位申请，回显数据
-        if (type!=null){
-            VariableEntity variableEntity=new VariableEntity(id,"applyReason");
-            VariableEntity variableEntity1=new VariableEntity(id,"approvedPerson");
-            VariableEntity variableEntity2=new VariableEntity(id,"position");
-            //查询申请原因
-           String applyReason= variableService.getTextByName(variableEntity);
-           //查询审批人
-           String approvedPerson=variableService.getTextByName(variableEntity1);
-           //查询申请岗位
-            String position=variableService.getTextByName(variableEntity2);
-           positionEntity.setApplyReason(applyReason);
-           positionEntity.setApprovedPerson(approvedPerson);
-            positionEntity.setPosition(position);
-        }
+           //修改岗位申请，回显数据
+           if (type!=null){
+               VariableEntity variableEntity=new VariableEntity(id,"applyReason");
+               VariableEntity variableEntity1=new VariableEntity(id,"approvedPerson");
+               VariableEntity variableEntity2=new VariableEntity(id,"position");
+               //查询申请原因
+               String applyReason= variableService.getTextByName(variableEntity);
+               //查询审批人
+               String approvedPerson=variableService.getTextByName(variableEntity1);
+               //查询申请岗位
+               String position=variableService.getTextByName(variableEntity2);
+               positionEntity.setApplyReason(applyReason);
+               positionEntity.setApprovedPerson(approvedPerson);
+               positionEntity.setPosition(position);
+           }
+       }catch (Exception e){
+           log.info("==========================查询失败！"+e
+           );
+       }
 
         return positionEntity;
     }
@@ -97,70 +95,51 @@ public class PositionController {
     public int addPositionProcess(String position, String applyReason,String approvedPerson, HttpSession session, HttpServletRequest request){
         int iden=0;
 
-        //非空判断，防止越过前端非空验证
-        if(position != null && applyReason != null && applyReason != "" && position != "" && approvedPerson != null && approvedPerson != ""){
+       try{
+           //非空判断，防止越过前端非空验证
+           if(position != null && applyReason != null && applyReason != "" && position != "" && approvedPerson != null && approvedPerson != ""){
 
-            String approvedPersonStr=approvedPerson.substring(approvedPerson.indexOf("(")+1,approvedPerson.indexOf(")"));
+               String approvedPersonStr=approvedPerson.substring(approvedPerson.indexOf("(")+1,approvedPerson.indexOf(")"));
 
-            String userId=session.getAttribute("UserId").toString();
-            //查询申请的岗位id
-            String positionId=positionService.getPositionByName(position);
-            //为用户查询岗位设置参数
-            PositionEntity positionEntity=new PositionEntity();
-            positionEntity.setUserId(userId);
-            positionEntity.setPositionId(positionId);
+               String userId=session.getAttribute("UserId").toString();
+               //查询申请的岗位id
+               String positionId=positionService.getPositionByName(position);
+               //为用户查询岗位设置参数
+               PositionEntity positionEntity=new PositionEntity();
+               positionEntity.setUserId(userId);
+               positionEntity.setPositionId(positionId);
 
-            //查询用户岗位
-            PositionEntity positionEntity1= positionService.getInfo(positionEntity);
+               //查询用户岗位
+               PositionEntity positionEntity1= positionService.getInfo(positionEntity);
 
-            //用户未拥有申请的岗位
-            if (positionEntity1==null){
-                RuntimeService runtimeService = processEngine.getRuntimeService();
-                String sn = (String) session.getAttribute("userSn");
-                Map<String,Object> map = new HashMap<String,Object>();
-                map.put("applyPerson",sn);
-                map.put("position",position);
-                map.put("applyReason",applyReason);
-                map.put("taskType","岗位新增");
-                map.put("approvedPerson",approvedPersonStr);
-                ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
-                log.info("=========================="+sn+"申请了"+position+"岗位申请！");
-                iden=2;
+               //用户未拥有申请的岗位
+               if (positionEntity1==null){
+                   RuntimeService runtimeService = processEngine.getRuntimeService();
+                   String sn = (String) session.getAttribute("userSn");
+                   Map<String,Object> map = new HashMap<String,Object>();
+                   map.put("applyPerson",sn);
+                   map.put("position",position);
+                   map.put("applyReason",applyReason);
+                   map.put("taskType","岗位新增");
+                   map.put("approvedPerson",approvedPersonStr);
+                   ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
+                   log.info("=========================="+sn+"申请了"+position+"岗位申请！");
+                   iden=2;
 
-                findTask(/*firstResult,maxResults,*/sn,request);
+                   findTask(/*firstResult,maxResults,*/sn,request);
 
-                //用户已拥有申请的岗位
-            }else{
-                iden=1;
-            }
-        }else{
-            log.info("==========================申请岗位或申请原因为空，添加失败！");
-        }
+                   //用户已拥有申请的岗位
+               }else{
+                   iden=1;
+               }
+           }else{
+               log.info("==========================申请岗位或申请原因为空，添加失败！");
+           }
+       }catch (Exception e){
+           log.info("==========================申请岗位或申请原因为空，添加失败！"+e);
+       }
 
 
-
-        //1:得到ProcessEngine对象
-       /* ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
-        //2：得到TaskService对象
-        TaskService taskService=processEngine.getTaskService();
-        List<Task> list = taskService.createTaskQuery()//创建任务查询对象
-                .taskAssignee("001")//指定个人任务查询
-                .list();
-        if (list != null && list.size() > 0) {
-            for (Task task : list) {
-                request.setAttribute("task",task);
-                log.info("==========================任务ID:" + task.getId());
-                log.info("==========================任务名称:" + task.getName());
-                log.info("==========================任务的创建时间:" + task.getCreateTime());
-                log.info("==========================任务的办理人:" + task.getAssignee());
-                log.info("==========================流程实例ID：" + task.getProcessInstanceId());
-                log.info("==========================执行对象ID:" + task.getExecutionId());
-                log.info("==========================流程定义ID:" + task.getProcessDefinitionId());
-                processEngine.getTaskService()// 与正在执行任务相关的Service
-                        .complete(task.getId());
-                log.info("==========================完成任务：任务ID：" + task.getId());
-            }
-        }*/
        return iden;
     }
     /**
@@ -401,45 +380,50 @@ public class PositionController {
     public int updatePosition(String position, String applyReason,String id,HttpSession session){
         int iden=0;
 
-        //非空判断，防止越过前端非空验证
-        if(position != null && applyReason != null && applyReason != "" && position != "" ){
+        try{
+            //非空判断，防止越过前端非空验证
+            if(position != null && applyReason != null && applyReason != "" && position != "" ){
 
-            String userId=session.getAttribute("UserId").toString();
-            //查询申请的岗位id
-            String positionId=positionService.getPositionByName(position);
-            //为用户查询岗位设置参数
-            PositionEntity positionEntity=new PositionEntity();
-            positionEntity.setUserId(userId);
-            positionEntity.setPositionId(positionId);
+                String userId=session.getAttribute("UserId").toString();
+                //查询申请的岗位id
+                String positionId=positionService.getPositionByName(position);
+                //为用户查询岗位设置参数
+                PositionEntity positionEntity=new PositionEntity();
+                positionEntity.setUserId(userId);
+                positionEntity.setPositionId(positionId);
 
-            //查询用户岗位
-            PositionEntity positionEntity1= positionService.getInfo(positionEntity);
+                //查询用户岗位
+                PositionEntity positionEntity1= positionService.getInfo(positionEntity);
 
-            //用户未拥有申请的岗位
-            if (positionEntity1==null){
-                //修改申请岗位
-                VariableEntity variableEntity=new VariableEntity();
-                variableEntity.setProcInstId(id);
-                variableEntity.setName("position");
-                variableEntity.setText(position);
-                variableService.updateTaskParam(variableEntity);
-                //修改申请原因
-                VariableEntity variableEntity1=new VariableEntity();
-                variableEntity1.setProcInstId(id);
-                variableEntity1.setName("applyReason");
-                variableEntity1.setText(applyReason);
-                variableService.updateTaskParam(variableEntity1);
+                //用户未拥有申请的岗位
+                if (positionEntity1==null){
+                    //修改申请岗位
+                    VariableEntity variableEntity=new VariableEntity();
+                    variableEntity.setProcInstId(id);
+                    variableEntity.setName("position");
+                    variableEntity.setText(position);
+                    variableService.updateTaskParam(variableEntity);
+                    //修改申请原因
+                    VariableEntity variableEntity1=new VariableEntity();
+                    variableEntity1.setProcInstId(id);
+                    variableEntity1.setName("applyReason");
+                    variableEntity1.setText(applyReason);
+                    variableService.updateTaskParam(variableEntity1);
 
-                iden=2;
-                //用户已拥有申请的岗位
+                    iden=2;
+                    //用户已拥有申请的岗位
+                }else{
+                    iden=1;
+                }
             }else{
-                iden=1;
+                log.info("==========================岗位修改失败！");
             }
-        }else{
-            log.info("==========================岗位修改失败！");
+        }catch (Exception e){
+            log.info("==========================岗位修改失败！"+e);
         }
         return iden;
     }
+
 }
 
 

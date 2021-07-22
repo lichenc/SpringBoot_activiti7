@@ -17,7 +17,8 @@
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
     <script type="text/javascript" src="../js/jquery.js"></script>
     <script type="text/javascript" src="../js/layui.js"></script>
-
+    <script type="text/javascript" src="../js/echarts.min.js"></script>
+    <script type="text/javascript" src="../js/index.js"></script>
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
@@ -76,65 +77,60 @@
                 <li class="layui-this" lay-id="11">首页</li>
             </ul>
             <!-- 内容 -->
-            <div class="layui-tab-content">
+            <div class="layui-tab-content" style="background-color: #F2F2F2 ">
                 <div class="layui-tab-item layui-show">
-                    <div id="indexTabContent"  class="layui-row layui-col-space15 tab-content-div" style="padding: 20px;background-color: #F2F2F2;overflow: auto;">
-                        <div class="layui-col-md6">
-                            <div class="layui-card">
-                                <div class="layui-card-header">欢迎使用</div>
-                                <div class="layui-card-body">
-                                    欢迎你，<span></span>
-                                    <br/>
-                                    <br/>
-                                    <p>欢迎你</p>
-                                    <br/>
-                                    <br/>
-                                    <p>欢迎你</p>
-                                    <p>欢迎你</p>
-                                    <p>欢迎你</p>
-                                    <p>欢迎你</p>
-                                    <p>欢迎你</p>
+                    <div id="indexTabContent"  class="layui-row layui-col-space15 tab-content-div" style="padding: 10px;overflow: auto;">
+                        <div class="layui-col-md6" >
+                            <div class="layui-card" style="width: 1650px;height: 150px;background-color: #F2F2F2">
+                                <div class="layui-form-item" style="padding-left: 15px;">
+                                <div class="layui-input-inline" style="background-color: white;height: 130px;width: 401px;">
+                                    <br>
+                                    <div class="layui-card-header" style="font-size: 20px;font-weight: bold;text-align: center ">总流程数</div>
+                                    <div class="layui-card-body" style="font-size: 18px;font-weight: bold;text-align: center  ">
+                                        <p style="display: inline" id="sumCount"></p>&nbsp;&nbsp;
+                                        <p style="display: inline; font-size: 15px; color: darkseagreen" id="todaySumCount"></p>
+                                    </div>
+                                </div>
+                                <div class="layui-input-inline" style="background-color: white;height: 130px;width: 402px">
+                                    <br>
+                                    <div class="layui-card-header" style="font-size: 20px;font-weight: bold;text-align: center">待审批</div>
+                                    <div class="layui-card-body" style="font-size: 18px;font-weight: bold;;text-align: center ">
+                                        <p style="display: inline" id="approvalCount"></p>&nbsp;&nbsp;
+                                        <p style="display: inline; font-size: 15px; color: darkseagreen" id="todayApprovalCount"></p>
+                                    </div>
+                                </div>
+                                <div class="layui-input-inline" style="background-color: white;height: 130px;width: 395px">
+                                    <br>
+                                    <div class="layui-card-header" style="font-size: 20px;font-weight: bold;text-align: center">待重试</div>
+                                    <div class="layui-card-body" style="font-size: 18px;font-weight: bold;text-align: center ">
+                                        <p style="display: inline" id="waitTryAgainCount"></p>&nbsp;&nbsp;
+                                        <p style="display: inline; font-size: 15px; color: darkseagreen" id="todayWaitTryAgainCount"></p>
+                                    </div>
+                                </div>
+                                        <div class="layui-input-inline" style="background-color: white;height: 130px;width: 397px">
+                                            <br>
+                                            <div class="layui-card-header" style="font-size: 20px;font-weight: bold;text-align: center">已审批</div>
+                                            <div class="layui-card-body" style="font-size: 18px;font-weight: bold;text-align: center ">
+                                               <p  style="display: inline"id="historyCount"></p>&nbsp;&nbsp;
+                                                <p style="display: inline; font-size: 15px; color: darkseagreen" id="todayHistoryCount"></p>
+                                            </div>
+                                        </div>
+                            </div>
+                            </div>
+                            <div>
+                                <div  style="background-color:white;">
+                                    <div  id="EchartOrder" style="width: 900px;height: 550px;"> </div>
+                                     <div  id="PieEchartOrder" style="width: 820px;height: 550px;position: absolute;left: 850px;top: 171px;background-color:white;"> </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="layui-col-md6">
-                            <div class="layui-card">
-                                <div class="layui-card-header">系统公告</div>
-                                <div class="layui-card-body">
-                                    <div></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md6">
-                            <div class="layui-card">
-                                <div class="layui-card-header"></div>
-                                <div class="layui-card-body">
-                                    <a target="_blank" href="https://s.click.taobao.com/zb70Vtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/q9rZYtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/2khzUtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/vLrzUtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/8PG0Vtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/L110Vtu"></a><br/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="layui-col-md12">
-                            <div class="layui-card">
-                                <div class="layui-card-header"></div>
-                                <div class="layui-card-body">
-                                    <a target="_blank" href="https://s.click.taobao.com/zb70Vtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/q9rZYtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/2khzUtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/vLrzUtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/8PG0Vtu"></a><br/>
-                                    <a target="_blank" href="https://s.click.taobao.com/L110Vtu"></a><br/>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
+
             </div>
             </div>
+
         </div>
         <!-- 底部固定区域 -->
         <div class="layui-footer" style="text-align: center">
@@ -142,8 +138,5 @@
         </div>
     </div>
 </div>
-
-<script type="text/javascript" src="../js/index.js">
-</script>
 </body>
 </html>
