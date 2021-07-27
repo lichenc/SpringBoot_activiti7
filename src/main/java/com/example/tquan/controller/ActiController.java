@@ -522,14 +522,8 @@ public class ActiController{
                 task.setExecutionId(li.getExecutionId());
                 task.setProcessInstanceId(li.getProcessInstanceId());
                 task.setApprovedPerson(audits.get(0).getAudit());
-                task.setOrgName(variables.get("orgName").toString());
-                task.setApplyReason(variables.get("applyReason").toString());
-                task.setRole(variables.get("role").toString());
                 task.setTypes(variables.get("taskType").toString());
-                task.setAccount(variables.get("account").toString());
-                task.setActType(variables.get("actType").toString());
                 task.setApplyPerson(variables.get("applyPerson").toString());
-                task.setApp(variables.get("app").toString());
                 lists.add(task);
                 System.out.println(lists);
             }
