@@ -251,32 +251,29 @@ public class AccountController {
     public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpSession session,String approvedPerson){
             if (approvedPerson!=null &&approvedPerson!=""){
             taskEntity.setApprovedPerson(approvedPerson);
-        }
-        taskEntity.setRev(2);
+            }
         String sn=session.getAttribute("userSn").toString();
+        taskEntity.setApplyPerson(sn);
        try {
-           List<TaskEntity> taskEntities= taskService.getTaskListByProperty(taskEntity);
+           List<TaskEntity> taskEntities= taskService.getWaitTryAgainTask(taskEntity);
            List<TaskEntity> taskEntities1=new ArrayList<>();
            for(TaskEntity taskEntity2:taskEntities) {
-
                Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity2.getTaskType());
-               if (variables.get("applyPerson").equals(sn) || variables.get("applyPerson") == sn) {
                    taskEntity2.setApplyPerson(variables.get("applyPerson").toString());
                    taskEntity2.setApprovedPerson(variables.get("approvedPerson").toString());
                    taskEntity2.setTaskType(variables.get("taskType").toString());
                    taskEntity2.setApplyReason(variables.get("applyReason").toString());
-                   VariableEntity variableEntity = new VariableEntity();
-                   variableEntity.setName("repulseReason");
+                   //判断角色原因是否为空
+                   VariableEntity variableEntity=new VariableEntity();
                    variableEntity.setProcInstId(taskEntity2.getId());
-                   String text = variableService.getTextByName(variableEntity);
-                   //查询是否被打回过
-                   if (text != null) {
-                       taskEntity2.setRepulseReason(text);
+                   variableEntity.setName("repulseReason");
+                   String text= variableService.getTextByName(variableEntity);
+                   if (text!=null){
+                       taskEntity2.setRepulseReason(variables.get("repulseReason").toString());
                    } else {
                        taskEntity2.setRepulseReason("");
                    }
                    taskEntities1.add(taskEntity2);
-               }
                taskEntity.setTaskEntities(taskEntities1);
            }
        }catch (Exception e){

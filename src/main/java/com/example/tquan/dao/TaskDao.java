@@ -19,6 +19,13 @@ public interface TaskDao {
     List<TaskEntity> getTaskListByProperty(TaskEntity taskEntity);
 
     /**
+     * 获取待重试流程
+     * @param taskEntity
+     * @return
+     */
+    List<TaskEntity> getWaitTryAgainTask(TaskEntity taskEntity);
+
+    /**
      * 修改任务的状态
      * @param taskEntity
      * @return

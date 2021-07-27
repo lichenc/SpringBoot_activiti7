@@ -89,4 +89,13 @@ public class TasksService {
     public int updateProcdefStatus(ProcdefEntity procdefEntity){
         return taskDao.updateProcdefStatus(procdefEntity);
     }
+
+    /**
+     * 获取待重试流程
+     * @param taskEntity
+     * @return
+     */
+    public List<TaskEntity> getWaitTryAgainTask(TaskEntity taskEntity){
+        return taskDao.getWaitTryAgainTask(taskEntity);
+    }
 }

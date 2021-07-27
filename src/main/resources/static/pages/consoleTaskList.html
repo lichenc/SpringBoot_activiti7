@@ -87,9 +87,40 @@
         </div>
     </div>
 </div>
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
+    <div class="layui-form" lay-filter="" id="form1">
+        <img src="" id="picture">
+    </div>
+</div>
 <script type="text/javascript">
     $(document).ready(function(){
         selectTaskList();
+
+        $("body").on("click", "#history", function (e) {
+            var proId=  $(this).val();
+            layui.use('form', function () {
+                var form = layui.form;
+                layui.use('layer', function () {
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        title: "查看流程图",   //标题
+                        area: ['800px', '390px'],    //弹窗大小
+                        shadeClose: false,      //禁止点击空白关闭
+                        scrollbar: false,      //禁用滚动条
+                        move: false,       //禁用移动
+                        scrolling: 'no',
+                        resize: false,
+                        closeBtn: 1,
+                        content: $('#procdefPicture'),
+                        end: function () {
+                            $('#procdefPicture').hide();
+                        }
+                    });
+                });
+
+            });
+            $("#picture").attr("src","../getProcefPicture?taskId="+proId+"");
     });
     function selectTaskList(){
         //渲染分页
@@ -133,7 +164,7 @@
                                             + "<td><input type='text' value='" + item.applyReason + "' id='applyReasonShow'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
                                             + "<td><input type='text' value='"+item.repulseReason+"' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
                                             + " <td>"
-                                            + "<button value='" + item.event + "' class='layui-btn' id='history'>历史</button>"
+                                            + "<button value='" + item.event + "' class='layui-btn' id='history'>查看进度</button>"
                                             + "</td>"
                                             + "</tr>";
                                         arr.push(taskStr);

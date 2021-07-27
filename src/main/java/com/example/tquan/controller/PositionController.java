@@ -41,9 +41,10 @@ public class PositionController {
     private VariableService variableService;
     @Autowired
     private ApproverService approverService;
+    ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
 
 
-    ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+
 
     private Log log = LogFactory.getLog(getClass());
 
@@ -137,6 +138,7 @@ public class PositionController {
            }
        }catch (Exception e){
            log.info("==========================申请岗位或申请原因为空，添加失败！"+e);
+           e.printStackTrace();
        }
 
 
@@ -147,7 +149,7 @@ public class PositionController {
      */
     public HttpServletRequest findTask(/*int firstResult,int maxResults,*/ String name,HttpServletRequest request) {
         //1:得到ProcessEngine对象
-        ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
+
         //2：得到TaskService对象
         TaskService taskService=processEngine.getTaskService();
         List<Task> list = taskService.createTaskQuery()//创建任务查询对象
@@ -324,51 +326,57 @@ public class PositionController {
      */
     @RequestMapping("/getPositionParamList")
     public List<VariableEntity> getPositionParamList(String startTime,String endTime,String approvedPerson,HttpSession session){
-        String sn=session.getAttribute("userSn").toString();
-
-        VariableEntity variableEntity4=new VariableEntity();
-        variableEntity4.setProcDefId("positionApply");
-        //按日期区间查找
-        if(startTime !=null && startTime != ""){
-            variableEntity4.setStartTime(startTime);
-        }
-        if(endTime!=null && endTime != ""){
-            variableEntity4.setEndTime(endTime);
-        }
-        if (approvedPerson!= null &&approvedPerson!=""){
-            variableEntity4.setApprovedPerson(approvedPerson);
-        }
-
-        //获取岗位流程的实例ID
-        List<VariableEntity> variableEntities=variableService.getProcessParamByName(variableEntity4);
         List<VariableEntity> variableEntityList=new ArrayList<>();
+       try{
+           String sn=session.getAttribute("userSn").toString();
+           VariableEntity variableEntity4=new VariableEntity();
+           variableEntity4.setProcDefId("positionApply");
+           //按日期区间查找
+           if(startTime !=null && startTime != ""){
+               variableEntity4.setStartTime(startTime);
+           }
+           if(endTime!=null && endTime != ""){
+               variableEntity4.setEndTime(endTime);
+           }
+           if (approvedPerson!= null &&approvedPerson!=""){
+               variableEntity4.setApprovedPerson(approvedPerson);
+           }
 
-        //循环获取申请岗位参数
-        for(VariableEntity variableEntity1:variableEntities){
+           //获取岗位流程的实例ID
+           List<VariableEntity> variableEntities=variableService.getProcessParamByName(variableEntity4);
 
-            Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
-            if (variables.get("applyPerson")==sn||variables.get("applyPerson").equals(sn)){
-            for (Map.Entry<String, Object> entry : variables.entrySet()) {
 
-                variableEntity1.setApplyPerson(variables.get("applyPerson").toString());
-                variableEntity1.setApplyReason(variables.get("applyReason").toString());
-                variableEntity1.setTaskType(variables.get("taskType").toString());
-                variableEntity1.setApprovedPerson(variables.get("approvedPerson").toString());
-                variableEntity1.setPosition(variables.get("position").toString());
-                VariableEntity variableEntity=new VariableEntity();
-                variableEntity.setName("repulseReason");
-                String text=variableService.getTextByName(variableEntity);
-                if (text!=null){
-                    variableEntity1.setRepulseReason(variables.get("repulseReason").toString());
-                }else {
-                    variableEntity1.setRepulseReason("");
-                }
-            }
-                //最终list集合
-                variableEntityList.add(variableEntity1);
-            }
+           //循环获取申请岗位参数
+           for(VariableEntity variableEntity1:variableEntities){
 
-        }
+               Map<String, Object> variables = processEngine.getRuntimeService().getVariables(variableEntity1.getProcInstId());
+               if (variables.get("applyPerson")==sn||variables.get("applyPerson").equals(sn)){
+                   for (Map.Entry<String, Object> entry : variables.entrySet()) {
+
+                       variableEntity1.setApplyPerson(variables.get("applyPerson").toString());
+                       variableEntity1.setApplyReason(variables.get("applyReason").toString());
+                       variableEntity1.setTaskType(variables.get("taskType").toString());
+                       variableEntity1.setApprovedPerson(variables.get("approvedPerson").toString());
+                       variableEntity1.setPosition(variables.get("position").toString());
+                       //判断角色原因是否为空
+                       VariableEntity variableEntity=new VariableEntity();
+                       variableEntity.setProcInstId(variableEntity1.getProcInstId());
+                        variableEntity.setName("repulseReason");
+                       String text= variableService.getTextByName(variableEntity);
+                       if (text!=null){
+                           variableEntity1.setRepulseReason(variables.get("repulseReason").toString());
+                       }else {
+                           variableEntity1.setRepulseReason("");
+                       }
+                   }
+                   //最终list集合
+                   variableEntityList.add(variableEntity1);
+               }
+
+           }
+       }catch(Exception e){
+            e.printStackTrace();
+       }
         return variableEntityList;
     }
 

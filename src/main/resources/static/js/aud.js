@@ -1,10 +1,4 @@
 
-
-
-
-
-
-
 /*
 * 帐号申请表单
 * */
@@ -41,6 +35,13 @@ $(document).ready(function() {
                     id: value
                 },
                 success: function (data) {
+                    var but ="<div class='layui-form-item div'>"
+                        +"<div class='layui-input-block layui-form' lay-filter='test2'>"
+                        +"<button lay-filter='setmypass'   onclick='unAuditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >不同意 </button>"
+                        +"<button lay-filter='setmypass'   onclick='auditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >同意 </button>"
+                        +"</div> </div>";
+                    $('#but').append(but);
+
                     var userName = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>申请者： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                         + " <input id='userName' type='text' disabled   lay-vertype='tips' required class='layui-input' value='" + data[0].taskApplyPerson + "'  ></div></div>"
@@ -133,12 +134,7 @@ $(document).ready(function() {
                         approvalOpinion =approvalOpinion + "</p></div></div>"
                         $('#approvalOpinions').append(approvalOpinion);
                     }
-                    var but ="<div class='layui-form-item div'>"
-                        +"<div class='layui-input-block layui-form' lay-filter='test2'>"
-                        +"<button lay-filter='setmypass'   onclick='unAuditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >不同意 </button>"
-                        +"<button lay-filter='setmypass'   onclick='auditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >同意 </button>"
-                        +"</div> </div>"
-                    $('#but').append(but);
+
 
                     form.render('select', 'test2');
                 }
@@ -171,9 +167,13 @@ $(document).ready(function() {
                             thisData =dat.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                             layui.each(thisData, function(index, item){
                                 var positionStr= "<tr>"
-                                    +"<td>"+item.id+"</td>"
-                                    +"<td>帐号待审批</td>"
-                                    +"<td>"+item.applyPerson+"</td>"
+                                    +"<td>"+item.id+"</td>";
+                                if(item.types=='岗位新增'){
+                                    positionStr=positionStr +"<td>岗位待审批</td>";
+                                }else{
+                                    positionStr=positionStr +"<td>账号待审批</td>";
+                                }
+                                positionStr=positionStr  +"<td>"+item.applyPerson+"</td>"
                                     +"<td>"+item.approvedPerson+"</td>"
                                     +"<td>"+item.types+"</td><td>"
                                     + "<button value='" + item.processInstanceId + "' class='layui-btn' id='staAudit'>审核任务</button>"
@@ -341,7 +341,7 @@ function unAuditAccount(id) {
         layer.alert("请填写不同意的理由!")
         return false;
     }
-    if ((approvalOpinion != null || approvalOpinion != "")) {
+    if ((approvalOpinion != null && approvalOpinion != "")) {
         $.ajax({
             url: "/repulse",
             type: "POST",
@@ -407,9 +407,14 @@ function  sel() {
                             thisData = dat.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
                             layui.each(thisData, function (index, item) {
                                 var positionStr = "<tr>"
-                                    + "<td>" + item.id + "</td>"
-                                    + "<td>帐号待审批</td>"
-                                    + "<td>" + item.applyPerson + "</td>"
+                                    + "<td>" + item.id + "</td>";
+                                if(item.types=="岗位新增"){
+                                    positionStr=positionStr + "<td>岗位待审批</td>";
+                                }else{
+                                    positionStr=positionStr + "<td>账号待审批</td>";
+                                }
+
+                                positionStr=positionStr+ "<td>" + item.applyPerson + "</td>"
                                     + "<td>" + item.approvedPerson + "</td>"
                                     + "<td>" + item.types + "</td><td>"
                                     + "<button value='" + item.processInstanceId + "' class='layui-btn' id='staAudit'>审核任务</button>"

@@ -4,26 +4,38 @@
     <!--根据参数查询用户-->
     <select id="getUserByProperty" parameterType="com.example.tquan.entity.UserEntity"
             resultType="com.example.tquan.entity.UserEntity">
-        select * from im_user
+
+        SELECT
+        iu.ID as id,iu.SN as sn,iu.NAME as name,iu.SEX as sex,io.NAME AS orgName,
+        iut.REMARK as userTypeId,iu.TELEPHONE as telephone,iu.EMAIL as email,iu.CREATE_TIME as createTime,iu.STATUS as status,iu.OPT_USER as optUser
+        FROM
+        im_user iu
+        LEFT JOIN im_org_user iou ON iu.ID = iou.USER_ID
+        LEFT JOIN im_org io ON io.ID = iou.ORG_ID
+        left join im_user_type iut on iut.ID=iu.USER_TYPE_ID
         <where>
             <if test="id != null and id != ''">
-                and ID=#{id}
+                and iu.ID=#{id}
             </if>
             <if test="sn != null and sn != ''">
-                and SN=#{sn}
+                and iu.SN=#{sn}
             </if>
             <if test="name != null and name!=''">
-                and NAME=#{id}
+                and iu.NAME=#{id}
             </if>
             <if test="userTypeId != null and userTypeId != ''">
-                and USER_TYPE_ID=#{userTypeId}
+                and iu.USER_TYPE_ID=#{userTypeId}
             </if>
             <if test="telephone != null and telephone != ''">
-                and TELEPHONE=#{telephone}
+                and iu.TELEPHONE=#{telephone}
             </if>
             <if test="status != null and status != ''">
-                and STATUS=#{status}
+                and iu.STATUS=#{status}
             </if>
         </where>
     </select>
+    <select id="findAll" parameterType="com.example.tquan.entity.FieldEntity" resultType="java.lang.String">
+        select field.name,field.remark from sys_field field
+    </select>
+
 </mapper>

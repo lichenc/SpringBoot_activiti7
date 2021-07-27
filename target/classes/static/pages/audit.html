@@ -1,0 +1,280 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>申请单</title>
+
+    <!--<link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
+    <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/aud.js"></script>
+</head>
+
+<body>
+<style>
+    .layui-layer{
+        margin: -24.5% 0;
+    }
+    .element.style {
+        width: 410px;
+    }
+    .layui-form-label{
+        width: 88px;
+    }
+    .layui-laypage select{
+        width: 65px;
+    }
+</style>
+
+<div class="cBody">
+    <div class="console">
+        <form class="layui-form" >
+            <div class="layui-form-item">
+
+                <div class="au layui-input-inline">
+                    <span class="span">事件类型</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="name"   placeholder="事件类型" autocomplete="off" class="layui-input">
+                </div>
+                <div class="au layui-input-inline">
+                    <span class="span">任务类型</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="name"   placeholder="任务类型" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
+            </div>
+        </form>
+
+    </div>
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>事件类型标识</th>
+            <th>事件类型</th>
+            <th>申请人</th>
+            <th>审批人</th>
+            <th>任务类型</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="auditPositionLists">
+        <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
+        </tbody>
+    </table>
+    <div id="auditPositionPages" style="text-align: center"></div>
+
+</div>
+
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAudit">
+    <div class="layui-form" lay-filter="" id="form1">
+        <div id="userNames">
+
+        </div>
+        <div id="orgNames">
+
+        </div>
+
+        <div class="taskTapys" id="taskTapys2">
+
+        </div>
+        <div class="types"  id="types2">
+
+        </div>
+        <div class="field" id="field2">
+
+        </div>
+        <div class="aud" id="aud2">
+
+        </div>
+        <div id="roles">
+
+        </div>
+        <div id="applyReasonss">
+
+        </div>
+
+        <div id="approvalOpinions">
+
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                批注：
+            </label>
+            <div class="layui-input-inline">
+                <textarea  id="approvalOpinion" required autocomplete="off" class="layui-textarea"
+                           placeholder="批注" name="description"></textarea>
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div id="but" >
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--查询表单详细信息-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAudit3">
+    <div class="layui-form" lay-filter="" id="form3">
+        <div id="userNames3">
+
+        </div>
+        <div id="orgNames3">
+
+        </div>
+
+        <div class="taskTapys3" id="taskTapys3">
+
+        </div>
+        <div class="types3"  id="types3">
+
+        </div>
+        <div class="field3" id="field3">
+
+        </div>
+        <div class="aud3" id="aud3">
+
+        </div>
+        <div id="roles3">
+
+        </div>
+        <div id="applyReasonss3">
+
+        </div>
+
+        <div id="approvalOpinions3">
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+<div class="form_1">
+    <form action="/activi" method="post">
+        <div class="input_1"><div class="login_logo">未审核任务</div><div class="close">X</div></div>
+        <hr>
+        <div class="input_1"><span>事件类型标识</span><input type="text" required name="name" placeholder="&nbsp;申请者"></div>
+        <div class="input_1"><span>事件类型</span><input type="type" required name="type" placeholder="&nbsp;任务类型"></div>
+        <div class="input_1"><span>申请人</span></div>
+
+        <div class="input_1"><span>任务类型</span>
+            <select th:each="audits:${audits}" required name="proposer">
+                <option th:text="${audits.audit}"></option>
+            </select>
+        </div>
+        <div class="input_1" id="submit">
+            <input class="close_1"   value="不同意">&nbsp;&nbsp;&nbsp;&nbsp;<input class="submit_1" οnclick="addOrder()" type="submit" value="同&nbsp;意"></div>
+    </form>
+</div>
+<!--查看账号-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="repulseReasonDiv">
+    <div class="layui-form-item">
+        <label class="layui-form-label" style="font-size:12px;">
+            打回原因：
+        </label>
+        <div class="layui-input-inline">
+                <textarea  id="repulseReason"  autocomplete="off" class="layui-textarea"
+                           placeholder="打回原因" maxlength="50" style="width: 300px" ></textarea>
+        </div>
+    </div>
+    <div height="100px;"></div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button lay-filter="setmypass" href="" class="layui-btn" onclick="repulse();">确定
+            </button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+      /*  function test(){
+                var f = document.getElementsByTagName("form")[0];
+                f.action=f.action+"id="+document.getElementById("input").value;
+                alert(f.action);
+        }*/
+var taskId;
+        /**
+         * 打回任务
+         */
+        $("body").on("click", "#repulse", function (e) {
+
+             taskId = $(this).val();
+            layui.use('layer', function () {
+                var layer = layui.layer;
+                layer.open({
+                    type: 1,
+                    title: "打回",   //标题
+                    area: ['450px', '260px'],    //弹窗大小
+                    shadeClose: false,      //禁止点击空白关闭
+                    scrollbar: false,      //禁用滚动条
+                    move: false,       //禁用移动
+                    scrolling: 'no',
+                    resize: false,
+                    closeBtn: 1,
+                    content: $('#repulseReasonDiv'),
+                    end: function () {
+                        $('#repulseReasonDiv').hide();
+                    }
+                });
+            });
+        });
+
+        /**
+         * 打回操作
+         */
+        function repulse() {
+            var repulseReason=document.getElementById("repulseReason").value;
+            if (repulseReason==""||repulseReason==null){
+                alert("打回原因不能为空!");
+            }else{
+                $.ajax({
+                    url: "/repulse",
+                    type: "POST",
+                    dataType: "json",
+                    data: {
+                        id: taskId,
+                        repulseReason: repulseReason
+                    },
+                    success: function (data) {
+                        if (data[0] == 1) {
+                            alert("打回成功！");
+                            layer.close(layer.index - 1);
+                            location.reload();
+                        } else {
+                            alert("打回失败！");
+                        }
+                    }, error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.status);
+                    }
+                });
+            }
+        }
+
+        /**
+         * 重置操作
+         */
+        function reset() {
+            document.getElementById("taskType").value=null;
+        }
+</script>
+</html>

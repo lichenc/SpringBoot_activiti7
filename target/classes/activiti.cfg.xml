@@ -2,4 +2,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.23.1:3306/iam" />
+        <property name="jdbcDriver" value="com.mysql.cj.jdbc.Driver" />
+        <property name="jdbcUsername" value="root" />
+        <property name="jdbcPassword" value="root" />
+        <property name="activityFontName" value="宋体"/>
+        <property name="labelFontName" value="宋体"/>
+        <!-- 对应 DB_SCHEMA_UPDATE_TRUE 如何表不存在，自动创建和更新表 -->
+        <property name="databaseSchemaUpdate" value="true" />
+    </bean>
+
 </beans>

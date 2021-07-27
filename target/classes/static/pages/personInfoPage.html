@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>个人信息</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/personInfoPage.js"></script>
+
+
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+    hr {/*透明渐变水平线*/
+        width:80%;
+        margin:0 auto;
+        border: 0;
+        height: 2px;
+        background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    }
+</style>
+
+<body>
+<div class="layui-row layui-col-space15">
+    <!-- 操作表单 -->
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">唯一标识</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="id"
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="sn"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="sex"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">组织机构</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="orgName"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">姓名</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="name"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">身份证号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="idCard"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">用户类型</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="userTypeId"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">联系电话</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="telephone"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">邮件</label>
+                        <div class="layui-input-inline">
+                            <input type="text" autocomplete="off" id="email"
+                                   class="layui-input" style="width: 300px">
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="createTime"
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="status"
+                                   class="layui-input" style="width: 300px"/>
+                        </div>
+                    </div>
+                    <div class="layui-inline" style="padding-left: 250px">
+                        <label class="layui-form-label">操作管理员</label>
+                        <div class="layui-input-inline">
+                            <input type="text"  autocomplete="off" id="optUser"
+                                   class="layui-input" style="width: 300px" readonly="readonly"/>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div style="text-align: center" ><a style="color: #999999;font-size: 20px" onclick="changeShow();"  id="span">查看↓↓↓↓</a></div>
+                <br>
+                <div class="layui-form-item" id="block" style="display: none">
+                </div>
+                <br>
+
+                <!--账号列表-->
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">权限</li>
+                        <li>平台角色</li>
+                        <li>岗位</li>
+                        <li>用户组</li>
+                    </ul>
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <table class="layui-table">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>系统标识</th>
+                                    <th>系统名称</th>
+                                    <th>账号名称</th>
+                                    <th>状态</th>
+                                    <th>账号类型</th>
+                                    <th>角色标识</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="accountList">
+                                </tbody>
+                            </table>
+                            <div id="accountPage" style="text-align: center"></div>
+                        </div>
+                        <div class="layui-tab-item">
+
+                        </div>
+                        <div class="layui-tab-item">
+                            <table class="layui-table">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>岗位标识</th>
+                                    <th>岗位名称</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="positionList">
+                                </tbody>
+                            </table>
+                            <div id="positionPage" style="text-align: center"></div>
+                        </div>
+                        <div class="layui-tab-item">
+                            <table class="layui-table">
+                                <colgroup>
+                                    <col width="150">
+                                    <col width="200">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>用户组标识</th>
+                                    <th>用户组名称</th>
+                                    <th>备注</th>
+                                    <th>操作</th>
+                                </tr>
+                                </thead>
+                                <tbody id="groupList">
+                                </tbody>
+                            </table>
+                            <div id="groupPage" style="text-align: center"></div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!--重置密码弹窗-->
+    <div style="display: none;margin-top: 20px;overflow:hidden;" id="updatePassword">
+        <div class="layui-form" lay-filter="" id="form1">
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="font-size:12px;">
+                    新密码：
+                </label>
+                <div class="layui-input-inline">
+                    <input id="password" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                           type="password">
+                </div>
+                <div class="layui-form-mid layui-word-aux"></div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label" style="font-size:12px;">
+                    确认密码：
+                </label>
+                <div class="layui-input-inline">
+                    <input id="repassword" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                           type="password">
+                </div>
+            </div>
+            <div height="100px;"></div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button lay-submit="" lay-filter="setmypass" href="" class="layui-btn" onclick="updatePassword();">确定
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--查看账号-->
+    <div style="display: none;margin-top: 20px;overflow:hidden;" id="selectAccount">
+        <form class="layui-form">
+            <div class="layui-form" lay-filter="" id="form2">
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="font-size:12px;">
+                        账号名称：
+                    </label>
+                    <div class="layui-input-inline">
+                        <input id="accountName" lay-verify="required" lay-vertype="tips" autocomplete="off"
+                               class="layui-input"
+                               type="text">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="font-size:12px;">
+                        状态：
+                    </label>
+                    <div class="layui-input-inline">
+                        <input type="radio" name="accountStatus" id="accountStatus1" value="1"
+                               title="启用" checked="checked">
+                        <input type="radio" name="accountStatus" id="accountStatus2" value="2"
+                               title="禁用">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label" style="font-size:12px;">
+                        账号类型：
+                    </label>
+                    <div class="layui-input-inline">
+                        <input id="accountType" lay-verify="required" lay-vertype="tips" autocomplete="off"
+                               class="layui-input"
+                               type="text">
+                    </div>
+                </div>
+                <div height="100px;"></div>
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="../js/index.js"></script>
+</body>
+
+
+</html>

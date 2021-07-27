@@ -123,6 +123,7 @@ public class ProdefController {
            BpmnAutoLayout bpmnAutoLayout = new BpmnAutoLayout(bpmnModel);
            bpmnAutoLayout.setTaskHeight(90);
            bpmnAutoLayout.setTaskWidth(200);
+
            bpmnAutoLayout.execute();
 
            imageStream1= processDiagramGenerator.generateDiagram(bpmnModel, "png", executedActivityIdList,new ArrayList<>(), processEngine.getProcessEngineConfiguration().getActivityFontName(), processEngine.getProcessEngineConfiguration().getLabelFontName(),"宋体",null,1.0);

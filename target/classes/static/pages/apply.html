@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>申请单</title>
+
+    <!--<link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
+    <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/app.js"></script>
+</head>
+<style>
+    .layui-layer{
+        margin: -24.5% 0;
+    }
+    .element.style {
+        width: 410px;
+    }
+    .layui-form-label{
+        width: 88px;
+    }
+    #form2{
+        margin: 0 10%;
+    }
+    .layui-btn {
+        padding: 0 3px;
+        width: 70px;
+    }
+    .layui-laypage select{
+        width: 65px;
+    }
+    .layui-tab-content {
+        padding: 0.6% 0.6% 49% 0.6%;
+    }
+</style>
+<script>
+
+</script>
+<body>
+<div class="cBody">
+    <div class="console">
+            <div class="layui-form-item">
+                <div class="au layui-input-inline">
+                    <span class="span">申请时间</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-input-inline">
+                    <input type="date" name="endTime" id="endTime"   placeholder="结束时间" autocomplete="off" class="layui-input">
+                </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <!-- <div class="au layui-input-inline">
+                     <span class="span">审批人</span>
+                 </div>
+                 <div class="layui-input-inline">
+                     <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
+                 </div>-->
+                <div class="layui-input-inline">
+                    <button class="layui-btn"  onclick="getPositionLists()">查询&nbsp;</button>
+                    <button class="layui-btn"   onclick="reset()">重置&nbsp;</button>
+                </div>
+            </div>
+
+    </div>
+    <button type="button" class="layui-btn" onclick="accountApply();">账号申请</button>
+    <!--事件列表-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table" id="table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                    <col width="250px">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>事件标识</th>
+                    <th>申请者</th>
+                    <th>申请时间</th>
+                    <th>系统名</th>
+                    <th>帐号登陆名</th>
+                    <th>任务类型</th>
+                    <th>审批者</th>
+                    <th>任务状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody class="tbody" id="positionLists">
+                <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
+                </tbody>
+            </table>
+            <div id="positionPages" style="text-align: center">
+
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountApply">
+    <div class="layui-form" lay-filter="" id="form">
+        <div class="layui-form-item">
+        <label class="layui-form-label" style="font-size:12px;">
+            申请者：
+        </label>
+        <div class="layui-input-inline">
+            <input id="userName" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
+                   type="text" th:value="${session.userName}" disabled required    readonly="readonly">
+        </div>
+        <div class="layui-form-mid layui-word-aux"></div>
+    </div>
+       <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                用户所属组织：
+            </label>
+            <div class="layui-input-inline">
+                <input type='text' id='orgId' style='display:none' class='' value='' />
+                <input id="orgName" onfocus="org();" lay-verify="required" lay-vertype="tips"  class="layui-input"
+                       type="text"  th:value="${{userStr.orgName}}"  required    >
+            </div>
+            <div class="layui-form-mid layui-word-aux"></div>
+        </div>
+
+        <div class="taskTapys" id="taskTapys">
+
+        </div>
+        <div class="types"  id="types">
+
+        </div>
+        <div class="field" id="field">
+
+        </div>
+        <div class="aud" id="aud">
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                审批角色：
+            </label>
+            <div class="layui-input-inline">
+                <select id="role" lay-verify="required" name="role"  required  class="select">
+                    <option></option>
+                    <option >审批角色</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请理由：
+            </label>
+            <div class="layui-input-inline">
+                <textarea  id="applyReason" required autocomplete="off" class="layui-textarea"
+                           placeholder="申请理由" name="description"></textarea>
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button lay-filter="setmypass"  href="" onclick="addAccount();" class="layui-btn" >确定
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAgainApply">
+    <div class="layui-form" lay-filter="" id="form1">
+        <div id="userNames">
+
+        </div>
+        <div id="orgNames">
+
+        </div>
+
+        <div class="taskTapys" id="taskTapys2">
+
+        </div>
+        <div class="types"  id="types2">
+
+        </div>
+        <div class="field" id="field2">
+
+        </div>
+        <div class="aud" id="aud2">
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                审批角色：
+            </label>
+            <div class="layui-input-inline">
+                <select id="role" lay-verify="required" name="role"  required  class="select">
+                    <option >审批角色</option>
+                </select>
+            </div>
+        </div>
+        <div id="approvalOpinions">
+
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                申请理由：
+            </label>
+            <div class="layui-input-inline">
+                <textarea  id="applyReasons" required autocomplete="off" class="layui-textarea"
+                           placeholder="申请理由"  name="description" > </textarea>
+            </div>
+        </div>
+        <div height="100px;"></div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button lay-filter="setmypass"  href="" onclick="againAddAccount();" class="layui-btn" >确定
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--查询表单详细信息-->
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="accountAudit3">
+    <div class="layui-form" lay-filter="" id="form3">
+        <div id="userNames3">
+
+        </div>
+        <div id="orgNames3">
+
+        </div>
+
+        <div class="taskTapys3" id="taskTapys3">
+
+        </div>
+        <div class="types3"  id="types3">
+
+        </div>
+        <div class="field3" id="field3">
+
+        </div>
+        <div class="aud3" id="aud3">
+
+        </div>
+        <div id="roles3">
+
+        </div>
+        <div id="applyReasonss3">
+
+        </div>
+
+        <div id="approvalOpinions3">
+
+        </div>
+
+    </div>
+</div>
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="orgTree">
+    <div class="layui-form" lay-filter="" id="form2">
+        <div id="test13" class="demo-tree-more"></div>
+    </div>
+</div>
+</body>
+
+</html>

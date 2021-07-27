@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.ImAppDao">
+    <!-- 查询全部业务系统-->
+    <select id="findAll" resultType="com.example.tquan.entity.ImApp">
+        select *
+        from im_app
+    </select>
+
+    <select id="findApply" resultType="com.example.tquan.entity.ImApp">
+        select app.id
+        from im_app app
+        where app.NAME = #{nameApp}
+
+    </select>
+    <!-- 当前用户有账号禁用的应用-->
+    <select id="actAppEn" resultType="com.example.tquan.entity.ImApp">
+        select app.name from im_account act left join im_app app on act.app_id=app.id
+        where act.user_id=#{usId} and act.status=2 group by name;
+    </select>
+    <!-- 当前用户有账号的应用-->
+    <select id="actAppUp" resultType="com.example.tquan.entity.ImApp">
+        select app.name from im_account act left join im_app app on act.app_id=app.id
+        where act.user_id=#{usId} and act.status=1 group by name;
+    </select>
+
+</mapper>

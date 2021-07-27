@@ -1,11 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.tquan.dao.AccountDao">
-    <!-- 根据主键查询-->
-    <select id="getById" resultType="com.example.tquan.entity.AccountEntity" parameterType="java.lang.Integer">
-        select *
-        from im_account
-        where id = #{id}
+    <!-- 根据用户ID查询-->
+    <select id="getByUserId" resultType="com.example.tquan.entity.AccountEntity"
+            parameterType="com.example.tquan.entity.AccountEntity">
+        SELECT
+        ia.ID,
+        ia.APP_ID,
+        ia.LOGIN_NAME,
+        ia.`STATUS`,
+        ia.ACCT_TYPE,
+        iap.`NAME` as appName
+        FROM
+        im_account ia
+        LEFT JOIN im_app iap ON ia.APP_ID = iap.ID
+        <where>
+            <if test="userId !=null and userId != '' ">
+                and ia.USER_ID = #{userId}
+            </if>
+            <if test="id !=null and id !='' ">
+                and ia.id=#{id}
+            </if>
+        </where>
+
+
     </select>
     <!--新增用户 -->
     <insert id="addUser" parameterType="com.example.tquan.entity.AccountEntity">
@@ -14,6 +32,41 @@
     <!--用户登录 -->
     <select id="findUserByName" parameterType="java.lang.String"
             resultType="com.example.tquan.entity.AccountEntity">
-        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName}
+        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1 and APP_ID=100000065
     </select>
+    <!--管理员登录-->
+    <select id="adminLogin" parameterType="java.lang.String" resultType="com.example.tquan.entity.AccountEntity">
+        SELECT
+	        LOGIN_NAME,
+	        LOGIN_PWD
+        FROM
+	        sys_acct
+        WHERE
+        	`STATUS` = 1
+	        AND LOGIN_NAME = #{name}
+    </select>
+    <!--根据账号ID修改账号-->
+    <update id="updateAccountById" parameterType="com.example.tquan.entity.AccountEntity">
+        update im_account
+        <set>
+            <if test="loginPwd != null and loginPwd != '' ">
+                LOGIN_PWD=#{loginPwd},
+            </if>
+            <if test="loginName != null and loginName !='' ">
+                LOGIN_NAME=#{loginName},
+            </if>
+            <if test="status !=null and status != '' ">
+                STATUS=#{status}
+            </if>
+        </set>
+        <where>
+            ID=#{id}
+        </where>
+    </update>
+
+
+
+
+
+
 </mapper>

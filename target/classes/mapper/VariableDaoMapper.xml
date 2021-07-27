@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.VariableDao">
+    <!--根据流程名获取流程的参数-->
+    <select id="getProcessParamByName" parameterType="com.example.tquan.entity.VariableEntity" resultType="com.example.tquan.entity.VariableEntity">
+       SELECT DISTINCT
+	        var.PROC_INST_ID_ AS procInstId,
+	        task.CREATE_TIME_ as applyCreateTime,
+            task.ID_ as id,
+            task.NAME_ as processName
+        FROM
+	        act_ru_task task
+	    LEFT JOIN act_ru_variable var ON var.PROC_INST_ID_ = task.PROC_INST_ID_
+	    <where>
+            <if test="startTime != null and startTime != ''">
+                <![CDATA[   DATE_FORMAT(task.CREATE_TIME_, '%Y-%m-%d') >=  DATE_FORMAT(#{startTime}, '%Y-%m-%d')   ]]>
+            </if>
+            <if test="endTime != null and endTime != ''">
+               and  <![CDATA[   DATE_FORMAT(task.CREATE_TIME_, '%Y-%m-%d') <=  DATE_FORMAT(#{endTime}, '%Y-%m-%d')   ]]>
+            </if>
+            <if test="approvedPerson!=null and approvedPerson!=''">
+                and   task.ASSIGNEE_ =#{approvedPerson}
+            </if>
+            and  task.PROC_DEF_ID_ like  CONCAT('%', #{procDefId}, '%')  and var.PROC_INST_ID_ is not null order by task.CREATE_TIME_ desc
+        </where>
+
+    </select>
+    <!--根据name获取text内容-->
+    <select id="getTextByName" parameterType="com.example.tquan.entity.VariableEntity" resultType="java.lang.String">
+        SELECT
+	        TEXT_  as text
+        FROM
+	        act_ru_variable
+        WHERE
+	        PROC_INST_ID_ = #{procInstId}
+	    AND NAME_ = #{name}
+    </select>
+    <!--根据id获取任务-->
+    <select id="getTaskDefByProcInstId" parameterType="java.lang.String" resultType="com.example.tquan.entity.VariableEntity">
+        SELECT
+	        PROC_DEF_ID_ AS procDefId
+        FROM
+	        act_ru_task
+        WHERE
+	        ID_ = #{procInstId}
+    </select>
+    <!--修改task参数-->
+    <update id="updateTaskParam" parameterType="com.example.tquan.entity.VariableEntity">
+        UPDATE act_ru_variable
+        SET TEXT_ = #{text}
+        WHERE
+	        PROC_INST_ID_ =#{procInstId}
+	    AND NAME_=#{name}
+    </update>
+    <!--新增打回原因-->
+    <insert id="addRepulseReason" parameterType="com.example.tquan.entity.VariableAddEntity">
+        INSERT INTO act_ru_variable (ID_,REV_, TYPE_, NAME_, EXECUTION_ID_, PROC_INST_ID_, TEXT_ )
+        VALUES
+	    (#{id},#{rev},#{type},#{name},#{executionId},#{procInstId},#{text} )
+    </insert>
+
+    <!--获取历史流程的参数-->
+    <select id="getHistoryVariables" parameterType="com.example.tquan.entity.TaskEntity" resultType="java.lang.String">
+        SELECT
+	        TEXT_
+        FROM
+	        act_hi_varinst
+        WHERE
+	        PROC_INST_ID_ =#{rev}
+	    AND NAME_ =#{repulseReason}
+    </select>
+</mapper>
