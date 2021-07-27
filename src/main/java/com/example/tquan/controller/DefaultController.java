@@ -331,7 +331,6 @@ public class DefaultController {
             JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
             JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
             JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-            List<DefaultsEntity> selectList2=new ArrayList<>();
             for (int text=0;text<selectList.size();text++) {
                     if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
                         base=selectListValue.get(text).toString();
@@ -340,7 +339,6 @@ public class DefaultController {
             JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
             JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
             JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-            List<DefaultsEntity> dateList2=new ArrayList<>();
             for (int text=0;text<dateList.size();text++) {
                     if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
                         base=dateListValue.get(text).toString();

@@ -104,4 +104,9 @@ public class IndexController {
         return "/consoleTaskList";
     }
 
+    @GetMapping("/hisTask")
+    public String completeRecordsTask(){
+        return "/hisTask";
+    }
+
 }

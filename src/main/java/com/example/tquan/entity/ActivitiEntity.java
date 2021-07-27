@@ -20,10 +20,9 @@ public class ActivitiEntity {
         private String status;
         private String userId;
         private String description;
-
         private String taskId;
         private String taskName;
-        private Date taskCreateTime;
+        private String taskCreateTime;
         private String taskApplyReason;
         private String taskRole;
         private String taskAssignee;
@@ -210,11 +209,11 @@ public class ActivitiEntity {
         this.taskName = taskName;
     }
 
-    public Date getTaskCreateTime() {
+    public String getTaskCreateTime() {
         return taskCreateTime;
     }
 
-    public void setTaskCreateTime(Date taskCreateTime) {
+    public void setTaskCreateTime(String taskCreateTime) {
         this.taskCreateTime = taskCreateTime;
     }
 

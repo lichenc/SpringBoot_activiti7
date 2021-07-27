@@ -8,7 +8,7 @@ import java.util.List;
 public class AuditEntity {
     private String id;
     private String name;
-    private Date time;
+    private String time;
     private String reason;
     private String role;
     private String assignee;
@@ -57,11 +57,11 @@ public class AuditEntity {
         this.name = name;
     }
 
-    public Date getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(String time) {
         this.time = time;
     }
 

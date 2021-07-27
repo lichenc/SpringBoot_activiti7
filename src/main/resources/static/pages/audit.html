@@ -22,9 +22,9 @@
 
 <body>
 <style>
-    .layui-layer{
+   /* .layui-layer{
         margin: -24.5% 0;
-    }
+    }*/
     .element.style {
         width: 410px;
     }
@@ -243,6 +243,7 @@ var taskId;
          * 打回操作
          */
         function repulse() {
+            alert("***")
             var repulseReason=document.getElementById("repulseReason").value;
             if (repulseReason==""||repulseReason==null){
                 alert("打回原因不能为空!");
