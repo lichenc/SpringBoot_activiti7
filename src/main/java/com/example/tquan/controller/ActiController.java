@@ -533,7 +533,7 @@ public class ActiController{
 
 
     //驳回任务
-    @RequestMapping("/unRepulse")
+    @RequestMapping("/repulse")
     @ResponseBody
     public List setTaskAssignee(@RequestParam("userName") String userName,@RequestParam("id") String pid,@RequestParam("approvalOpinion")String approvalOpinion,HttpSession session,String id,String repulseReason){
         List list1=new ArrayList();
@@ -1188,7 +1188,7 @@ public class ActiController{
                             hisTask.setEndTime(df.format(tasks.getEndTime()));
                             hisTask.setStatus("未完成");
                             List<ActEntity> accountField = null;
-                            //任务结束的变量值，字段不同可根据任务类型判断
+                            //任务未结束的变量值，字段不同可根据任务类型判断
 
                             for(HistoricVariableInstance hvi:list){
                                 if("account".equals(hvi.getVariableName())){
