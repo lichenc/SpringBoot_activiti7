@@ -93,11 +93,11 @@
     </div>
 </div>
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         selectTaskList();
 
         $("body").on("click", "#history", function (e) {
-            var proId=  $(this).val();
+            var proId = $(this).val();
             layui.use('form', function () {
                 var form = layui.form;
                 layui.use('layer', function () {
@@ -120,65 +120,68 @@
                 });
 
             });
-            $("#picture").attr("src","../getProcefPicture?taskId="+proId+"");
-    });
-    function selectTaskList(){
-        //渲染分页
-        layui.use('laypage', function () {
-            //清空之前的列表记录
-            $('.tbody tr').remove();
-            //获取审批人
-            var approvedPerson = document.getElementById("approvedPerson").value;
-            $.ajax({
-                url: "/getAllTaskAdmin",
-                type: "POST",
-                data: {
-                    approvedPerson: approvedPerson
-                },
-                success: function (data) {
-                    //清空之前的列表记录
-                    $('.tbody tr').remove();
-                    var laypage = layui.laypage;
-                    //获取任务集合
-                    var taskList = data.taskEntities;
-                    if (taskList != null) {
-                        laypage.render({
-                            elem: 'eventPage',
-                            count: taskList.length, //数据总数，从服务端得到
-                            limit: 10,
-                            limits:[10,20,30],
-                            layout: ['prev', 'page', 'count','next',  'skip'],
-                            jump: function (obj) {
-                                //模拟渲染
-                                document.getElementById('eventList').innerHTML = function () {
-                                    var arr = []
-                                    thisData = taskList.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
-                                    layui.each(thisData, function (index, item) {
-                                        var taskStr =
-                                            "<tr>"
-                                            + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='" + item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='" + item.applyReason + "' id='applyReasonShow'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
-                                            + "<td><input type='text' value='"+item.repulseReason+"' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
-                                            + " <td>"
-                                            + "<button value='" + item.event + "' class='layui-btn' id='history'>查看进度</button>"
-                                            + "</td>"
-                                            + "</tr>";
-                                        arr.push(taskStr);
-                                    });
-                                    return arr.join('');
-
-                                }();
-                            }
-                        });
-                    }
-                }
-            });
+            $("#picture").attr("src", "../getProcefPicture?taskId=" + proId + "");
         });
-    }
+    });
+
+        function selectTaskList() {
+            //渲染分页
+            layui.use('laypage', function () {
+                //清空之前的列表记录
+                $('.tbody tr').remove();
+                //获取审批人
+                var approvedPerson = document.getElementById("approvedPerson").value;
+                $.ajax({
+                    url: "/getAllTaskAdmin",
+                    type: "POST",
+                    data: {
+                        approvedPerson: approvedPerson
+                    },
+                    success: function (data) {
+                        //清空之前的列表记录
+                        $('.tbody tr').remove();
+                        var laypage = layui.laypage;
+                        //获取任务集合
+                        var taskList = data.taskEntities;
+                        if (taskList != null) {
+                            laypage.render({
+                                elem: 'eventPage',
+                                count: taskList.length, //数据总数，从服务端得到
+                                limit: 10,
+                                limits: [10, 20, 30],
+                                layout: ['prev', 'page', 'count', 'next', 'skip'],
+                                jump: function (obj) {
+                                    //模拟渲染
+                                    document.getElementById('eventList').innerHTML = function () {
+                                        var arr = []
+                                        thisData = taskList.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                                        layui.each(thisData, function (index, item) {
+                                            var taskStr =
+                                                "<tr>"
+                                                + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.applyPerson + "'  class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.applyReason + "' id='applyReasonShow'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
+                                                + "<td><input type='text' value='" + item.repulseReason + "' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
+                                                + " <td>"
+                                                + "<button value='" + item.id + "' class='layui-btn' id='history'>查看进度</button>"
+                                                + "</td>"
+                                                + "</tr>";
+                                            arr.push(taskStr);
+                                        });
+                                        return arr.join('');
+
+                                    }();
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
 </script>
 </body>
 </html>

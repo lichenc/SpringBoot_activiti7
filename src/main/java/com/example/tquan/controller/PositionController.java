@@ -2,9 +2,11 @@ package com.example.tquan.controller;
 
 import com.example.tquan.entity.Approver;
 import com.example.tquan.entity.PositionEntity;
+import com.example.tquan.entity.TaskEntity;
 import com.example.tquan.entity.VariableEntity;
 import com.example.tquan.service.ApproverService;
 import com.example.tquan.service.PositionService;
+import com.example.tquan.service.TasksService;
 import com.example.tquan.service.VariableService;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
@@ -41,6 +43,8 @@ public class PositionController {
     private VariableService variableService;
     @Autowired
     private ApproverService approverService;
+    @Autowired
+    private TasksService tasksService;
     ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
 
 
@@ -143,6 +147,44 @@ public class PositionController {
 
 
        return iden;
+    }
+    /**
+     *查询待重试的流程
+     * @return
+     */
+    @RequestMapping("/waitTryAgain")
+    public com.example.tquan.entity.TaskEntity waitTryAgainPage(com.example.tquan.entity.TaskEntity taskEntity, HttpSession session, String approvedPerson){
+        if (approvedPerson!=null &&approvedPerson!=""){
+            taskEntity.setApprovedPerson(approvedPerson);
+        }
+        String sn=session.getAttribute("userSn").toString();
+        taskEntity.setApplyPerson(sn);
+        try {
+            List<com.example.tquan.entity.TaskEntity> taskEntities= tasksService.getWaitTryAgainTask(taskEntity);
+            List<com.example.tquan.entity.TaskEntity> taskEntities1=new ArrayList<>();
+            for(TaskEntity taskEntity2:taskEntities) {
+                Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity2.getTaskType());
+                taskEntity2.setApplyPerson(variables.get("applyPerson").toString());
+                taskEntity2.setApprovedPerson(variables.get("approvedPerson").toString());
+                taskEntity2.setTaskType(variables.get("taskType").toString());
+                taskEntity2.setApplyReason(variables.get("applyReason").toString());
+                //判断角色原因是否为空
+                VariableEntity variableEntity=new VariableEntity();
+                variableEntity.setProcInstId(taskEntity2.getId());
+                variableEntity.setName("repulseReason");
+                String text= variableService.getTextByName(variableEntity);
+                if (text!=null){
+                    taskEntity2.setRepulseReason(variables.get("repulseReason").toString());
+                } else {
+                    taskEntity2.setRepulseReason("");
+                }
+                taskEntities1.add(taskEntity2);
+                taskEntity.setTaskEntities(taskEntities1);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return taskEntity;
     }
     /**
      * 查询任务

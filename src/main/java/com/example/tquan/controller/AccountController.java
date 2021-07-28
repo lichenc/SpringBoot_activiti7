@@ -243,44 +243,7 @@ public class AccountController {
         return taskEntity;
     }
 
-    /**
-     *查询待重试的流程
-     * @return
-     */
-    @RequestMapping("/waitTryAgain")
-    public TaskEntity waitTryAgainPage(TaskEntity taskEntity,HttpSession session,String approvedPerson){
-            if (approvedPerson!=null &&approvedPerson!=""){
-            taskEntity.setApprovedPerson(approvedPerson);
-            }
-        String sn=session.getAttribute("userSn").toString();
-        taskEntity.setApplyPerson(sn);
-       try {
-           List<TaskEntity> taskEntities= taskService.getWaitTryAgainTask(taskEntity);
-           List<TaskEntity> taskEntities1=new ArrayList<>();
-           for(TaskEntity taskEntity2:taskEntities) {
-               Map<String, Object> variables = processEngine.getRuntimeService().getVariables(taskEntity2.getTaskType());
-                   taskEntity2.setApplyPerson(variables.get("applyPerson").toString());
-                   taskEntity2.setApprovedPerson(variables.get("approvedPerson").toString());
-                   taskEntity2.setTaskType(variables.get("taskType").toString());
-                   taskEntity2.setApplyReason(variables.get("applyReason").toString());
-                   //判断角色原因是否为空
-                   VariableEntity variableEntity=new VariableEntity();
-                   variableEntity.setProcInstId(taskEntity2.getId());
-                   variableEntity.setName("repulseReason");
-                   String text= variableService.getTextByName(variableEntity);
-                   if (text!=null){
-                       taskEntity2.setRepulseReason(variables.get("repulseReason").toString());
-                   } else {
-                       taskEntity2.setRepulseReason("");
-                   }
-                   taskEntities1.add(taskEntity2);
-               taskEntity.setTaskEntities(taskEntities1);
-           }
-       }catch (Exception e){
-           e.printStackTrace();
-       }
-        return taskEntity;
-    }
+
 
     /**
      * 任务重试
@@ -411,20 +374,20 @@ public class AccountController {
     public CountEntity getAdminCount(HttpSession session){
         CountEntity countEntity=new CountEntity();
         //查询待重试
-        TaskEntity taskEntity=new TaskEntity(null,null,null,2);
+        TaskEntity taskEntity=new TaskEntity(null,null,null,"申请");
         int waitTryAgainCount=taskService.getTaskCountByProperty(taskEntity);
         //查询待审批流程
-        TaskEntity taskEntity1=new TaskEntity(null,null,null,1);
+        TaskEntity taskEntity1=new TaskEntity(null,null,null,"审批");
         int approvalCount=taskService.getTaskCountByProperty(taskEntity1);
 
         //系统总流程
         int sumCount=waitTryAgainCount+approvalCount;
 
         //查询今日新增待重试
-        TaskEntity taskEntity5=new TaskEntity(null,null,"today",2);
+        TaskEntity taskEntity5=new TaskEntity(null,null,"today","申请");
         int todayWaitTryAgainCount=taskService.getTaskCountByProperty(taskEntity5);
         //查询今日新增待审批
-        TaskEntity taskEntity6=new TaskEntity(null,null,"today",1);
+        TaskEntity taskEntity6=new TaskEntity(null,null,"today","审批");
         int todayApprovalCount=taskService.getTaskCountByProperty(taskEntity6);
 
         //今日总新增
@@ -468,20 +431,20 @@ public class AccountController {
         String userSn=session.getAttribute("userSn").toString();
 
         //查询待重试
-        TaskEntity taskEntity=new TaskEntity(userSn,null,null,2);
+        TaskEntity taskEntity=new TaskEntity(userSn,null,null,"申请");
         int waitTryAgainCount=taskService.getTaskCountByProperty(taskEntity);
         //查询待审批流程
-        TaskEntity taskEntity1=new TaskEntity(null,userSn,null,1);
+        TaskEntity taskEntity1=new TaskEntity(null,userSn,null,"审批");
         int approvalCount=taskService.getTaskCountByProperty(taskEntity1);
 
         //系统总流程
         int sumCount=waitTryAgainCount+approvalCount;
 
         //查询今日新增待重试
-        TaskEntity taskEntity5=new TaskEntity(userSn,null,"today",2);
+        TaskEntity taskEntity5=new TaskEntity(userSn,null,"today","申请");
         int todayWaitTryAgainCount=taskService.getTaskCountByProperty(taskEntity5);
         //查询今日新增待审批
-        TaskEntity taskEntity6=new TaskEntity(null,userSn,"today",1);
+        TaskEntity taskEntity6=new TaskEntity(null,userSn,"today","审批");
         int todayApprovalCount=taskService.getTaskCountByProperty(taskEntity6);
 
         //今日总新增

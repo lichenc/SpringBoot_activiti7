@@ -78,19 +78,25 @@ public class ProdefController {
      * @throws Exception
      */
     @GetMapping("/getProcefPicture")
-    public void getProcefPicture(HttpServletRequest request, HttpServletResponse response, String taskId) throws Exception{
-      // try{
+    public void getProcefPicture(HttpServletRequest request, HttpServletResponse response, String taskId){
+       try{
           InputStream imageStream = lookCurrentProcessImage(taskId);
            byte[] b = new byte[1024];
            int len;
            while ((len = imageStream.read(b, 0, 1024)) != -1) {
                response.getOutputStream().write(b, 0, len);
            }
-       //}catch (Exception e){
-          // log.info("==========================查询失败！"+e);
-       //}
+       }catch (Exception e){
+          log.info("==========================查询失败！"+e);
+          e.printStackTrace();
+       }
     }
 
+    /**
+     * 获取流程图
+     * @param taskId
+     * @return
+     */
     public InputStream lookCurrentProcessImage(String taskId) {
         InputStream imageStream1=null;
 

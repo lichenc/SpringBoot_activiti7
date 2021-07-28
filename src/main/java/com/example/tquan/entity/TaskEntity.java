@@ -136,11 +136,11 @@ public class TaskEntity {
         this.taskType = taskType;
     }
 
-    public TaskEntity(String applyPerson, String approvedPerson, String taskType, int rev) {
+    public TaskEntity(String applyPerson, String approvedPerson, String taskType, String name) {
         this.applyPerson = applyPerson;
         this.approvedPerson = approvedPerson;
         this.taskType = taskType;
-        this.rev = rev;
+        this.name = name;
     }
     public TaskEntity(String createTime,String name) {
         this.createTime = createTime;

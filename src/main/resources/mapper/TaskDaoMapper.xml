@@ -36,8 +36,8 @@
         FROM
         act_ru_task task left join act_ru_variable var on var.PROC_INST_ID_=task.PROC_INST_ID_
         <where>
-            <if test="rev != null and rev != ''">
-                task.REV_ =#{rev}
+            <if test="name != null and name != ''">
+                task.NAME_ like  CONCAT('%', #{name}, '%')
             </if>
             <if test="taskType != '' and taskType != null">
                 and to_days(NOW()) - TO_DAYS(task.CREATE_TIME_)  <![CDATA[  =  ]]> 0

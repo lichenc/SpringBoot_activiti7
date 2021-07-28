@@ -189,7 +189,6 @@
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-web:5.4.6" level="project" />
     <orderEntry type="library" name="Maven: org.activiti:activiti-engine:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.activiti:activiti-bpmn-converter:6.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.activiti:activiti-bpmn-model:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.activiti:activiti-process-validation:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.activiti:activiti-image-generator:6.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.activiti:activiti-dmn-api:6.0.0" level="project" />
@@ -218,6 +217,9 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-test:5.3.6" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-test:2.4.5" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.4.5" level="project" />
+    <orderEntry type="library" name="Maven: org.activiti:activiti-bpmn-layout:6.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.activiti:activiti-bpmn-model:6.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.tinyjee.jgraphx:jgraphx:1.10.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper-spring-boot-starter:1.2.3" level="project" />
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper-spring-boot-autoconfigure:1.2.3" level="project" />
