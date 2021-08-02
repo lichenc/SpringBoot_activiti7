@@ -22,34 +22,51 @@
 <style>
     .layui-btn {
         padding: 0 3px;
-        width: 70px;
+        width: 95px;
     }
     .layui-laypage select{
         width: 65px;
     }
+    .layui-laypage button{
+        width: 48px;
+        background-color: #009688;
+        padding: 0;
+    }
+    .layui-search{
+        margin-top: 10px;
+        margin-bottom: 8px;
+    }
+
 </style>
 <body>
 
 <div class="cBody">
     <div class="console">
         <form class="layui-form">
-            <br>
-            <div class="layui-form-item">
+            <div class="layui-form-item layui-search">
 
-                <div class="au layui-input-inline">
-                    <span class="span">事件类型</span>
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">申请人</span>
+                </div>
+                <div class="layui-input-inline ">
+                    <input type="text" name="taskType"   placeholder="申请人" autocomplete="off" class="layui-input">
+                </div>
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">任务类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="taskType"  id="taskType" placeholder="事件类型" autocomplete="off" class="layui-input">
+                    <input type="text" name="taskType"   placeholder="任务类型" autocomplete="off" class="layui-input">
                 </div>
-                <!--<div class="au layui-input-inline">
-                    <span class="span">事件类型</span>
-                </div>-->
-               <!-- <div class="layui-input-inline">
-                    <input type="text" name="taskType"  id="taskType"  placeholder="事件类型" autocomplete="off" class="layui-input">
-                </div>-->
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">任务状态</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="taskType"   placeholder="任务状态" autocomplete="off" class="layui-input">
+                </div>
                 <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
                 <button class="layui-btn" onclick="reset();">重置</button>
+                <button class="layui-btn" id="export">导出</button>
+
             </div>
         </form>
 
@@ -112,6 +129,12 @@
         </div>
     </div>
 
+</div>
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
+    <div class="layui-form" lay-filter="" id="form1">
+        <img src="" id="picture">
+    </div>
 </div>
 </body>
 

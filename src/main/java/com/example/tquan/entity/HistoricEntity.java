@@ -40,6 +40,7 @@ public class HistoricEntity {
     private List<DefaultsEntity> selectLists;
     private List<DefaultsEntity> dateLists;
 
+
     public String getStatus() {
         return status;
     }

@@ -22,8 +22,7 @@ public class UserEntity {
     private String companySn;
     private String optUser;
     private StringBuilder extended;
-
-
+    private String value;
 
 
     //辅助字段：组织名称
@@ -211,6 +210,14 @@ public class UserEntity {
         this.positionCount = positionCount;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         return "UserEntity{" +
@@ -218,7 +225,7 @@ public class UserEntity {
                 ", sn='" + sn + '\'' +
                 ", sex='" + sex + '\'' +
                 ", name='" + name + '\'' +
-                ", userTypeId=" + userTypeId +
+                ", userTypeId='" + userTypeId + '\'' +
                 ", telephone='" + telephone + '\'' +
                 ", email='" + email + '\'' +
                 ", status=" + status +
@@ -226,10 +233,16 @@ public class UserEntity {
                 ", updateTime=" + updateTime +
                 ", optTime='" + optTime + '\'' +
                 ", companySn='" + companySn + '\'' +
+                ", optUser='" + optUser + '\'' +
+                ", extended=" + extended +
+                ", value='" + value + '\'' +
                 ", orgName='" + orgName + '\'' +
                 ", accountCount=" + accountCount +
+                ", positionCount=" + positionCount +
                 ", positionEntityList=" + positionEntityList +
                 ", accountEntities=" + accountEntities +
+                ", groupCount=" + groupCount +
+                ", groupEntities=" + groupEntities +
                 '}';
     }
 }

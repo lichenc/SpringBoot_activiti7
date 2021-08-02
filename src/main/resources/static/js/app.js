@@ -7,6 +7,7 @@ layui.use('laydate', function() {
         range: true
     });
 })
+
 /*
 * 帐号表单联动属性
 * */

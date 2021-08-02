@@ -45,7 +45,6 @@
         ${sql}
     </select>
     <!-- 查询用户下的所有组织-->
-    <select id="actMove" resultType="String">
-        select
-    </select>
+
+
 </mapper>

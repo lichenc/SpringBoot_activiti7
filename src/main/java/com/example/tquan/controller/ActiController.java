@@ -1064,6 +1064,7 @@ public class ActiController{
                             }else {
                                 hisTask.setComment(comments);
                             }
+
                             if("account".equals(hvi.getVariableName())){
                                 hisTask.setAccount(hvi.getValue().toString());
                             }

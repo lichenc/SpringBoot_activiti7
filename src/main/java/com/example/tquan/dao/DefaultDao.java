@@ -89,4 +89,5 @@ public interface DefaultDao {
      * @return
      */
     String fieldDefaultVal(String sql);
+
 }

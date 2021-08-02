@@ -11,6 +11,7 @@
     <sequenceFlow id="_9" name="审批" sourceRef="_4" targetRef="_5"/>
     <sequenceFlow id="_10" name="同意" sourceRef="_5" targetRef="_6">
       <conditionExpression xsi:type="tFormalExpression">
+
         <![CDATA[${msg==true}]]>
       </conditionExpression>
     </sequenceFlow>
