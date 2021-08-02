@@ -7,6 +7,7 @@ import org.activiti.engine.ProcessEngines;
 import org.activiti.engine.RepositoryService;
 import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.repository.DeploymentBuilder;
+
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,27 +26,26 @@ public class TquanApplication {
     public static void main(String[] args) {
         SpringApplication.run(TquanApplication.class, args);
     }
-@Test
+    @Test
   public void testCreateProcessEngine() {
         ProcessEngineConfiguration cfg = ProcessEngineConfiguration.createStandaloneProcessEngineConfiguration();
-        cfg.setJdbcDriver("com.mysql.cj.jdbc.Drivers");
-        cfg.setJdbcUrl("jdbc:mysql://192.168.23.1:3306/iam");
+        cfg.setJdbcDriver("com.mysql.cj.jdbc.Driver");
+        cfg.setJdbcUrl("jdbc:mysql://127.0.0.1:3306/iam");
         cfg.setJdbcUsername("root");
-        cfg.setJdbcPassword("root");
+        cfg.setJdbcPassword("P@ssw0rd");
         //配置建表策略
         cfg.setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
         ProcessEngine engine = cfg.buildProcessEngine();
     }
-
+    @Test
     public void CreateProcessEngineByCfgXml() {
 
         ProcessEngineConfiguration cfg = ProcessEngineConfiguration.createProcessEngineConfigurationFromResource("activiti.cfg.xml");
         ProcessEngine engine = cfg.buildProcessEngine();
     }
-
     @Test
     public void deployProcess() throws FileNotFoundException {
-        String bpmnPath = "E:/idea/tongquan/src/main/resources/bpmn/apply.xml";
+        String bpmnPath = "D:/idea/tquan/src/main/resources/bpmn/apply.xml";
         //读取资源作为一个输入流
         FileInputStream bpmnfileInputStream = new FileInputStream(bpmnPath);
         RepositoryService repositoryService = processEngine.getRepositoryService();

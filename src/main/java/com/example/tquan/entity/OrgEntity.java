@@ -17,6 +17,8 @@ public class OrgEntity {
      * 父节点id
      */
     private String parentId;
+    //扩展字段
+    private String value;
 
     /**
      * 子节点(数据库中不存在该字段，仅用于传输数据使用)
@@ -55,12 +57,21 @@ public class OrgEntity {
         this.children = children;
     }
 
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
     @Override
     public String toString() {
         return "OrgEntity{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", parentId='" + parentId + '\'' +
+                ", value='" + value + '\'' +
                 ", children=" + children +
                 '}';
     }

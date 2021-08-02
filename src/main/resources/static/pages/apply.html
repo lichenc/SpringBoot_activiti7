@@ -17,6 +17,7 @@
     <script type="text/javascript" src="../js/layui.js"></script>
     <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
     <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <link rel="stylesheet" type="text/css" href="../css/modules/laydate/default/laydate.css">
     <script type="text/javascript" src="../js/app.js"></script>
 </head>
 <style>
@@ -42,6 +43,30 @@
     .layui-tab-content {
         padding: 0.6% 0.6% 49% 0.6%;
     }
+    .layui-btn-normal{
+        height: 38px;
+        font-size: 14px;
+    }
+    .layui-btn-sm i{
+        font-size: 20px !important;
+    }
+    .layui-laypage button{
+        width: 48px;
+        background-color: #009688;
+        padding: 0;
+    }
+    .layui-form-item .layui-selectButton{
+        float: right;
+        margin-top: 10px;
+        margin-bottom: 8px;
+    }
+    .layui-applyTimes{
+        width: 56px;
+        padding: 20px 15px;
+    }
+    .layui-timeInput{
+        margin-top: 12px;
+    }
 </style>
 <script>
 
@@ -49,23 +74,27 @@
 <body>
 <div class="cBody">
     <div class="console">
-            <div class="layui-form-item">
-                <div class="au layui-input-inline">
-                    <span class="span">申请时间</span>
+            <div class="layui-form-item ">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-applyTimes">申请时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input layui-timeInput" id="times" placeholder="yyyy-MM-dd HH:mm:ss">
+                    </div>
                 </div>
-                <div class="layui-input-inline">
-                    <input type="date" name="startTime" id="startTime"   placeholder="开始时间" autocomplete="off" class="layui-input">
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-applyTimes">事件标识</label>
+                    <div class="layui-input-inline">
+                        <input type="text" class="layui-input layui-timeInput"  placeholder="事件标识">
+                    </div>
                 </div>
-                <div class="layui-input-inline">
-                    <input type="date" name="endTime" id="endTime"   placeholder="结束时间" autocomplete="off" class="layui-input">
-                </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
                 <!-- <div class="au layui-input-inline">
                      <span class="span">审批人</span>
                  </div>
                  <div class="layui-input-inline">
                      <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
                  </div>-->
-                <div class="layui-input-inline">
+                <div class="layui-input-inline layui-selectButton">
                     <button class="layui-btn"  onclick="getPositionLists()">查询&nbsp;</button>
                     <button class="layui-btn"   onclick="reset()">重置&nbsp;</button>
                 </div>
@@ -280,6 +309,17 @@
         <div id="test13" class="demo-tree-more"></div>
     </div>
 </div>
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
+    <div class="layui-form" lay-filter="" id="form4">
+        <img src="" id="picture">
+    </div>
+</div>
+<<!--div style="display: none;margin-top: 20px;overflow:hidden;" id="act">
+    <div class="layui-form" lay-filter="" id="form5">
+
+    </div>
+</div>-->
 </body>
 
 </html>

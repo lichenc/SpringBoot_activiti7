@@ -10,6 +10,9 @@
         <property name="jdbcPassword" value="P@ssw0rd" />
         <!-- 对应 DB_SCHEMA_UPDATE_TRUE 如何表不存在，自动创建和更新表 -->
         <property name="databaseSchemaUpdate" value="true" />
+        <property name="history" value="full"/>
+        <property name="activityFontName" value="宋体"/>
+        <property name="labelFontName" value="宋体"/>
     </bean>
 
 </beans>

@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>申请单</title>
+
+    <!--<link rel="stylesheet" type="text/css" href="../css/audit/layui.css">-->
+    <link href="../css/audit/app.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <script type="text/javascript" src="../js/lay/modules/laypage.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/hisTask.js"></script>
+</head>
+<style>
+    .layui-btn {
+        padding: 0 3px;
+        width: 95px;
+    }
+    .layui-laypage select{
+        width: 65px;
+    }
+    .layui-laypage button{
+        width: 48px;
+        background-color: #009688;
+        padding: 0;
+    }
+    .layui-search{
+        margin-top: 10px;
+        margin-bottom: 8px;
+    }
+
+</style>
+<body>
+
+<div class="cBody">
+    <div class="console">
+        <form class="layui-form">
+            <div class="layui-form-item layui-search">
+
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">申请人</span>
+                </div>
+                <div class="layui-input-inline ">
+                    <input type="text" name="taskType"   placeholder="申请人" autocomplete="off" class="layui-input">
+                </div>
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">任务类型</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="taskType"   placeholder="任务类型" autocomplete="off" class="layui-input">
+                </div>
+                <div class="au layui-input-inline" style="width: 90px;">
+                    <span class="span">任务状态</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" name="taskType"   placeholder="任务状态" autocomplete="off" class="layui-input">
+                </div>
+                <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
+                <button class="layui-btn" onclick="reset();">重置</button>
+                <button class="layui-btn" id="export">导出</button>
+
+            </div>
+        </form>
+
+    </div>
+    <br>
+
+    <table class="layui-table">
+        <thead>
+        <tr>
+            <th>事件类型标识</th>
+            <th>任务类型</th>
+            <th>申请人</th>
+            <th>审批人</th>
+            <th>任务创建时间</th>
+            <th>任务结束时间</th>
+            <th>任务状态</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="hisTasks">
+        <span id="prompt" style="display: none;position: absolute;top:300px;left:700px;font-size: 18px">暂无记录</span>
+        </tbody>
+    </table>
+    <div id="hisTaskPages" style="text-align: center"></div>
+
+
+
+    <div style="display: none;margin-top: 20px;overflow:hidden;" id="histaskParticular">
+        <div class="layui-form" lay-filter="" id="form3">
+            <div id="userNames3">
+
+            </div>
+            <div id="orgNames3">
+
+            </div>
+
+            <div class="taskTapys3" id="taskTapys3">
+
+            </div>
+            <div class="types3"  id="types3">
+
+            </div>
+            <div class="field3" id="field3">
+
+            </div>
+            <div class="aud3" id="aud3">
+
+            </div>
+            <div id="roles3">
+
+            </div>
+            <div id="applyReasonss3">
+
+            </div>
+
+            <div id="approvalOpinions3">
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
+    <div class="layui-form" lay-filter="" id="form1">
+        <img src="" id="picture">
+    </div>
+</div>
+</body>
+
+</html>

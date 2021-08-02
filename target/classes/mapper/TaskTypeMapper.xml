@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.tquan.dao.TaskTypeDao">
+    <!-- 查询全部业务系统-->
+    <select id="accountTask" resultType="com.example.tquan.entity.TaskTypeEntity" parameterType="com.example.tquan.entity.TaskTypeEntity">
+        select event.id,event.name,event.method,event.event_type
+        from sys_event event where event.name='帐号启用' or event.name='帐号新增' or event.name='帐号修改'
+      <!--  <where>
+        <if test="name !=null and name != '' ">
+            and event.NAME = #{name}
+        </if>
+        </where>-->
+    </select>
+
+
+</mapper>

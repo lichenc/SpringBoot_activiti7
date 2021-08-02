@@ -173,7 +173,22 @@
             <artifactId>httpmime</artifactId>
             <version>4.3</version>
         </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-bpmn-layout</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-engine</artifactId>
+            <version>6.0.0</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.activiti</groupId>
+            <artifactId>activiti-bpmn-layout</artifactId>
+            <version>6.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>

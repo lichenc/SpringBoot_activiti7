@@ -62,11 +62,9 @@ public class IamInterface {
             br.close();
             JSONObject resultJson = JSONObject.fromObject(result.toString());
             if (resultJson.get("success").toString().equals("true")) {
-                System.out.println("获取到的uid信息,msg:" + resultJson.get("msg"));
                 uuid = resultJson.get("msg").toString();
                 return uuid;
             } else {
-                System.out.println("获取到的uid信息,msg:" + resultJson.get("msg"));
                 return uuid;
             }
         }

@@ -4,10 +4,14 @@ import com.example.tquan.dao.DefaultDao;
 import com.example.tquan.entity.ActEntity;
 import com.example.tquan.entity.DefaultEntity;
 import com.example.tquan.entity.DefaultsEntity;
+import com.example.tquan.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
 @Service
 public class DefaultService {
     @Autowired
@@ -96,5 +100,14 @@ public class DefaultService {
      */
     public List actNum(String accountName, String applyName){
         return defaultDao.actNum(accountName,applyName);
+    }
+    /**
+     * 查询字段默认值
+     *
+     * @param
+     * @return
+     */
+    public String fieldDefaultVal(String sql){
+        return defaultDao.fieldDefaultVal(sql);
     }
 }

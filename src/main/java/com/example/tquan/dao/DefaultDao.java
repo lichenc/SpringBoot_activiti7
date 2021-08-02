@@ -3,10 +3,13 @@ package com.example.tquan.dao;
 import com.example.tquan.entity.ActEntity;
 import com.example.tquan.entity.DefaultEntity;
 import com.example.tquan.entity.DefaultsEntity;
+import com.example.tquan.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Mapper
 @Repository
@@ -79,4 +82,11 @@ public interface DefaultDao {
      * @return
      */
     List actNum(String accountName, String applyName);
+    /**
+     * 查询字段默认值
+     *
+     * @param
+     * @return
+     */
+    String fieldDefaultVal(String sql);
 }

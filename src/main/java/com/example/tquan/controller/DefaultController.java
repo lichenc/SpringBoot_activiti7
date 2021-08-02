@@ -74,12 +74,22 @@ public class DefaultController {
                     if (firstDef.equals("$")) {
                         String allField = defVal.substring(defVal.lastIndexOf(".") + 1, defVal.lastIndexOf("}"));
                         List<DefaultEntity> allDe = defaultService.allDefaults(usId, allField);
-                        log.info("关联字段:" + allField + "关联字段值:" + allDe.get(0).getAllField());
                         //用户和账号关联字段默认值
                         defaultValues=allDe.get(0).getAllField();
 
                     } else if (firstDef.equals("<")) {
-                        //sql查询默认值
+                        String sqlField = defVal.substring(defVal.lastIndexOf("sql=") + 5, defVal.lastIndexOf("/>")-1);
+                        String sqlCondition = sqlField.substring(sqlField.lastIndexOf("$"),sqlField.lastIndexOf("}")+1);
+                        /*String sqlCondition = sqlField.substring(sqlField.lastIndexOf("{")+1,sqlField.lastIndexOf("."));
+                        if("user".equals(sqlCondition)){
+                            String userField = sqlField.substring(sqlField.lastIndexOf(".")+1,sqlField.lastIndexOf("?"));
+                            System.out.println("===用户表字段:" +userField);
+                            if("id".equals(userField)){
+                            }
+                        }*/
+                        //组装sql
+                        String sql = sqlField.replace(sqlCondition, "'"+usId+"'");
+                        defaultValues=defaultService.fieldDefaultVal(sql);
 
                     } else {
                         //固定默认值
@@ -138,14 +148,13 @@ public class DefaultController {
     @RequestMapping("/actField")
     @ResponseBody
     public List actField(@Param("app") String app,@Param("act") String act, String uuid, HttpServletRequest request, HttpSession session) throws Exception {
-        System.out.println("开始");
         String usId = (String) session.getAttribute("UserId");
         List<ActEntity> accountField=defaultService.act(app);
         List<ImApp> listApp=imAppService.findApply(app);
         List<DefaultsEntity> list=new ArrayList<>();
         String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
         if (StringUtils.isEmpty(ifo.toString())) {
-            System.out.println("uuid为空，认证失败，无法开通账号");
+
         } else {
             List<NameValuePair> params = Lists.newArrayList();
             params.add(new BasicNameValuePair("appId", listApp.get(0).getId()));
@@ -157,107 +166,68 @@ public class DefaultController {
             JSONObject resultJson = JSONObject.fromObject(accountSelect.toString());
             JSONArray rear=JSONArray.fromObject(resultJson.get("dataList").toString());
             JSONObject res = JSONObject.fromObject(rear.get(0).toString());
-            System.out.println(res.get("id").toString());
             List<NameValuePair> paramsId = Lists.newArrayList();
             paramsId.add(new BasicNameValuePair("id", res.get("id").toString()));
             paramsId.add(new BasicNameValuePair("uim-login-user-id", ifo));
             //转换为键值对
             String strAccountId = EntityUtils.toString(new UrlEncodedFormEntity(paramsId, Consts.UTF_8));
             StringBuilder accountSelectAll=iamInterface.accountSelectId(strAccountId,account.getAddr(),account.getType());
-            System.out.println(accountSelectAll.toString());
             JSONObject resultJsonAll = JSONObject.fromObject(accountSelectAll.toString());
             JSONObject resultJsonAllEx = JSONObject.fromObject(resultJsonAll.get("extraAttrs").toString());
-            System.out.println(resultJsonAllEx.toString());
+            /*查询的IAM的扩展字段的key和value值;*/
             List key=new ArrayList();
             key= Arrays.asList(resultJsonAllEx.keySet().toArray());
             List val=new ArrayList();
             val= Arrays.asList(resultJsonAllEx.values().toArray());
             for (int i=0;i<accountField.size();i++) {
-                DefaultsEntity defaultsEntity = new DefaultsEntity();
-                String defaultValues="";
-                if (StringUtils.isEmpty(accountField.get(i).getDefaultValue())) {
-                    if("ACCT_TYPE".equals(accountField.get(i).getName()) ){
-                        defaultValues=resultJsonAll.get("acctType").toString();
-                    }else if("2".equals(accountField.get(i).getIsBasic())){
-                        for(int a=0;a<resultJsonAllEx.keySet().size();a++){
-                            if (accountField.get(i).getName().toString().equals(key.get(a).toString())) {
-                                defaultValues =val.get(a).toString();
-                            }
-                        }
-
-                    }else if ("ACCOUNT_ORG".equals(accountField.get(i).getName()) ){
-                        defaultValues="";
-                    }else {
-                        defaultValues=accountField.get(i).getDefaultValue();
-                    }
-
-                } else {
-                    if("ACCT_TYPE".equals(accountField.get(i).getName()) ){
-                        defaultValues=resultJsonAll.get("acctType").toString();
-                    }else  if("2".equals(accountField.get(i).getIsBasic())){
-                        for(int a=0;a<resultJsonAllEx.keySet().size();a++){
-                            if (accountField.get(i).getName().toString().equals(key.get(a).toString())) {
-                                defaultValues =val.get(a).toString();
-                            }
-                        }
-                    }else if ("ACCOUNT_ORG".equals(accountField.get(i).getName()) ){
-                        defaultValues="";
-                    }else {
-                        String defVal = accountField.get(i).getDefaultValue();
-                        String firstDef = defVal.substring(0, 1);
-                        if (firstDef.equals("$")) {
-                            String allField = defVal.substring(defVal.lastIndexOf(".") + 1, defVal.lastIndexOf("}"));
-                            List<DefaultEntity> allDe = defaultService.allDefaults(usId, allField);
-                            log.info("关联字段:" + allField + "关联字段值:" + allDe.get(0).getAllField());
-                            //用户和账号关联字段默认值
-                            defaultValues = allDe.get(0).getAllField();
-
-                        } else if (firstDef.equals("<")) {
-                            //sql查询默认值
-
-                        } else {
-                            //固定默认值
-                            defaultValues = accountField.get(i).getDefaultValue();
-                        }
-                    }
-                }
-                defaultsEntity.setNames(accountField.get(i).getName());
-                defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                defaultsEntity.setDefaultValues(defaultValues);
-                defaultsEntity.setInputTypes(accountField.get(i).getInputType());
-                defaultsEntity.setIsRequrieds(accountField.get(i).getIsRequried());
-                defaultsEntity.setIsInserts(accountField.get(i).getIsInsert());
-                defaultsEntity.setIsEdits(accountField.get(i).getIsEdit());
-                if(StringUtils.isEmpty(accountField.get(i).getInputType())){
-                    defaultsEntity.setCompants(accountField.get(i).getCompant());
-                }else {
-                    if(accountField.get(i).getInputType().equals("select")==true){
-
-                        if(StringUtils.isEmpty(accountField.get(i).getCompant())){
-                            defaultsEntity.setCompants(accountField.get(i).getCompant());
+                    DefaultsEntity defaultsEntity = new DefaultsEntity();
+                    String defaultValues="";
+                        if("ACCT_TYPE".equals(accountField.get(i).getName()) ){
+                            defaultValues=resultJsonAll.get("acctType").toString();
+                        }else if ("ACCOUNT_ORG".equals(accountField.get(i).getName()) ){
+                            defaultValues="";
                         }else {
-                            String compantStr = accountField.get(i).getCompant();
-                            List<Map<String, Object>> compant= new ArrayList<>();
-                            List<String> result = Arrays.asList(compantStr.split(","));
-                            Map<String, Object> map = new HashMap<String, Object>();
-
-                            for(int c=0;c<result.size();c++){
-                                String [] com= result.get(c).split("[=]");
-                                String keys= com[0];
-                                String values= com[1];
-                                map.put(keys,values);
+                            for (int k=0;k<key.size();k++) {
+                               if(key.get(k).equals(accountField.get(i).getName())){
+                                    defaultValues=val.get(k).toString();
+                                }
                             }
-                            compant.add(map);
-                            defaultsEntity.setListCompants(compant);
+
                         }
-                    }else {
+                    defaultsEntity.setNames(accountField.get(i).getName());
+                    defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                    defaultsEntity.setDefaultValues(defaultValues);
+                    defaultsEntity.setInputTypes(accountField.get(i).getInputType());
+                    defaultsEntity.setIsRequrieds(accountField.get(i).getIsRequried());
+                    defaultsEntity.setIsInserts(accountField.get(i).getIsInsert());
+                    defaultsEntity.setIsEdits(accountField.get(i).getIsEdit());
+                    if(StringUtils.isEmpty(accountField.get(i).getInputType())){
                         defaultsEntity.setCompants(accountField.get(i).getCompant());
+                    }else {
+                        if(accountField.get(i).getInputType().equals("select")==true){
+
+                            if(StringUtils.isEmpty(accountField.get(i).getCompant())){
+                                defaultsEntity.setCompants(accountField.get(i).getCompant());
+                            }else {
+                                String compantStr = accountField.get(i).getCompant();
+                                List<Map<String, Object>> compant= new ArrayList<>();
+                                List<String> result = Arrays.asList(compantStr.split(","));
+                                Map<String, Object> map = new HashMap<String, Object>();
+
+                                for(int c=0;c<result.size();c++){
+                                    String [] com= result.get(c).split("[=]");
+                                    String keys= com[0];
+                                    String values= com[1];
+                                    map.put(keys,values);
+                                }
+                                compant.add(map);
+                                defaultsEntity.setListCompants(compant);
+                            }
+                        }else {
+                            defaultsEntity.setCompants(accountField.get(i).getCompant());
+                        }
                     }
-
-                }
-                list.add(defaultsEntity);
-
-
+                    list.add(defaultsEntity);
             }
         }
         System.out.println(list.toString());
@@ -303,7 +273,11 @@ public class DefaultController {
 
                 } else if (firstDef.equals("<")) {
                     //sql查询默认值
-
+                    String sqlField = defVal.substring(defVal.lastIndexOf("sql=") + 5, defVal.lastIndexOf("/>")-1);
+                    String sqlCondition = sqlField.substring(sqlField.lastIndexOf("$"),sqlField.lastIndexOf("}")+1);
+                    //组装sql
+                    String sql = sqlField.replace(sqlCondition, "'"+usId+"'");
+                    defaultValues=defaultService.fieldDefaultVal(sql);
                 } else {
                     //固定默认值
                     defaultValues=accountField.get(i).getDefaultValue();
@@ -492,4 +466,17 @@ public class DefaultController {
     }
 
 
+
+        /**
+         * 根据用户移动的信息查询账号
+         *
+         * @param
+         * @return
+         */
+        @RequestMapping("/actMove")
+        @ResponseBody
+        public int actMove( @Param("accountName") String accountName,HttpSession session) {
+
+            return Integer.parseInt(null);
+        }
 }

@@ -37,8 +37,8 @@ $(document).ready(function() {
                 success: function (data) {
                     var but ="<div class='layui-form-item div'>"
                         +"<div class='layui-input-block layui-form' lay-filter='test2'>"
-                        +"<button lay-filter='setmypass'   onclick='unAuditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >不同意 </button>"
-                        +"<button lay-filter='setmypass'   onclick='auditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn' >同意 </button>"
+                        +"<button lay-filter='setmypass'   onclick='unAuditAccount(" + data[0].taskProcessInstanceId + ");' class='layui-btn layui-btn-no' >不同意 </button>"
+                        +"<button lay-filter='setmypass'   onclick='auditAccount(" + data[0].taskProcessInstanceId + ");'class='layui-btn layui-btn-pass' >同意 </button>"
                         +"</div> </div>";
                     $('#but').append(but);
 
@@ -159,7 +159,7 @@ $(document).ready(function() {
                     count: dat.length, //数据总数，从服务端得到
                     limit:2,
                     limits:[1,2,3,4,5,10,20,30,50,100],
-                    layout: ['count', 'prev', 'page', 'next','limit'],
+                    layout: ['count', 'prev', 'page', 'next','skip','limit'],
                     jump: function(obj){
                         //模拟渲染
                         document.getElementById('auditPositionLists').innerHTML = function(){
@@ -406,7 +406,7 @@ function  sel() {
                     count: dat.length, //数据总数，从服务端得到
                     limit: 2,
                     limits:[1,2,3,4,5,10,20,30,50,100],
-                    layout: ['count', 'prev', 'page', 'next','limit'],
+                    layout: ['count', 'prev', 'page', 'next','skip','limit'],
                     jump: function (obj) {
                         //模拟渲染
                         document.getElementById('auditPositionLists').innerHTML = function () {

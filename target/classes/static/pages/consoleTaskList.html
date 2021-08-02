@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org"/>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="Cache-Control" content="no-store"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="referrer" content="no-referrer"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>待重试</title>
+    <script type="text/javascript" src="../js/jquery.js"></script>
+    <script type="text/javascript" src="../js/layui.js"></script>
+    <link rel="stylesheet" type="text/css" href="../css/layui.css">
+    <script type="text/javascript" src="../js/retry.js"></script>
+
+</head>
+<style>
+    body {
+        background-color: white;
+    }
+    .span{
+        float:right;
+        width:50px;
+        margin:9px 0 0 0;
+    }
+    .layui-layer {
+        word-break: break-all;
+        word-wrap: break-word;
+    }
+</style>
+
+<body>
+<br>
+<div class="cBody">
+    <div class="console">
+        <form class="layui-form" >
+            <div class="layui-form-item">
+                <div class="main">
+
+                </div>
+                <div class="au layui-input-inline">
+                    <span class="span">审批人</span>
+                </div>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="approvedPerson" placeholder="审批人">
+                </div>
+                <div class="layui-input-inline">
+                    <button class="layui-btn" lay-submit lay-filter="submitBut" id="selectTask" onclick="selectTaskList()">&nbsp;&nbsp;查询&nbsp;&nbsp;</button>
+                    <button class="layui-btn" lay-submit lay-filter="submitBut">&nbsp;&nbsp;重置&nbsp;&nbsp;</button>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <br>
+    <!--事件列表-->
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="150">
+                    <col width="200">
+                    <col>
+                </colgroup>
+                <thead>
+                <tr>
+                    <th>事件标识</th>
+                    <th>事件类型</th>
+                    <th>申请人</th>
+                    <th>审批人</th>
+                    <th>任务类型</th>
+                    <th>申请原因</th>
+                    <th>审批意见</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody id="eventList">
+
+                </tbody>
+            </table>
+            <div id="eventPage" style="text-align: center"></div>
+        </div>
+    </div>
+</div>
+<div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
+    <div class="layui-form" lay-filter="" id="form1">
+        <img src="" id="picture">
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        selectTaskList();
+
+        $("body").on("click", "#history", function (e) {
+            var proId=  $(this).val();
+            layui.use('form', function () {
+                var form = layui.form;
+                layui.use('layer', function () {
+                    var layer = layui.layer;
+                    layer.open({
+                        type: 1,
+                        title: "查看流程图",   //标题
+                        area: ['800px', '390px'],    //弹窗大小
+                        shadeClose: false,      //禁止点击空白关闭
+                        scrollbar: false,      //禁用滚动条
+                        move: false,       //禁用移动
+                        scrolling: 'no',
+                        resize: false,
+                        closeBtn: 1,
+                        content: $('#procdefPicture'),
+                        end: function () {
+                            $('#procdefPicture').hide();
+                        }
+                    });
+                });
+
+            });
+            $("#picture").attr("src","../getProcefPicture?taskId="+proId+"");
+    });
+    function selectTaskList(){
+        //渲染分页
+        layui.use('laypage', function () {
+            //清空之前的列表记录
+            $('.tbody tr').remove();
+            //获取审批人
+            var approvedPerson = document.getElementById("approvedPerson").value;
+            $.ajax({
+                url: "/getAllTaskAdmin",
+                type: "POST",
+                data: {
+                    approvedPerson: approvedPerson
+                },
+                success: function (data) {
+                    //清空之前的列表记录
+                    $('.tbody tr').remove();
+                    var laypage = layui.laypage;
+                    //获取任务集合
+                    var taskList = data.taskEntities;
+                    if (taskList != null) {
+                        laypage.render({
+                            elem: 'eventPage',
+                            count: taskList.length, //数据总数，从服务端得到
+                            limit: 10,
+                            limits:[10,20,30],
+                            layout: ['prev', 'page', 'count','next',  'skip'],
+                            jump: function (obj) {
+                                //模拟渲染
+                                document.getElementById('eventList').innerHTML = function () {
+                                    var arr = []
+                                    thisData = taskList.concat().splice(obj.curr * obj.limit - obj.limit, obj.limit);
+                                    layui.each(thisData, function (index, item) {
+                                        var taskStr =
+                                            "<tr>"
+                                            + "<td><input type='text' value='" + item.event + "'  class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='" + item.eventType + "'  class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='" + item.applyPerson+"'  class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='" + item.approvedPerson + "'  class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='" + item.taskType + "'  class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='" + item.applyReason + "' id='applyReasonShow'  onmouseover='over1(this.value);' class='layui-input' style='border:none;'></td>"
+                                            + "<td><input type='text' value='"+item.repulseReason+"' id='repulseReason'  onmouseover='over(this.value);' class='layui-input' style='border:none;'></td>"
+                                            + " <td>"
+                                            + "<button value='" + item.event + "' class='layui-btn' id='history'>查看进度</button>"
+                                            + "</td>"
+                                            + "</tr>";
+                                        arr.push(taskStr);
+                                    });
+                                    return arr.join('');
+
+                                }();
+                            }
+                        });
+                    }
+                }
+            });
+        });
+    }
+</script>
+</body>
+</html>

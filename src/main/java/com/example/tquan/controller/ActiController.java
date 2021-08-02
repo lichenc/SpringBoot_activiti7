@@ -211,7 +211,6 @@ public class ActiController{
                     System.out.println("时间倒叙的id："+lists.get(0).getId());
                     processEngine.getTaskService()// 与正在执行任务相关的Service
                             .complete(lists.get(0).getId());
-
                     findTasks(session);
                 }
             }if(taskType.equals("帐号修改")==true){
@@ -406,64 +405,70 @@ public class ActiController{
         if(audit.equals(login_name)){
             for (int p=0;p<listsl.size();p++){
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(listsl.get(p).getProcessInstanceId().toString());
-                ActivitiEntity task=new ActivitiEntity();
-                task.setTaskId(listsl.get(p).getId());
-                task.setTaskName(listsl.get(p).getName());
-                task.setTaskAssignee(listsl.get(p).getAssignee());
-                task.setTaskCreateTime(df.format(listsl.get(p).getCreateTime()));
-                task.setTaskExecutionId(listsl.get(p).getExecutionId());
-                task.setTaskProcessInstanceId(listsl.get(p).getProcessInstanceId());
-                task.setTaskApp(variables.get("app").toString());
-                task.setTaskTypes(variables.get("taskType").toString());
-                task.setTaskAccount(variables.get("account").toString());
-                task.setTaskApplyPerson(name);
-                task.setTaskApprovedPerson(audits.get(0).getAudit());
-                for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                    if ("applyPerson".equals(entry.getKey())&&login_name.equals(entry.getValue())) {
-                        listTask.add(task);
-                    }else {
+                if(!variables.get("taskType").toString().equals("岗位新增")){
+                    ActivitiEntity task=new ActivitiEntity();
+                    task.setTaskId(listsl.get(p).getId());
+                    task.setTaskName(listsl.get(p).getName());
+                    task.setTaskAssignee(listsl.get(p).getAssignee());
+                    task.setTaskCreateTime(df.format(listsl.get(p).getCreateTime()));
+                    task.setTaskExecutionId(listsl.get(p).getExecutionId());
+                    task.setTaskProcessInstanceId(listsl.get(p).getProcessInstanceId());
+                    task.setTaskApp(variables.get("app").toString());
+                    task.setTaskTypes(variables.get("taskType").toString());
+                    task.setTaskAccount(variables.get("account").toString());
+                    task.setTaskApplyPerson(name);
+                    task.setTaskApprovedPerson(audits.get(0).getAudit());
+                    for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                        if ("applyPerson".equals(entry.getKey())&&login_name.equals(entry.getValue())) {
+                            listTask.add(task);
+                        }else {
 
-                    }
+                        }
+                }
                 }
             }
         }else {
             for (int p=0;p<listsl.size();p++){
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(listsl.get(p).getProcessInstanceId().toString());
-                ActivitiEntity task=new ActivitiEntity();
-                task.setTaskId(listsl.get(p).getId());
-                task.setTaskName(listsl.get(p).getName());
-                task.setTaskAssignee(listsl.get(p).getAssignee());
-                task.setTaskCreateTime(df.format(listsl.get(p).getCreateTime()));
-                task.setTaskExecutionId(listsl.get(p).getExecutionId());
-                task.setTaskProcessInstanceId(listsl.get(p).getProcessInstanceId());
-                task.setTaskApp(variables.get("app").toString());
-                task.setTaskTypes(variables.get("taskType").toString());
-                task.setTaskAccount(variables.get("account").toString());
-                task.setTaskApplyPerson(name);
-                task.setTaskApprovedPerson(audits.get(0).getAudit());
-                for (Map.Entry<String, Object> entry : variables.entrySet()) {
-                    if ("applyPerson".equals(entry.getKey())&&login_name.equals(entry.getValue())) {
-                        listTask.add(task);
-                    }else {
+                if(!variables.get("taskType").toString().equals("岗位新增")) {
+                    ActivitiEntity task = new ActivitiEntity();
+                    task.setTaskId(listsl.get(p).getId());
+                    task.setTaskName(listsl.get(p).getName());
+                    task.setTaskAssignee(listsl.get(p).getAssignee());
+                    task.setTaskCreateTime(df.format(listsl.get(p).getCreateTime()));
+                    task.setTaskExecutionId(listsl.get(p).getExecutionId());
+                    task.setTaskProcessInstanceId(listsl.get(p).getProcessInstanceId());
+                    task.setTaskApp(variables.get("app").toString());
+                    task.setTaskTypes(variables.get("taskType").toString());
+                    task.setTaskAccount(variables.get("account").toString());
+                    task.setTaskApplyPerson(name);
+                    task.setTaskApprovedPerson(audits.get(0).getAudit());
+                    for (Map.Entry<String, Object> entry : variables.entrySet()) {
+                        if ("applyPerson".equals(entry.getKey()) && login_name.equals(entry.getValue())) {
+                            listTask.add(task);
+                        } else {
 
+                        }
                     }
                 }
             }
             for (int p=0;p<lists2.size();p++) {
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(lists2.get(p).getProcessInstanceId().toString());
-                ActivitiEntity task = new ActivitiEntity();
-                task.setTaskId(lists2.get(p).getId());
-                task.setTaskName(lists2.get(p).getName());
-                task.setTaskAssignee(lists2.get(p).getAssignee());
-                task.setTaskCreateTime(df.format(lists2.get(p).getCreateTime()));
-                task.setTaskExecutionId(lists2.get(p).getExecutionId());
-                task.setTaskProcessInstanceId(lists2.get(p).getProcessInstanceId());
-                task.setTaskApp(variables.get("app").toString());
-                task.setTaskTypes(variables.get("taskType").toString());
-                task.setTaskAccount(variables.get("account").toString());
-                task.setTaskApplyPerson(name);
-                task.setTaskApprovedPerson(audits.get(0).getAudit());
-                listTask.add(task);
+                if(!variables.get("taskType").toString().equals("岗位新增")) {
+                    ActivitiEntity task = new ActivitiEntity();
+                    task.setTaskId(lists2.get(p).getId());
+                    task.setTaskName(lists2.get(p).getName());
+                    task.setTaskAssignee(lists2.get(p).getAssignee());
+                    task.setTaskCreateTime(df.format(lists2.get(p).getCreateTime()));
+                    task.setTaskExecutionId(lists2.get(p).getExecutionId());
+                    task.setTaskProcessInstanceId(lists2.get(p).getProcessInstanceId());
+                    task.setTaskApp(variables.get("app").toString());
+                    task.setTaskTypes(variables.get("taskType").toString());
+                    task.setTaskAccount(variables.get("account").toString());
+                    task.setTaskApplyPerson(name);
+                    task.setTaskApprovedPerson(audits.get(0).getAudit());
+                    listTask.add(task);
+                }
             }
         }
 
@@ -548,9 +553,12 @@ public class ActiController{
         System.out.println(list2.getId()+"***"+pid+"***"+approvalOpinion+"***"+userName);
         taskService.addComment(list2.getId(),pid,approvalOpinion);//增加批注
         //taskService.setAssignee(list2.getId(),null);//归还候选任务
-        System.out.println(list2.getId()+"***"+pid+"***"+approvalOpinion+"***"+userName);
-        taskService.setAssignee(list2.getId(),userName);//
-
+        Map<String, Object> variables = new HashMap<>();
+        //msg来决定流程走向。具体看bpmn图
+        variables.put("msg", false);
+        list2.setAssignee(userName);
+        taskService.setVariableLocal(list2.getId(),"msg",false);
+        taskService.complete(list2.getId(), variables);
 
         //查询是否是第一次打回
         VariableEntity variableEntity = new VariableEntity();
@@ -751,8 +759,11 @@ public class ActiController{
         for (Map.Entry<String, Object> entry : variables.entrySet()) {
             System.out.println(entry + "Key = " + entry.getKey() + ", Value = " + entry.getValue());
         }
+        Map<String, Object> variable = new HashMap<>();
+        //msg来决定流程是否完成。具体看bpmn图
+        variable.put("msg", true);
         processEngine.getTaskService()// 与正在执行任务相关的Service
-                .complete(task.getId());
+                .complete(task.getId(),variable);
         //如果申请为岗位申请，审批通过之后需要授权申请的岗位
         VariableEntity variableEntity = variableService.getTaskDefByProcInstId(task.getId());
         if (variableEntity != null) {
@@ -1005,6 +1016,7 @@ public class ActiController{
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         //2：得到HistoryService对象
         HistoryService historyService = processEngine.getHistoryService();
+        TaskService taskService=processEngine.getTaskService();
         String name = (String) session.getAttribute("userSn");
         List<HistoricActivityInstance> taskList = historyService.createHistoricActivityInstanceQuery()
                 .taskAssignee(name)
@@ -1044,6 +1056,14 @@ public class ActiController{
                         //任务结束的变量值，字段不同可根据任务类型判断
 
                         for(HistoricVariableInstance hvi:list){
+                            List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                            //如果当前任务有批注信息，添加到集合中
+                            System.out.println(comments.size());
+                            if(comments!=null && comments.size()>0){
+                                hisTask.setComment(comments);
+                            }else {
+                                hisTask.setComment(comments);
+                            }
                             if("account".equals(hvi.getVariableName())){
                                 hisTask.setAccount(hvi.getValue().toString());
                             }
@@ -1147,7 +1167,7 @@ public class ActiController{
                                 }
                                 hisTask.setSelectLists(selectList2);
                             }
-                            if(" dateList".equals(hvi.getVariableName())){
+                            if("dateList".equals(hvi.getVariableName())){
                                 JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
                                 JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
                                 JSONArray dateListValue = JSONArray.fromObject(dateList.values());
@@ -1187,10 +1207,19 @@ public class ActiController{
                             hisTask.setCreateTime(df.format(tasks.getStartTime()));
                             hisTask.setEndTime(df.format(tasks.getEndTime()));
                             hisTask.setStatus("未完成");
+
                             List<ActEntity> accountField = null;
                             //任务未结束的变量值，字段不同可根据任务类型判断
 
                             for(HistoricVariableInstance hvi:list){
+                                List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                //如果当前任务有批注信息，添加到集合中
+                                System.out.println(comments.size());
+                                if(comments!=null && comments.size()>0){
+                                    hisTask.setComment(comments);
+                                }else {
+                                    hisTask.setComment(comments);
+                                }
                                 if("account".equals(hvi.getVariableName())){
                                     hisTask.setAccount(hvi.getValue().toString());
                                 }
@@ -1294,7 +1323,8 @@ public class ActiController{
                                     }
                                     hisTask.setSelectLists(selectList2);
                                 }
-                                if(" dateList".equals(hvi.getVariableName())){
+                                System.out.println("=====:  "+hvi.getVariableName());
+                                if("dateList".equals(hvi.getVariableName())){
                                     JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
                                     JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
                                     JSONArray dateListValue = JSONArray.fromObject(dateList.values());

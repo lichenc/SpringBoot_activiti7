@@ -34,24 +34,34 @@
     .layui-laypage select{
         width: 65px;
     }
+   .layui-laypage button{
+       width: 48px;
+       background-color: #009688;
+       padding: 0;
+   }
+    .layui-search{
+        float: right;
+        margin-top: 10px;
+        margin-bottom: 8px;
+    }
 </style>
 
 <div class="cBody">
     <div class="console">
         <form class="layui-form" >
-            <div class="layui-form-item">
+            <div class="layui-form-item layui-search">
 
                 <div class="au layui-input-inline">
-                    <span class="span">事件类型</span>
+                    <span class="span layui-applyTimes">事件类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="name"   placeholder="事件类型" autocomplete="off" class="layui-input">
+                    <input type="text" name="name"   placeholder="事件类型" autocomplete="off" class="layui-input layui-timeInput">
                 </div>
                 <div class="au layui-input-inline">
-                    <span class="span">任务类型</span>
+                    <span class="span layui-applyTimes">任务类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="name"   placeholder="任务类型" autocomplete="off" class="layui-input">
+                    <input type="text" name="name"   placeholder="任务类型" autocomplete="off" class="layui-input layui-timeInput">
                 </div>
                 <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
             </div>

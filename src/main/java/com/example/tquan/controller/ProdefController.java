@@ -8,10 +8,14 @@ import org.activiti.bpmn.model.BpmnModel;
 
 import org.activiti.engine.history.HistoricActivityInstance;
 
+import org.activiti.engine.impl.RepositoryServiceImpl;
+import org.activiti.engine.impl.persistence.entity.ProcessDefinitionEntity;
 import org.activiti.engine.task.Task;
 import org.activiti.image.ProcessDiagramGenerator;
+import org.activiti.image.impl.DefaultProcessDiagramGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +37,12 @@ public class ProdefController {
     private TasksService tasksService;
 
     private Log log = LogFactory.getLog(getClass());
+
+    //1:得到ProcessEngine对象
+    ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
+    //2：得到HistoryService对象
+    HistoryService historyService = processEngine.getHistoryService();
+    RuntimeService runtimeService = processEngine.getRuntimeService();
     /**
      * 查询所有流程
      * @return
@@ -109,8 +120,6 @@ public class ProdefController {
           ProcessDiagramGenerator processDiagramGenerator=processEngine.getProcessEngineConfiguration().getProcessDiagramGenerator();
            // 获取流程
            Task task=taskService.createTaskQuery().processInstanceId(taskId).singleResult();
-
-
            // 获取流程历史中已执行节点，并按照节点在流程中执行先后顺序排序
            List<HistoricActivityInstance> historicActivityInstanceList = historyService.createHistoricActivityInstanceQuery()
                    .processInstanceId(taskId).orderByHistoricActivityInstanceId().asc().list();
@@ -141,6 +150,5 @@ public class ProdefController {
        }
         return imageStream1;
     }
-
 
 }
