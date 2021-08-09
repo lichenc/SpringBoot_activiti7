@@ -143,7 +143,7 @@ public class ActiController{
     @ResponseBody
     public List<ActivitiEntity> start(@Param("id")String id,@Param("taskType")String taskType, @Param("applyName")String applyName,
                                       @Param("appName")String appName,@Param("accountName")String accountName,
-                                      @Param("orgName")String orgName,@Param("orgId")String orgId,@Param("audit")String audit,
+                                      @Param("orgId")String orgId,@Param("audit")String audit,
                                       @Param("role")String role,@Param("applyReason")String applyReason,
                                       @Param("accountOrg")String accountOrg,@Param("accountOrgId")String accountOrgId,@Param("actType")String actType,
                                       @Param("textList")String textList,@Param("passwordList")String passwordList,
@@ -191,7 +191,7 @@ public class ActiController{
                     map.put("account",accountName);
                     map.put("status","1");
                     map.put("usersId",userId);
-                    map.put("orgName",orgName);
+                    /*map.put("orgName",orgName);*/
                     map.put("orgId",orgId);
                     map.put("accountOrgId",accountOrgId);
                     map.put("actType",actType);
@@ -225,7 +225,7 @@ public class ActiController{
                 map.put("account",accountName);
                 map.put("status","1");
                 map.put("usersId",userId);
-                map.put("orgName",orgName);
+                /*map.put("orgName",orgName);*/
                 map.put("orgId",orgId);
                 map.put("accountOrgId",accountOrgId);
                 map.put("actType",actType);
@@ -257,7 +257,7 @@ public class ActiController{
                 map.put("account",accountName);
                 map.put("status","1");
                 map.put("usersId",userId);
-                map.put("orgName",orgName);
+                /*map.put("orgName",orgName);*/
                 map.put("accountOrg",accountOrg);
                 map.put("applyReason",applyReason);
                 ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("myProcess_1",map);
@@ -303,7 +303,7 @@ public class ActiController{
                             map.put("account",accountName);
                             map.put("status","1");
                             map.put("usersId",userId);
-                            map.put("orgName",orgName);
+                            /*map.put("orgName",orgName);*/
                             map.put("orgId",orgId);
                             map.put("accountOrgId",accountOrgId);
                             map.put("actType",actType);
@@ -334,7 +334,7 @@ public class ActiController{
                         map.put("account",accountName);
                         map.put("status","1");
                         map.put("usersId",userId);
-                        map.put("orgName",orgName);
+                        /*map.put("orgName",orgName);*/
                         map.put("orgId",orgId);
                         map.put("accountOrgId",accountOrgId);
                         map.put("actType",actType);
@@ -364,7 +364,7 @@ public class ActiController{
                         map.put("account",accountName);
                         map.put("status","1");
                         map.put("usersId",userId);
-                        map.put("orgName",orgName);
+                        /*map.put("orgName",orgName);*/
                         map.put("accountOrg",accountOrg);
                         map.put("applyReason",applyReason);
                         runtimeService.setVariables(id,map);
@@ -514,7 +514,7 @@ public class ActiController{
                     }
                 }
                 if (!variables.get("taskType").equals("岗位新增")){
-                    task.setOrgName(variables.get("orgName").toString());
+                   /* task.setOrgName(variables.get("orgName").toString());*/
                     task.setRole(variables.get("role").toString());
                     task.setAccount(variables.get("account").toString());
                     task.setActType(variables.get("actType").toString());
@@ -631,7 +631,7 @@ public class ActiController{
             task.setTaskExecutionId(listsl.getExecutionId());
             task.setTaskProcessInstanceId(listsl.getProcessInstanceId());
             task.setTaskApprovedPerson(audits.get(0).getAudit());
-            task.setTaskOrgName(variables.get("orgName").toString());
+           /* task.setTaskOrgName(variables.get("orgName").toString());*/
             task.setTaskApplyReason(variables.get("applyReason").toString());
             task.setTaskRole(variables.get("role").toString());
             task.setTaskTypes(variables.get("taskType").toString());
@@ -746,6 +746,7 @@ public class ActiController{
     @RequestMapping("/AuditTask")
     @ResponseBody
     public List AuditTask(@RequestParam("id") String pid,@RequestParam("approvalOpinion") String approvalOpinion, HttpSession session, String uuid) throws Exception {
+        String userId = (String) session.getAttribute("UserId");
         List<ActivitiEntity> li=new ArrayList<>();
         //1:得到ProcessEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -798,7 +799,24 @@ public class ActiController{
                 PositionEntity positionEntity = new PositionEntity();
                 positionEntity.setUserId(userEntity1.getId());
                 positionEntity.setPositionId(positionId);
-
+                //用户移动
+                //账号
+                String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
+                if (StringUtils.isEmpty(ifo.toString())) {
+                    System.out.println("uuid为空，认证失败，无法移动用户");
+                } else {
+                    /*ids[0]: 1628394176024783_1626841411357127
+                     * newOrgId: 1626841471677700
+                    * */
+                    List<NameValuePair> params = Lists.newArrayList();
+                    params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
+                    params.add(new BasicNameValuePair("ids[0]", userId+"_"+defaultService.org(userId)));
+                    params.add(new BasicNameValuePair("newOrgId", variable.get("orgId").toString()));
+                    //转换为键值对
+                    String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+                    String ifa=iamInterface.movenUser(str,user.getAddr(),user.getType());
+                    System.out.println("======= 用户移动结果：" + ifa);
+                }
                 //执行用户关联岗位的add方法
                 int iden = positionService.addUserPosition(positionEntity);
                 //添加成功
@@ -1071,9 +1089,9 @@ public class ActiController{
                             if("role".equals(hvi.getVariableName())){
                                 hisTask.setRole(hvi.getValue().toString());
                             }
-                            if("orgName".equals(hvi.getVariableName())){
+                            /*if("orgName".equals(hvi.getVariableName())){
                                 hisTask.setOrgName(hvi.getValue().toString());
-                            }
+                            }*/
                             if("applyReason".equals(hvi.getVariableName())){
                                 hisTask.setApplyReason(hvi.getValue().toString());
                             }
@@ -1227,9 +1245,9 @@ public class ActiController{
                                 if("role".equals(hvi.getVariableName())){
                                     hisTask.setRole(hvi.getValue().toString());
                                 }
-                                if("orgName".equals(hvi.getVariableName())){
+                                /*if("orgName".equals(hvi.getVariableName())){
                                     hisTask.setOrgName(hvi.getValue().toString());
-                                }
+                                }*/
                                 if("applyReason".equals(hvi.getVariableName())){
                                     hisTask.setApplyReason(hvi.getValue().toString());
                                 }

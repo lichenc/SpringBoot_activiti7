@@ -320,7 +320,7 @@ public class DefaultController {
             }
             defaultsEntity.setId(id);
             defaultsEntity.setApprovedPerson(audits.get(0).getAudit());
-            defaultsEntity.setOrgName(variables.get("orgName").toString());
+            /*defaultsEntity.setOrgName(variables.get("orgName").toString());*/
             defaultsEntity.setApplyReason(variables.get("applyReason").toString());
             defaultsEntity.setRole(variables.get("role").toString());
             defaultsEntity.setTaskType(variables.get("taskType").toString());
@@ -465,8 +465,6 @@ public class DefaultController {
         return actNums.size();
     }
 
-
-
         /**
          * 根据用户移动的信息查询账号
          *
@@ -475,9 +473,11 @@ public class DefaultController {
          */
         @RequestMapping("/actMove")
         @ResponseBody
-        public int actMove( @Param("accountName") String accountName,HttpSession session) {
-
-            return Integer.parseInt(null);
+        public List<DefaultEntity> actMove( HttpSession session) {
+            String usId = (String) session.getAttribute("UserId");
+            List<DefaultEntity> acts=defaultService.actMove(usId);
+            return acts;
         }
+
 
 }

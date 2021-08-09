@@ -20,6 +20,7 @@ import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Task;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,13 +94,24 @@ public class PositionController {
     }
 
     /**
+     * 根据组织查询岗位
+     */
+    @RequestMapping("/userOrg")
+    public List<PositionEntity> orgPosition(String orgId){
+        List<PositionEntity> positionEntityList= positionService.orgPosition(orgId);
+        return positionEntityList;
+    };
+
+
+    /**
      * 添加岗位流程
      * @return
      */
     @RequestMapping("/addPositionProcess")
-    public int addPositionProcess(String position, String applyReason,String approvedPerson, HttpSession session, HttpServletRequest request){
+    public int addPositionProcess(String position, String applyReason,String approvedPerson,String orgName,
+                                  String orgId, HttpSession session, HttpServletRequest request){
+        System.out.println(orgName);
         int iden=0;
-
        try{
            //非空判断，防止越过前端非空验证
            if(position != null && applyReason != null && applyReason != "" && position != "" && approvedPerson != null && approvedPerson != ""){
@@ -125,6 +137,8 @@ public class PositionController {
                    map.put("applyPerson",sn);
                    map.put("position",position);
                    map.put("applyReason",applyReason);
+                   map.put("orgName",orgName);
+                   map.put("orgId",orgId);
                    map.put("taskType","岗位新增");
                    map.put("approvedPerson",approvedPersonStr);
                    ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);

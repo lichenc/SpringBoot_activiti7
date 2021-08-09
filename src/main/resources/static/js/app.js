@@ -461,7 +461,7 @@ function addAccount() {
     //申请人
     var userName = document.getElementById("userName").value;
     //用户所属组织
-    var orgName = document.getElementById("orgName").value;
+    /*var orgName = document.getElementById("orgName").value;*/
     //用户所属组织ID
     var orgId = document.getElementById("orgId").value;
     //任务类型
@@ -479,10 +479,10 @@ function addAccount() {
         layer.alert("申请人为空!")
         return false;
     }
-    if (orgName == null || orgName == "") {
+   /* if (orgName == null || orgName == "") {
         layer.alert("请选择用户所属组织!")
         return false;
-    }
+    }*/
     if (taskType == null || taskType == "") {
         layer.alert("请选择任务类型!")
         return false;
@@ -608,7 +608,7 @@ function addAccount() {
                     taskType:taskType,
                     appName: appName,
                     accountName: accountName,
-                    orgName: orgName,
+                   /* orgName: orgName,*/
                     orgId:orgId,
                     audit:audit,
                     role:role,
@@ -735,7 +735,8 @@ function addAccount() {
             layer.alert("请选择要禁用的帐号!")
             return false;
         }
-        if ((accountEnable != null || accountEnable != "")&&(taskType != "" || taskType != null) && (appName != null || appName != "") && (orgName != null || orgName != "") && (audit != null || audit != "") && (role != null || role != "") && (applyReason != null || applyReason != "") ) {
+        if ((accountEnable != null || accountEnable != "")&&(taskType != "" || taskType != null) && (appName != null || appName != "") &&
+            (audit != null || audit != "") && (role != null || role != "") && (applyReason != null || applyReason != "") ) {
             $.ajax({
                 url: "/verifyActTask",
                 type: "POST",
@@ -744,7 +745,7 @@ function addAccount() {
                     taskType:taskType,
                     appName: appName,
                     accountName: accountEnable,
-                    orgName: orgName,
+                   /* orgName: orgName,*/
                     audit:audit,
                     applyReason:applyReason,
                     role:role
@@ -870,12 +871,12 @@ $(document).ready(function() {
                         +" <input id='userName' type='text' disabled   lay-vertype='tips' required class='layui-input' value='"+data[0].applyPerson+"'  ></div></div>"
 
                     $('#userNames').append(userName);
-                    var orgName  = "<div id='div' class='layui-form-item delForm div'><label class='layui-form-label' style='font-size:12px;'>用户所属组织： </label>"
+                    /*var orgName  = "<div id='div' class='layui-form-item delForm div'><label class='layui-form-label' style='font-size:12px;'>用户所属组织： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                         +"<input type='text' id='orgId' style='display:none' class='' value='' />"
                         +" <input id='orgName' onfocus='org();' type='text'   lay-vertype='tips' required class='layui-input' value='"+data[0].orgName+"'  ></div></div>"
 
-                    $('#orgNames').append(orgName);
+                    $('#orgNames').append(orgName);*/
 
                     var selectTs= "<div id='div' class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>任务类型： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
@@ -1183,7 +1184,7 @@ function againAddAccount() {
     //申请人
     var userName = document.getElementById("userName").value;
     //用户所属组织
-    var orgName = document.getElementById("orgName").value;
+   /* var orgName = document.getElementById("orgName").value;*/
     //用户所属组织
     var orgId = document.getElementById("orgId").value;
     //任务类型
@@ -1201,10 +1202,10 @@ function againAddAccount() {
         layer.alert("申请人为空!")
         return false;
     }
-    if (orgName == null || orgName == "") {
+   /* if (orgName == null || orgName == "") {
         layer.alert("请选择用户所属组织!")
         return false;
-    }
+    }*/
     if (taskType == null || taskType == "") {
         layer.alert("请选择任务类型!")
         return false;
@@ -1330,7 +1331,7 @@ function againAddAccount() {
                     taskType:taskType,
                     appName: appName,
                     accountName: accountName,
-                    orgName: orgName,
+                   /* orgName: orgName,*/
                     orgId: orgId,
                     audit:audit,
                     role:role,
@@ -1456,7 +1457,8 @@ function againAddAccount() {
             layer.alert("请选择要禁用的帐号!")
             return false;
         }
-        if ((accountEnable != null || accountEnable != "")&&(taskType != "" || taskType != null) && (appName != null || appName != "") && (orgName != null || orgName != "") && (audit != null || audit != "") && (role != null || role != "") && (applyReason != null || applyReason != "") ) {
+        if ((accountEnable != null || accountEnable != "")&&(taskType != "" || taskType != null) && (appName != null || appName != "") &&
+            (audit != null || audit != "") && (role != null || role != "") && (applyReason != null || applyReason != "") ) {
             $.ajax({
                 url: "/verifyActTask",
                 type: "POST",
@@ -1465,7 +1467,7 @@ function againAddAccount() {
                     taskType:taskType,
                     appName: appName,
                     accountName: accountEnable,
-                    orgName: orgName,
+                   /* orgName: orgName,*/
                     audit:audit,
                     applyReason:applyReason,
                     role:role
@@ -1577,11 +1579,11 @@ $(document).ready(function() {
                         + " <input id='userName' type='text' disabled   lay-vertype='tips' required class='layui-input' value='" + data[0].taskApplyPerson + "'  ></div></div>"
 
                     $('#userNames3').append(userName);
-                    var orgName = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>用户所属组织： </label>"
+                   /* var orgName = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>用户所属组织： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                         + " <input id='orgName' type='text' disabled  lay-vertype='tips' required class='layui-input' value='" + data[0].taskOrgName + "'  ></div></div>"
 
-                    $('#orgNames3').append(orgName);
+                    $('#orgNames3').append(orgName);*/
                     var selectTs = "<div class='layui-form-item div' ><label class='layui-form-label' style='font-size:12px;'>任务类型： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
                         + " <input id='taskType' class='layui-input' lay-filter='taskty' disabled lay-verify='required'   required value='" + data[0].taskTypes + "'  ></div></div>"
@@ -1712,58 +1714,15 @@ function org() {
                         showLine: true,  //是否开启连接线,
                         click:function (obj) {
 
-                            userMove()
-
-                            $("#orgName").val(obj.data.title);
-                            $("#orgId").val(obj.data.id);
                             $("#accountOrg").val(obj.data.title);
                             $("#accountOrgId").val(obj.data.id);
-                            layer.close(layer.index );
+                           /* layer.close(layer.index);*/
                         }
                     });
                 })
             }
         })
     })
-}
-
-
-
-/*
-* 确认用户移动的账号
-* */
-
-function userMove() {
-    /*layui.use('form', function () {
-        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-        layui.use('layer', function () {
-            var layer = layui.layer;
-            layer.open({
-                type: 1,
-                title: "移动用户提示框",   //标题
-                area: ['300px', '350px'],    //弹窗大小
-                shadeClose: false,      //禁止点击空白关闭
-                scrollbar: false,      //禁用滚动条
-                move: false,       //禁用移动
-                scrolling: 'no',
-                resize: false,
-                closeBtn: 1,
-                content: $('#act'),
-                end: function () {
-                    $('#act').hide();
-                }
-            });
-        });
-*/
-        $.ajax({
-            url: "/actMove",
-            type: "POST",
-            success: function (act) {
-                alert(act.toString())
-               /* layer.alert("申请成功！", {icon: 6,time:3000});*/
-            }
-        })
-   /* })*/
 }
 
 

@@ -1,9 +1,6 @@
 package com.example.tquan.dao;
 
-import com.example.tquan.entity.ActEntity;
-import com.example.tquan.entity.DefaultEntity;
-import com.example.tquan.entity.DefaultsEntity;
-import com.example.tquan.entity.UserEntity;
+import com.example.tquan.entity.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -89,5 +86,18 @@ public interface DefaultDao {
      * @return
      */
     String fieldDefaultVal(String sql);
-
+    /**
+     * 查询用户移动时的账号
+     *
+     * @param
+     * @return
+     */
+    List<DefaultEntity> actMove(String userId);
+    /**
+     * 查询用户移动前组织id
+     *
+     * @param
+     * @return
+     */
+    String org(String userId);
 }

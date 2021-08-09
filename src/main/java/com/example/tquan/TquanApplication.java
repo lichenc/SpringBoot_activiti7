@@ -45,12 +45,12 @@ public class TquanApplication {
     }
     @Test
     public void deployProcess() throws FileNotFoundException {
-        String bpmnPath = "D:/idea/tquan/src/main/resources/bpmn/apply.xml";
+        String bpmnPath = "D:/idea/tquan/src/main/resources/bpmn/positionApply.xml";
         //读取资源作为一个输入流
         FileInputStream bpmnfileInputStream = new FileInputStream(bpmnPath);
         RepositoryService repositoryService = processEngine.getRepositoryService();
         DeploymentBuilder builder = repositoryService.createDeployment();
-        String name = "apply.bpmn";
+        String name = "positionApply.bpmn";
         builder.addInputStream(name,bpmnfileInputStream);
         //builder.addClasspathResource("apply.xml");
         builder.deploy();

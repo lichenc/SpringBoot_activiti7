@@ -43,4 +43,10 @@ public interface PositionDao {
      * @return
      */
     PositionEntity getInfo(PositionEntity positionEntity);
+    /**
+     * 根据组织查询岗位
+     *
+     * @return
+     */
+    List<PositionEntity> orgPosition(String orgId);
 }

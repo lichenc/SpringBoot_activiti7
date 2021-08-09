@@ -11,8 +11,9 @@ public class DefaultEntity {
     //所有属性
     private String accountName;
     private String applyName;
+    private String accountOrg;
     private String sta;
-
+    private String status;
     private String allField;
 
     public String getAppId() {
@@ -104,6 +105,22 @@ public class DefaultEntity {
         this.sta = sta;
     }
 
+    public String getAccountOrg() {
+        return accountOrg;
+    }
+
+    public void setAccountOrg(String accountOrg) {
+        this.accountOrg = accountOrg;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "DefaultEntity{" +
@@ -116,7 +133,9 @@ public class DefaultEntity {
                 ", loName='" + loName + '\'' +
                 ", accountName='" + accountName + '\'' +
                 ", applyName='" + applyName + '\'' +
+                ", accountOrg='" + accountOrg + '\'' +
                 ", sta='" + sta + '\'' +
+                ", status='" + status + '\'' +
                 ", allField='" + allField + '\'' +
                 '}';
     }

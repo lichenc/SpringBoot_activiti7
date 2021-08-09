@@ -57,5 +57,12 @@ public class PositionService {
     public PositionEntity getInfo(PositionEntity positionEntity){
         return positionDao.getInfo(positionEntity);
     }
-
+    /**
+     * 根据组织查询岗位
+     *
+     * @return
+     */
+    public List<PositionEntity> orgPosition(String orgId){
+        return positionDao.orgPosition(orgId);
+    };
 }

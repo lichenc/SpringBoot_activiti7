@@ -331,13 +331,16 @@ function positionApply() {
             type: "POST",
             dataType: "json",
             success: function (data) {
-                var po  ="<option value='0'>请选择岗位</option>";
+                var po  ="";
                 if(data.positionEntityList!=null){
                     var positionStro=data.positionEntityList;
                     for(var i=0;i<positionStro.length;i++){
-                        po=po+  "<option  value='"+positionStro[i].name+"'>"+positionStro[i].name+"</option>";
+                        po=po+  "<option   value='"+positionStro[i].name+"'>"+positionStro[i].name+"</option>";
                     }
                     $('#position').append(po);
+                    //默认选中
+                  /*  var div = document.getElementsByClassName("layui-form-checkbox");
+                    div.setAttribute("class", "layui-form-checked");*/
                     document.getElementById("applyPerson").value=data.userSn;
                 }
                 var approverStr  ="<option value='0'>请选择审批人</option>";
@@ -351,6 +354,7 @@ function positionApply() {
                 }
                 //渲染select，不然无法显示值
                 form.render();
+
             }
         });
 
@@ -366,6 +370,16 @@ function addPosition() {
     var applyReason=document.getElementById("applyReason").value;
     //审批人
     var approvedPerson=document.getElementById("approvedPerson").value;
+    //用户所属组织
+    var orgName = document.getElementById("orgName").value;
+    alert(orgName);
+    //用户所属组织ID
+    var orgId = document.getElementById("orgId").value;
+    if (orgName==null||orgName==""){
+
+        layer.alert("请选择用户所属组织!")
+        return false;
+    }
     if (position==0){
         layer.alert("请选择岗位!")
         return false;
@@ -386,7 +400,9 @@ function addPosition() {
             data: {
                 position: position,
                 applyReason: applyReason,
-                approvedPerson:approvedPerson
+                approvedPerson:approvedPerson,
+                orgName:orgName,
+                orgId:orgId
             },
             success: function (data) {
                 if(data==1){
@@ -410,3 +426,131 @@ function reset() {
     document.getElementById("approvedPerson").value=null;
 }
 
+/*组织树*/
+function org() {
+    $('.select').remove();
+    layui.use('form', function () {
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "组织树",   //标题
+                area: ['300px', '350px'],    //弹窗大小
+                shadeClose: false,      //禁止点击空白关闭
+                scrollbar: false,      //禁用滚动条
+                move: false,       //禁用移动
+                scrolling: 'no',
+                resize: false,
+                closeBtn: 1,
+                content: $('#orgTree'),
+                end: function () {
+                    $('#orgTree').hide();
+                }
+            });
+        });
+        $.ajax({
+            url: "/org",
+            type: "POST",
+            success: function (orgTrees) {
+                layui.use(['tree', 'util'], function () {
+                    var tree = layui.tree
+                        , layer = layui.layer
+                        , util = layui.util
+                        , data = orgTrees
+
+                    tree.render({
+                        elem: '#test13',
+                        data: data,
+                        showLine: true,  //是否开启连接线,
+                        click:function (obj) {
+                            userMove(obj.data.title)
+                             $("#orgName").val(obj.data.title);
+                             $("#orgId").val(obj.data.id);
+                           /* $("#accountOrg").val(obj.data.title);
+                            $("#accountOrgId").val(obj.data.id);*/
+                            layer.close(layer.index -1);
+                        }
+                    });
+                })
+            }
+        })
+    })
+}
+
+
+
+/*
+* 确认用户移动的账号
+* */
+
+function userMove(nameOrg) {
+    $('.avtTable').remove();
+    layui.use('form', function () {
+        var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        layui.use('layer', function () {
+            var layer = layui.layer;
+            layer.open({
+                type: 1,
+                title: "账号移动提示",   //标题
+                area: ['550px', '300px'],    //弹窗大小
+                shadeClose: false,      //禁止点击空白关闭
+                scrollbar: false,      //禁用滚动条
+                move: false,       //禁用移动
+                scrolling: 'no',
+                resize: false,
+                closeBtn: 1,
+                content: $('#act'),
+                end: function () {
+                    $('#act').hide();
+                }
+            });
+        });
+        $.ajax({
+            url: "/actMove",
+            type: "POST",
+            success: function (act) {
+                var message = "<table class='layui-table avtTable'><thead><tr><th>账号名</th><th>所属应用</th><th>现在所属组织</th><th>状态</th><th>移动后所属组织</th></tr></thead><tbody>"
+                for (var a = 0; a < act.length; a++) {
+                    message = message + "<tr><td>" + act[a].loginName + "</td><td>" + act[a].appName + "</td><td>" + act[a].accountOrg + "</td>"
+                    if (act[a].status == '1') {
+                        message = message + "<td>启用</td>"
+                    } else {
+                        message = message + "<td>禁用</td>"
+                    }
+                    if(act[a].accountOrg==''){
+                        message = message + "<td>" + act[a].accountOrg + "</td></tr>";
+                    }else {
+                        message = message + "<td>" + nameOrg + "</td></tr>";
+                    }
+
+                }
+                message = message + "</tbody>";
+                $('#message').append(message);
+            }
+        })
+    })
+}
+
+layui.use(['layer', 'jquery', 'form'], function () {
+    var layer = layui.layer,
+        $ = layui.jquery;
+    form = layui.form;
+
+    form.on('input(userOrg)', function (data) {
+        var org = data.value;
+        $('.div').remove();
+        // $('#div').empty();
+        $.ajax({
+            url: "/userOrg",
+            type: 'POST',
+            data: {org: org},
+            dataType: "json",
+            success: function (res) {
+                var div = document.getElementsByClassName("layui-form-checkbox");
+                div.setAttribute("class", "layui-form-checked");
+            }
+        })
+
+    });
+})

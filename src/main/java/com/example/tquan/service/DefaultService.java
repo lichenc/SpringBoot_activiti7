@@ -1,10 +1,7 @@
 package com.example.tquan.service;
 
 import com.example.tquan.dao.DefaultDao;
-import com.example.tquan.entity.ActEntity;
-import com.example.tquan.entity.DefaultEntity;
-import com.example.tquan.entity.DefaultsEntity;
-import com.example.tquan.entity.UserEntity;
+import com.example.tquan.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -110,5 +107,22 @@ public class DefaultService {
     public String fieldDefaultVal(String sql){
         return defaultDao.fieldDefaultVal(sql);
     }
-
+    /**
+     * 查询用户移动时的账号
+     *
+     * @param
+     * @return
+     */
+    public List<DefaultEntity> actMove(String userId){
+        return defaultDao.actMove(userId);
+    };
+    /**
+     * 查询用户移动前组织id
+     *
+     * @param
+     * @return
+     */
+    public String org(String userId){
+        return defaultDao.org(userId);
+    };
 }

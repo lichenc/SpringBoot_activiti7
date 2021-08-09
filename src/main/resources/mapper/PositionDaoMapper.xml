@@ -21,6 +21,16 @@
 		FROM
 			im_position
 	</select>
+	<!--根据组织Id获取所有岗位-->
+	<select id="orgPosition" resultType="com.example.tquan.entity.PositionEntity">
+		SELECT
+			*
+		FROM
+			im_org_position
+		where
+			org_id=#{orgId}
+	</select>
+
 	<!--根据岗位名称获取岗位id-->
 	<select id="getPositionByName" parameterType="java.lang.String" resultType="java.lang.String">
 		SELECT

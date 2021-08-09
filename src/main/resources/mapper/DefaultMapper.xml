@@ -44,7 +44,15 @@
     <select id="fieldDefaultVal" resultType="String">
         ${sql}
     </select>
-    <!-- 查询用户下的所有组织-->
-
+    <!-- 查询用户下的所有账号-->
+    <select id="actMove" resultType="com.example.tquan.entity.DefaultEntity">
+        select us.name,app.name as appName,act.login_name as loginName,act.account_org as accountOrg,act.status
+        from im_account as act,im_user as us,im_app as app
+        where act.user_id=us.id and app.id=act.app_id and act.user_id=#{userId}
+    </select>
+    <!-- 查询用户移动前所属组织-->
+    <select id="org" resultType="String">
+        select org_id as id from im_org_user where user_id=#{userId}
+    </select>
 
 </mapper>

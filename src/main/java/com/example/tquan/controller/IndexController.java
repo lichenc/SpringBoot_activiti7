@@ -55,6 +55,28 @@ public class IndexController {
 
     @GetMapping("/apply")
     public String apply(String uuid, HttpServletRequest request, HttpServletRequest requests, HttpSession session) throws Exception {
+     /*   String userId=session.getAttribute("UserId").toString();
+        String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
+        if(StringUtils.isEmpty(ifo)) {
+            log.info("==========================uuid为空！");
+        }else {
+            //调用统权的接口，获取用户信息
+            List<NameValuePair> params = Lists.newArrayList();
+            params.add(new BasicNameValuePair("id", userId));
+            params.add(new BasicNameValuePair("uim-login-user-id", ifo));
+            //转换为键值对
+            String userStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+            StringBuilder ifus=iamInterface.userSelect(userStr,user.getAddr(),user.getType());
+            System.out.println("用户数据："+ifus);
+            JSONObject resultJson = JSONObject.fromObject(ifus.toString());
+            request.setAttribute("userStr",resultJson);
+
+        }*/
+        return "/apply";
+    }
+
+    @GetMapping("/position")
+    public String position(String uuid, HttpServletRequest request, HttpServletRequest requests, HttpSession session) throws Exception {
         String userId=session.getAttribute("UserId").toString();
         String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
         if(StringUtils.isEmpty(ifo)) {
@@ -72,11 +94,6 @@ public class IndexController {
             request.setAttribute("userStr",resultJson);
 
         }
-        return "/apply";
-    }
-
-    @GetMapping("/position")
-    public String position(){
         return "/position";
     }
 
