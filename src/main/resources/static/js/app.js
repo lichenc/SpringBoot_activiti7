@@ -1716,7 +1716,7 @@ function org() {
 
                             $("#accountOrg").val(obj.data.title);
                             $("#accountOrgId").val(obj.data.id);
-                           /* layer.close(layer.index);*/
+                           layer.close(layer.index);
                         }
                     });
                 })
