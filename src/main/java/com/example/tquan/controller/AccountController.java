@@ -10,10 +10,7 @@ import net.sf.json.JSONObject;
 import org.activiti.engine.ProcessEngine;
 import org.activiti.engine.ProcessEngines;
 import org.apache.commons.logging.Log;
-import org.apache.http.Consts;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -37,8 +34,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.security.PublicKey;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by chenjin on 2021/5/17 10:59
@@ -76,19 +76,28 @@ public class AccountController {
      * 修改账号
      */
     @PostMapping("/updateAccount")
-    public int updateAccount(String id, String loginPwd) {
+    public int updateAccount(String id, String loginPwd,HttpServletRequest request) {
         int iden = 0;
          try {
-             //初始化对象，设置修改需要的参数
-             AccountEntity accountEntity = new AccountEntity();
-             accountEntity.setId(id);
-             accountEntity.setLoginPwd(UIM.encode(loginPwd));
-             //执行修改
-             iden = accountService.updateAccountById(accountEntity);
-             if (iden != 0) {
-                 log.info("==========================账号ID:" + id + "的账号密码修改成功");
-             } else {
-                 log.info("==========================账号ID:" + id + "的账号密码修改失败");
+             if(id != "" && id!=null && loginPwd !="" && loginPwd !=null){
+                 //判断密码校验是否通过
+                 int checkIden=checkPassword(loginPwd,request);
+                 if (checkIden==0){
+                     //初始化对象，设置修改需要的参数
+                     AccountEntity accountEntity = new AccountEntity();
+                     accountEntity.setId(id);
+                     accountEntity.setLoginPwd(UIM.encode(loginPwd));
+                     //执行修改
+                     iden = accountService.updateAccountById(accountEntity);
+                     if (iden != 0) {
+                         log.info("==========================账号ID:" + id + "的账号密码修改成功");
+                     } else {
+                         log.info("==========================账号ID:" + id + "的账号密码修改失败");
+                     }
+                 }else{
+                     iden=checkIden;
+                 }
+
              }
          }catch (Exception e){
             e.printStackTrace();
@@ -243,7 +252,186 @@ public class AccountController {
         return taskEntity;
     }
 
+    /**
+     * 忘记密码
+     * @return
+     */
+    @PostMapping("/forgetPwd")
+    public int forgetPwd(String userName,String newPassword,HttpServletRequest request){
+        int iden = 0;
+        try {
+            //防止用户越过前端验证
+            if (userName!=null && newPassword!=null && userName!="" && newPassword !=""){
+                //判断密码校验是否通过
+                int checkIden=checkPassword(newPassword,request);
+                if (checkIden==0){
+                    AccountEntity accountEntity=new AccountEntity();
+                    accountEntity.setLoginName(userName);
+                    AccountEntity accountEntity1= accountService.findUserByName(accountEntity);
 
+                    accountEntity.setId(accountEntity1.getId());
+                    accountEntity.setLoginPwd(UIM.encode(newPassword));
+                    iden=accountService.updateAccountById(accountEntity);
+                    if (iden != 0) {
+                        log.info("==========================用户名：" + userName + "的账号密码修改成功");
+                    } else {
+                        log.info("==========================用户名：" + userName + "的账号密码修改失败");
+                    }
+                }else{
+                    iden=checkIden;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return iden;
+    }
+
+    /**
+     * 互联用户注册
+     * @param phone
+     * @param userName
+     * @param password
+     * @return
+     */
+    @PostMapping("/registerUser")
+    public int register(String phone,String userName,String password,  HttpServletRequest request){
+        int iden=0;
+        try {
+            if (phone!=null && phone!="" && userName !=null && userName !="" && password !=null && password!=""){
+
+                UserEntity userEntity=new UserEntity();
+                userEntity.setSn(userName);
+                //查看用户名是否已经存在
+                UserEntity userEntity1=userService.findUserByProperty(userEntity);
+                //用户不存在，可以注册
+                if (userEntity1==null){
+                    //判断密码校验是否通过
+                    int checkIden=checkPassword(password,request);
+                    if (checkIden==0){
+                        /**
+                         * 添加用户
+                         */
+                        userEntity.setTelephone(phone);
+                        userEntity.setCreateTime(new Date());
+                        int ids=(int) (Math.random() * 9000) + 1000;
+                        userEntity.setId(String.valueOf(ids));
+                        userEntity.setOptUser("admin");
+                        userEntity.setStatus(1);
+                        userEntity.setName(userName);
+                        userEntity.setCompanySn("100001");
+
+                        //获取用户类型id
+                        String userType= userService.getUserTypeIdByName("外部用户");
+                        userEntity.setUserTypeId(userType);
+                        int userIden=userService.addUser(userEntity);
+                        /**
+                         * 添加账号
+                         */
+                        AccountEntity accountEntity=new AccountEntity();
+                        accountEntity.setId(String.valueOf((int) (Math.random() * 9000) + 1000));
+                        accountEntity.setLoginName(userName);
+                        accountEntity.setLoginPwd(UIM.encode(password));
+                        accountEntity.setUserId(String.valueOf(ids));
+                        accountEntity.setAcctType("1");
+                        accountEntity.setStatus(1);
+                        accountEntity.setCreateTime(new Date());
+                        accountEntity.setAppId("100000065");
+                        accountEntity.setOpenType(1);
+                        accountEntity.setOptUser("admin");
+                        accountEntity.setCompanySn("100001");
+                        int accountIden=accountService.addAccount(accountEntity);
+                        /**
+                         * 添加用户与组织关联，注册的用户默认在默认组下
+                         */
+                        //获取默认组id
+                        String orgId=groupService.getDedaultId("默认组");
+                        GroupEntity groupEntity=new GroupEntity();
+                        groupEntity.setId(orgId);
+                        groupEntity.setSn(String.valueOf(ids));
+                        //添加用户与组织关联
+                        int groupIden=groupService.addUserOrg(groupEntity);
+                        /**
+                         * 用户与账号都添加成功
+                         */
+                        if (userIden!=0 && accountIden !=0 && groupIden!=0){
+                            iden=2;
+                            log.info("==========================用户名：" + userName + "账号添加成功！");
+                        }else{
+                            iden=3;
+                            log.info("==========================用户名：" + userName + "账号添加失败！");
+                        }
+                    }else{
+                        iden=checkIden;
+                    }
+                 //用户名已存在
+                }else{
+                    iden=1;
+                    log.info("==========================用户名：" + userName + "已存在！");
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return iden;
+    }
+
+    /**
+     * 根据后台设置的密码规则验证密码是否合格
+     * @param password
+     * @return
+     */
+    public int checkPassword(String password,  HttpServletRequest request){
+
+        Pattern p;
+        Matcher m;
+        int iden=0;
+        //密码最大长度
+        int pwdMaxLen=accountService.getAmPwdPolicy("PWD_MAX_LEN");
+        //密码最小长度
+        int pwdMinLen=accountService.getAmPwdPolicy("PWD_MIN_LEN");
+        //密码超过规定长度
+        if(password.length()>pwdMaxLen || password.length()<pwdMinLen){
+            return 11;
+        }
+        //是否包含数字
+        int pwdMinNumLen=accountService.getAmPwdPolicy("PWD_MIN_NUM_LEN");
+        if (pwdMinNumLen!=0){
+            p = Pattern.compile("[0-9]");
+             m = p.matcher(password);
+            //存在数字
+            if (m.find()) {
+
+                //没有包含数字
+            }else{
+
+                return 22;
+            }
+        }
+        //是否包含特殊字符
+        int pwdMinSpacilCharLen =accountService.getAmPwdPolicy("PWD_MIN_SPACIL_CHAR_LEN");
+        if (pwdMinSpacilCharLen!=0){
+            String regEx = "[ _`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]|\n|\r|\t";
+             p = Pattern.compile(regEx);
+             m = p.matcher(password);
+             if (m.find()){
+
+             }else{
+                 return 33;
+             }
+        }
+        //是否包含字符
+        int pwdMinCharLen=accountService.getAmPwdPolicy("PWD_MIN_CHAR_LEN");
+        if (pwdMinCharLen!=0){
+            p = Pattern.compile("[a-zA-Z]");
+            if(p.matcher(password).find()){
+            //没有包含英文字母
+            }else {
+                return 44;
+            }
+        }
+        return iden;
+    }
 
     /**
      * 任务重试

@@ -1,3 +1,14 @@
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
 /**
  * 请求个人信息页面的账号集合
  */
@@ -23,7 +34,7 @@ $(document).ready(function(){
             $("#userTypeId").val(data.userTypeId);
             $("#telephone").val(data.telephone);
             $("#email").val(data.email);
-            $("#createTime").val(data.createTime);
+            $("#createTime").val(formatDate(data.createTime));
             $("#optUser").val(data.optUser);
             //获取账号集合
             var accountlist=data.accountEntities;
@@ -294,12 +305,21 @@ function updatePassword() {
                 loginPwd: password
             },
             success: function (data) {
-                if (data != 0) {
+                if (data == 1) {
                     layer.alert("修改成功！");
                     layer.close(layer.index - 1);
-                } else {
-                    layer.alert("修改失败！");
+                }else if(data==11){
+                    layer.alert("密码长度必须在8-15位之间！");
+                }else if(data==22){
+                    layer.alert("密码中必须包含数字！");
+                }else if(data==33){
+                    layer.alert("密码中必须包含特殊字符！");
+                }else if(data==44){
+                    layer.alert("密码中必须包含英文字母！");
+                }else{
+                    layer.alert("注册失败！");
                 }
+
             }, error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(XMLHttpRequest.status);
             }

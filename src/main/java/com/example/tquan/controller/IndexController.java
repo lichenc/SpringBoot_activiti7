@@ -40,7 +40,7 @@ public class IndexController {
 
     @GetMapping("/register")
     public String register() {
-        return "/registerPage";
+        return "/register";
     }
 
     @GetMapping("/personInfoPage")
@@ -125,5 +125,8 @@ public class IndexController {
     public String completeRecordsTask(){
         return "/hisTask";
     }
-
+    @GetMapping("/forgetPwd")
+    public String forgetPwd(){
+        return "/forgetPwd";
+    }
 }

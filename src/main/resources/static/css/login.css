@@ -1,39 +1,42 @@
 /*登陆表单样式 start*/
-
-.loginForm {
-    margin-left: 35%;
-    margin-top: 10%;
-    /*background-color: #cccccc;*/
-    background-color: #e7e7e7;
-    width: 400px;
-    height: 400px;
-    float: left;
-    z-index: 9999;
-    position: fixed;
-    opacity: 0.75;
-}
-
 .usernameDiv {
-    width: 300px;
+    width: 358px;
     height: 40px;
-    padding-left: 130px;
+    padding-left: 60px;
     padding-top: 30px;
 
 }
-
+.classa{
+    font-size: 18px;
+    color: grey;
+    text-decoration: none;
+}
 .adminInput {
-    width: 200px;
+    width: 288px;
     height: 40px;
     font-size: 15px;
     border-radius: 0.5em;
+    background:rgba(255,255,255,0.1);
+    border:1px solid black;
     /*margin-left: auto;*/
     /* border: 1px solid #000000;*/
 }
+input::-ms-input-placeholder{
+    text-align: center;
+
+}
+input::-webkit-input-placeholder{
+    text-align: center;
+}
+input{
+    color:white;
+    font-size: 20px;
+}
 
 .passwordDiv {
-    width: 300px;
+    width: 358px;
     height: 40px;
-    padding-left: 130px;
+    padding-left: 60px;
     padding-top: 28px;
 }
 
@@ -92,7 +95,7 @@ i {
 }
 
 .usernameLabel {
-    width: 60px;
+    width: 80px;
     height: 30px;
     font-size: 16px;
     float: left;
@@ -105,7 +108,7 @@ i {
     height: 30px;
     font-size: 13px;
     float: left;
-    margin-left: 55px;
+    margin-left: 50px;
     margin-top: 40px;
     cursor: pointer;
 }
@@ -120,13 +123,17 @@ i {
     height: 40px;
     padding-left: 10px;
     padding-top: 28px;
-    float: left;
+    float:left;
+    text-align: center;
 }
 
 .submit {
     width: 112px;
     height: 40px;
     border-radius: 0.5em;
+    background:rgba(255,255,255,0);
+    border:1.5px solid black;
+    color: grey;
 }
 
 img {

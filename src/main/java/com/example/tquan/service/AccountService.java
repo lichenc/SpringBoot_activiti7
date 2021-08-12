@@ -74,4 +74,22 @@ public class AccountService {
     public int updateAccountById(AccountEntity accountEntity) {
         return accountDao.updateAccountById(accountEntity);
     }
+
+    /**
+     * 添加账号
+     * @param accountEntity
+     * @return
+     */
+    public  int addAccount(AccountEntity accountEntity){
+        return accountDao.addAccount(accountEntity);
+    }
+
+    /**
+     * 获取密码规则参数
+     * @param name
+     * @return
+     */
+    public int getAmPwdPolicy(String name){
+        return accountDao.getAmPwdPolicy(name);
+    }
 }

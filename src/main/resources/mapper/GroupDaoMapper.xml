@@ -13,4 +13,13 @@
         WHERE
 	        aug.IM_USER_ID =#{userId}
     </select>
+    <!--获取默认组id-->
+    <select id="getDedaultId" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT ID FROM IM_ORG WHERE NAME=#{name}
+    </select>
+
+    <!--添加用户与组织关联-->
+    <insert id="addUserOrg" parameterType="com.example.tquan.entity.GroupEntity">
+        insert into im_org_user(ORG_ID,USER_ID) values(#{id},#{sn})
+    </insert>
 </mapper>

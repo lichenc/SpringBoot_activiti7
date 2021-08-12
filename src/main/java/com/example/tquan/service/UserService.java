@@ -38,4 +38,31 @@ public class UserService {
     public List<FieldEntity> findAll(){
         return userDao.findAll();
     }
+
+    /**
+     * 根据参数查询用户(不连表)
+     * @param userEntity
+     * @return
+     */
+    public UserEntity findUserByProperty(UserEntity userEntity){
+        return userDao.findUserByProperty(userEntity);
+    }
+
+    /**
+     * 添加用户信息
+     * @param userEntity
+     * @return
+     */
+    public int addUser(UserEntity userEntity){
+        return userDao.addUser(userEntity);
+    }
+
+    /**
+     * 获取用户类型id
+     * @param name
+     * @return
+     */
+    public String getUserTypeIdByName(String name){
+        return userDao.getUserTypeIdByName(name);
+    }
 }

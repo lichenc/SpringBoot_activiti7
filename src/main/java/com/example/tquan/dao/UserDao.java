@@ -29,4 +29,25 @@ public interface UserDao {
      */
 
     List<FieldEntity> findAll();
+
+    /**
+     * 根据用户参数获取用户信息
+     * @param userEntity
+     * @return
+     */
+    UserEntity findUserByProperty(UserEntity userEntity);
+
+    /**
+     * 添加用户
+     * @param userEntity
+     * @return
+     */
+    int addUser(UserEntity userEntity);
+
+    /**
+     * 获取外部用户id
+     * @param name
+     * @return
+     */
+    String getUserTypeIdByName(String name);
 }

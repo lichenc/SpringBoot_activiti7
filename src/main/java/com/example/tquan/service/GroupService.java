@@ -24,4 +24,22 @@ public class GroupService {
         return groupDao.getGroupByUserId(userId);
     }
 
+    /**
+     * 获取默认组织id
+     * @param name
+     * @return
+     */
+    public String getDedaultId(String name){
+        return groupDao.getDedaultId(name);
+    }
+
+    /**
+     * 添加用户与组织关联
+     * @param groupEntity
+     * @return
+     */
+    public int addUserOrg(GroupEntity groupEntity){
+        return groupDao.addUserOrg(groupEntity);
+    }
+
 }

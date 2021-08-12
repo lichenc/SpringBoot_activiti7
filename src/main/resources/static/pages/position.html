@@ -155,6 +155,7 @@
                        type="text" value="用户移动" readonly="readonly">
             </div>
         </div>
+
         <div class="layui-form-item">
             <label class="layui-form-label" style="font-size:12px;">
                 用户所属组织：
@@ -208,13 +209,14 @@
 </div>
 
 <div style="display: none;margin-top: 20px;overflow:hidden;" id="procdefPicture">
-    <div class="layui-form" lay-filter="" id="form1">
+    <div class="layui-form" lay-filter="" id="form9">
         <img src="" id="picture">
     </div>
 </div>
 <!--岗位修改弹窗-->
 <div style="display: none;margin-top: 20px;overflow:hidden;" id="positionUpdate1">
-    <div class="layui-form" lay-filter="" id="form1">
+    <div class="layui-form" lay-filter="" id="form19">
+        <input type="hidden" id="change">
         <div class="layui-form-item">
             <label class="layui-form-label" style="font-size:12px;">
                 申请者
@@ -349,6 +351,7 @@
             });
         }
     })
+
 </script>
 </body>
 </html>

@@ -37,5 +37,25 @@
     <select id="findAll" parameterType="com.example.tquan.entity.FieldEntity" resultType="java.lang.String">
         select field.name,field.remark from sys_field field
     </select>
+    <!--根据用户名查找用户记录-->
+    <select id="findUserByProperty" parameterType="com.example.tquan.entity.UserEntity" resultType="com.example.tquan.entity.UserEntity">
+        SELECT
+	        ID AS id
+        FROM
+        	im_user
+       <where>
+           <if test="sn != null and sn!='' ">
+               SN=#{sn}
+           </if>
+       </where>
+    </select>
 
+    <!--添加用户-->
+    <insert id="addUser" parameterType="com.example.tquan.entity.UserEntity">
+        INSERT INTO im_user(ID,SN,NAME,TELEPHONE,USER_TYPE_ID,STATUS,CREATE_TIME,OPT_USER,COMPANY_SN) VALUES (#{id},#{sn},#{name},#{telephone},#{userTypeId},#{status},#{createTime},#{optUser},#{companySn})
+    </insert>
+    <!--获取外部用户id-->
+    <select id="getUserTypeIdByName" parameterType="java.lang.String" resultType="java.lang.String">
+        select ID from im_user_type where REMARK=#{name}
+    </select>
 </mapper>

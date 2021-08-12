@@ -16,8 +16,8 @@ public class AccountEntity {
     private Date createTime;
     private String optUser;
     private Integer openType;
-    private Integer acctType;
-    private Integer companySn;
+    private String acctType;
+    private String companySn;
 
     //辅助字段：显示应用名称
     private String appName;
@@ -102,19 +102,19 @@ public class AccountEntity {
         this.openType = openType;
     }
 
-    public Integer getAcctType() {
+    public String getAcctType() {
         return acctType;
     }
 
-    public void setAcctType(Integer acctType) {
+    public void setAcctType(String acctType) {
         this.acctType = acctType;
     }
 
-    public Integer getCompanySn() {
+    public String getCompanySn() {
         return companySn;
     }
 
-    public void setCompanySn(Integer companySn) {
+    public void setCompanySn(String companySn) {
         this.companySn = companySn;
     }
 

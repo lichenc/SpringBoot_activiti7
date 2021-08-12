@@ -121,6 +121,13 @@ $(document).ready(function(){
             });
         });
     });
+
+    $("body").on("change", "#approvedPerson", function (e) {
+        alert("dddddd");
+        var dd=document.getElementById("approvedPerson").value;
+        alert(dd)
+        document.getElementById("change").value=dd;
+    });
 });
 
 /**
@@ -362,8 +369,7 @@ function positionApply() {
  * 添加岗位申请流程
  */
 function addPosition() {
-    //审批人
-    var approvedPerson=document.getElementById("approvedPerson").value;
+
     //岗位
     var position=document.getElementById("position").value;
     //申请原因
@@ -371,9 +377,11 @@ function addPosition() {
 
     //用户所属组织
     var orgName = document.getElementById("orgName").value;
-    alert(orgName);
     //用户所属组织ID
     var orgId = document.getElementById("orgId").value;
+    //审批人
+    var approvedPerson=document.getElementById("change").value;
+
     if (orgName==null||orgName==""){
 
         layer.alert("请选择用户所属组织!")
@@ -534,7 +542,7 @@ function userMove(nameOrg) {
 layui.use(['layer', 'jquery', 'form'], function () {
     var layer = layui.layer,
         $ = layui.jquery;
-    form = layui.form;
+   var form = layui.form;
 
     form.on('input(userOrg)', function (data) {
         var org = data.value;

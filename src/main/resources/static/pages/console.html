@@ -17,26 +17,38 @@
     body {
         width: 100%;
         height: 60%;
-       background-color: #93D1FF;
+        background: url("../img/back9.png");
         /*background-color: #93D1FF;*/
         background-size: cover;
         overflow-x: hidden;
         overflow-y: hidden;
+    }
+    .loginForm {
+        margin-left: 35%;
+        margin-top: 10%;
+        background-color: #cccccc;
+        /* background-color:#eaeaea;*/
+        width: 400px;
+        height: 400px;
+        float: left;
+        z-index: 9999;
+        position: fixed;
+        opacity: 0.75;
     }
 </style>
 <div class="wrap">
     <div class="loginForm">
         <form action="/doConsoleLogin" method="post" id="submit_from">
             <div class="logoHead">
-                <h2 style="margin-top: 3px">统一身份管理平台</h2>
-                <h3 style="padding-top: -10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <h2 style="margin-top: 3px;margin-left: 10px;">统一身份管理平台</h2>
+                <h3 style="padding-top: -10px;margin-left: 10px">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     （自助服务）</h3>
             </div>
             <br>
             <div class="usernameWrapDiv">
-                <div class="usernameLabel">
+                <!--<div class="usernameLabel">
                     <label>用户名:</label>
-                </div>
+                </div>-->
                 <div class="usernameDiv">
                     <i class="layui-icon layui-icon-username adminIcon"></i>
                     <input id="username" class="layui-input adminInput" type="text" name="loginName"
@@ -44,9 +56,9 @@
                 </div>
             </div>
             <div class="usernameWrapDiv">
-                <div class="usernameLabel">
+                <!--<div class="usernameLabel">
                     <label>密码:</label>
-                </div>
+                </div>-->
                 <div class="passwordDiv">
                     <i class="layui-icon layui-icon-password adminIcon"></i>
                     <input id="password" class="layui-input adminInput" type="password" name="loginPwd"
@@ -55,15 +67,15 @@
             </div>
             <br>
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <em class="err_infor" id="errorInfo" style="color: red;font-family: 微软雅黑"></em>
             <div class="usernameWrapDiv">
-                <div class="submitLabel">
+               <!-- <div class="submitLabel">
                     <label>&nbsp;<a href="#" id="loginRegister">忘记密码</a></label>
-                </div>
-                <div class="submitDiv">
+                </div>-->
+                <div class="passwordDiv">
                     <input id="loginBtn" type="button" class="submit layui-btn layui-btn-primary" value="登录"
-                           onclick="login()"></input>
+                           onclick="login()" style="width: 288px;"/>
                 </div>
             </div>
         </form>

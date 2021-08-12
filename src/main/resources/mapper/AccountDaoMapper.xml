@@ -32,13 +32,13 @@
     <!--用户登录 -->
     <select id="findUserByName" parameterType="java.lang.String"
             resultType="com.example.tquan.entity.AccountEntity">
-        select LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1 and APP_ID=100000065
+        select ID,LOGIN_NAME,LOGIN_PWD,USER_ID from im_account where LOGIN_NAME=#{loginName} and STATUS=1 and APP_ID=100000065
     </select>
     <!--管理员登录-->
     <select id="adminLogin" parameterType="java.lang.String" resultType="com.example.tquan.entity.AccountEntity">
         SELECT
 	        LOGIN_NAME,
-	        LOGIN_PWD
+	        LOGIN_PWDupdateAccountById
         FROM
 	        sys_acct
         WHERE
@@ -60,13 +60,23 @@
             </if>
         </set>
         <where>
-            ID=#{id}
+            <if test="id!=null and id !=''">
+                ID=#{id}
+            </if>
         </where>
     </update>
-
-
-
-
-
-
+    <!--添加账号-->
+    <insert id="addAccount" parameterType="com.example.tquan.entity.AccountEntity">
+        INSERT INTO im_account ( ID, LOGIN_NAME, LOGIN_PWD, APP_ID, USER_ID, STATUS, CREATE_TIME, OPT_USER, ACCT_TYPE, OPEN_TYPE,COMPANY_SN)
+        values (#{id},#{loginName},#{loginPwd},#{appId},#{userId},#{status},#{createTime},#{optUser},#{acctType},#{openType},#{companySn})
+    </insert>
+    <!--获取密码参数-->
+    <select id="getAmPwdPolicy" parameterType="java.lang.String" resultType="java.lang.Integer">
+        SELECT
+            VALUE
+        FROM
+        	am_pwd_policy
+        WHERE
+	        NAME = #{name}
+    </select>
 </mapper>

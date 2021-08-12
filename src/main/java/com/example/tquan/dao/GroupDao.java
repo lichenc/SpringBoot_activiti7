@@ -16,4 +16,18 @@ public interface GroupDao {
      * @return
      */
     List<GroupEntity> getGroupByUserId(String userId);
+
+    /**
+     * 获取默认组组织的id
+     * @param name
+     * @return
+     */
+    String getDedaultId(String name);
+
+    /**
+     * 添加用户与组织关联
+     * @param groupEntity
+     * @return
+     */
+    int addUserOrg(GroupEntity groupEntity);
 }

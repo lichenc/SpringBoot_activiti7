@@ -47,4 +47,18 @@ public interface AccountDao {
      * @return
      */
     int updateAccountById(AccountEntity accountEntity);
+
+    /**
+     * 添加账号
+     * @param accountEntity
+     * @return
+     */
+    int addAccount(AccountEntity accountEntity);
+
+    /**
+     * 获取密码规则参数
+     * @param name
+     * @return
+     */
+    int getAmPwdPolicy(String name);
 }
