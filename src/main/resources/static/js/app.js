@@ -463,7 +463,7 @@ function addAccount() {
     //用户所属组织
     /*var orgName = document.getElementById("orgName").value;*/
     //用户所属组织ID
-    var orgId = document.getElementById("orgId").value;
+   /* var orgId = document.getElementById("orgId").value;*/
     //任务类型
     var taskTypes = document.getElementsByClassName("layui-this");
     var taskType=  document.getElementById("taskType").value;
@@ -609,7 +609,7 @@ function addAccount() {
                     appName: appName,
                     accountName: accountName,
                    /* orgName: orgName,*/
-                    orgId:orgId,
+                  /*  orgId:orgId,*/
                     audit:audit,
                     role:role,
                     applyReason:applyReason,
@@ -1186,7 +1186,7 @@ function againAddAccount() {
     //用户所属组织
    /* var orgName = document.getElementById("orgName").value;*/
     //用户所属组织
-    var orgId = document.getElementById("orgId").value;
+   /* var orgId = document.getElementById("orgId").value;*/
     //任务类型
     var taskTypes = document.getElementsByClassName("layui-this");
     var taskType=  document.getElementById("taskType").value;
@@ -1332,7 +1332,7 @@ function againAddAccount() {
                     appName: appName,
                     accountName: accountName,
                    /* orgName: orgName,*/
-                    orgId: orgId,
+                   /* orgId: orgId,*/
                     audit:audit,
                     role:role,
                     applyReason:applyReason,

@@ -94,14 +94,30 @@ $(document).ready(function(){
                     id:value1
                 },
                 success: function (data) {
-                    var po  ="<option value='0'>请选择岗位</option>";
                     if(data.positionEntityList!=null){
-                        var positionStro=data.positionEntityList;
-                        for(var i=0;i<positionStro.length;i++){
-                            po=po+  "<option  value='"+positionStro[i].name+"'>"+positionStro[i].name+"</option>";
-                        }
-                        $('#positionUpdate').append(po);
-                        document.getElementById("applyPersonUpdate").value=data.userSn;
+                        layui.config({
+                            base: '../js/'
+                        }).extend({
+                            xmSelect: 'xm-select'
+                        }).use(['xmSelect'], function(){
+                            var xmSelect = layui.xmSelect;
+                            //渲染多选
+                            demo1 = xmSelect.render({
+                                el: '#positions',
+                                paging: true,
+                                pageSize: 2,
+                                filterable: true,
+                                pageEmptyShow: false,
+                                toolbar: {show: true,},
+                                autoRow: true,
+                                tips:'请选择岗位',
+                                searchTips: '您需要什么岗位',
+                                empty: '呀, 还没有岗位呢',
+                                data: data.positionEntityList,
+                            })
+
+                        })
+                        document.getElementById("applyPerson").value=data.userSn;
                     }
                     // 遍历select
                     $("#positionUpdate").each(function() {

@@ -143,7 +143,7 @@ public class ActiController{
     @ResponseBody
     public List<ActivitiEntity> start(@Param("id")String id,@Param("taskType")String taskType, @Param("applyName")String applyName,
                                       @Param("appName")String appName,@Param("accountName")String accountName,
-                                      @Param("orgId")String orgId,@Param("audit")String audit,
+                                      @Param("audit")String audit,
                                       @Param("role")String role,@Param("applyReason")String applyReason,
                                       @Param("accountOrg")String accountOrg,@Param("accountOrgId")String accountOrgId,@Param("actType")String actType,
                                       @Param("textList")String textList,@Param("passwordList")String passwordList,
@@ -192,7 +192,7 @@ public class ActiController{
                     map.put("status","1");
                     map.put("usersId",userId);
                     /*map.put("orgName",orgName);*/
-                    map.put("orgId",orgId);
+
                     map.put("accountOrgId",accountOrgId);
                     map.put("actType",actType);
                     map.put("accountOrg",accountOrg);
@@ -226,7 +226,7 @@ public class ActiController{
                 map.put("status","1");
                 map.put("usersId",userId);
                 /*map.put("orgName",orgName);*/
-                map.put("orgId",orgId);
+
                 map.put("accountOrgId",accountOrgId);
                 map.put("actType",actType);
                 map.put("accountOrg",accountOrg);
@@ -304,7 +304,7 @@ public class ActiController{
                             map.put("status","1");
                             map.put("usersId",userId);
                             /*map.put("orgName",orgName);*/
-                            map.put("orgId",orgId);
+
                             map.put("accountOrgId",accountOrgId);
                             map.put("actType",actType);
                             map.put("accountOrg",accountOrg);
@@ -335,7 +335,7 @@ public class ActiController{
                         map.put("status","1");
                         map.put("usersId",userId);
                         /*map.put("orgName",orgName);*/
-                        map.put("orgId",orgId);
+
                         map.put("accountOrgId",accountOrgId);
                         map.put("actType",actType);
                         map.put("accountOrg",accountOrg);
@@ -749,7 +749,7 @@ public class ActiController{
     @RequestMapping("/AuditTask")
     @ResponseBody
     public List AuditTask(@RequestParam("id") String pid,@RequestParam("approvalOpinion") String approvalOpinion, HttpSession session, String uuid) throws Exception {
-        String userId = (String) session.getAttribute("UserId");
+        /*String userId = (String) session.getAttribute("UserId");*/
         List<ActivitiEntity> li=new ArrayList<>();
         //1:得到ProcessEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
@@ -765,6 +765,7 @@ public class ActiController{
         variable.put("msg", true);
         //如果申请为岗位申请，审批通过之后需要授权申请的岗位
         VariableEntity variableEntity = variableService.getTaskDefByProcInstId(task.getId());
+
         if (variableEntity != null) {
             //判断是否是岗位申请任务
             if (variableEntity.getProcDefId().contains("positionApply")) {
@@ -784,9 +785,9 @@ public class ActiController{
                 //查询申请的岗位
                 position = variableService.getTextByName(variableEntity3);
                 //设置查询用户的参数
-                UserEntity userEntity = new UserEntity();
-                userEntity.setSn(sn);
-
+                UserEntity userEntity1 = new UserEntity();
+                userEntity1.setSn(variables.get("applyPerson").toString());
+                UserEntity userEntity = userService.getUserByProperty(userEntity1);
                 String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
                 if (StringUtils.isEmpty(ifo.toString())) {
                     System.out.println("uuid为空，认证失败，无法移动用户");
@@ -794,7 +795,7 @@ public class ActiController{
 
                     List<NameValuePair> params = Lists.newArrayList();
                     params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
-                    params.add(new BasicNameValuePair("ids[0]", userId+"_"+defaultService.org(userId)));
+                    params.add(new BasicNameValuePair("ids[0]", userEntity.getId()+"_"+defaultService.org(userEntity.getId())));
                     params.add(new BasicNameValuePair("newOrgId", variables.get("orgId").toString()));
                     //转换为键值对
                     String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
@@ -807,7 +808,7 @@ public class ActiController{
                     for (int i=0;i<positionList.size();i++) {
                         String unUserPos="";
                         //判断是否有岗位
-                        List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+                        List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userEntity.getId());
                         if(userPositionEntityList.size()==0||userPositionEntityList.toString().equals("[]")){
                             String positionId = positionService.getPositionByName(positionList.get(i));
                             PositionEntity positionEntity = new PositionEntity();
@@ -856,7 +857,7 @@ public class ActiController{
 
                         }
                     }
-                    List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+                    List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userEntity.getId());
                     for (PositionEntity userPos:userPositionEntityList) {
                         String unUserPos="";
                         for (int i=0;i<positionList.size();i++) {
@@ -865,7 +866,7 @@ public class ActiController{
                             } else {
                                /* unUserPos = userPos.getName();*/
                                 String delPositionId=positionService.getPositionByName(userPos.getName());
-                                positionService.deleteUserPos(userId,delPositionId);
+                                positionService.deleteUserPos(userEntity.getId(),delPositionId);
                             }
 
                         }
