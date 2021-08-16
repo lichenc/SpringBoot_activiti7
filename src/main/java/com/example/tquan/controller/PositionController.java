@@ -187,7 +187,7 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/addPositionProcess")
-    public int addPositionProcess(String position, String applyReason,String approvedPerson,String orgName,
+    public int addPositionProcess(String position,String role, String applyReason,String approvedPerson,String orgName,
                                   String orgId, HttpSession session, HttpServletRequest request){
         System.out.println(orgName);
         int iden=0;
@@ -218,6 +218,7 @@ public class PositionController {
                    map.put("applyReason",applyReason);
                    map.put("orgName",orgName);
                    map.put("orgId",orgId);
+                   map.put("role",role);
                    map.put("userIds",userId);
                    map.put("taskType","用户移动");
                    map.put("approvedPerson",approvedPersonStr);

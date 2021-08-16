@@ -98,12 +98,12 @@ $(document).ready(function(){
                         layui.config({
                             base: '../js/'
                         }).extend({
-                            xmSelect: 'xm-select'
-                        }).use(['xmSelect'], function(){
-                            var xmSelect = layui.xmSelect;
+                            xmSelect2: 'xm-select'
+                        }).use(['xmSelect2'], function(){
+                            var xmSelect = layui.xmSelect2;
                             //渲染多选
                             demo1 = xmSelect.render({
-                                el: '#positions',
+                                el: '#positions2',
                                 paging: true,
                                 pageSize: 2,
                                 filterable: true,

@@ -794,22 +794,37 @@ public class ActiController{
                 } else {
 
                     List<NameValuePair> params = Lists.newArrayList();
-                    params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
-                    params.add(new BasicNameValuePair("ids[0]", userEntity.getId()+"_"+defaultService.org(userEntity.getId())));
+                    params.add(new BasicNameValuePair("uim-login-user-id", ifo.toString()));
+                    params.add(new BasicNameValuePair("ids[0]", userEntity.getId() + "_" + defaultService.org(userEntity.getId())));
                     params.add(new BasicNameValuePair("newOrgId", variables.get("orgId").toString()));
                     //转换为键值对
                     String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-                    StringBuilder ifa=iamInterface.movenUser(str,user.getAddr(),user.getType());
+                    StringBuilder ifa = iamInterface.movenUser(str, user.getAddr(), user.getType());
                     System.out.println("======= 用户移动结果：" + ifa.toString());
-                    //岗位转为
+                    //岗位转为数组
                     List<String> positionList = Arrays.asList(position.split(","));
-                    //多余的岗位记录下来，删除
-
-                    for (int i=0;i<positionList.size();i++) {
-                        String unUserPos="";
-                        //判断是否有岗位
-                        List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userEntity.getId());
-                        if(userPositionEntityList.size()==0||userPositionEntityList.toString().equals("[]")){
+                    List<PositionEntity> userPositionEntityList = positionService.getPositionByUserId(userEntity.getId());
+                    //原始岗位和新申请岗位集合
+                    Set<String> newSet = new HashSet<>();
+                    Set<String> newSet2 = new HashSet<>();
+                    for (int i = 0; i < positionList.size(); i++) {
+                        newSet.add(positionList.get(i));
+                        newSet2.add(positionList.get(i));
+                    }
+                    Set<String> userSet = new HashSet<>();
+                    Set<String> userSet2 = new HashSet<>();
+                    for (PositionEntity userPos : userPositionEntityList) {
+                        userSet.add(userPos.getName());
+                        userSet2.add(userPos.getName());
+                    }
+                    //要新增的岗位，新申请岗位比原始岗位集合多的数据
+                    newSet.removeAll(userSet);
+                    System.out.println("要添加的岗位: " + newSet);
+                    //要删除的岗位，原始岗位比新申请岗位集合多的数据
+                    userSet2.removeAll(newSet2);
+                    System.out.println("要删除的岗位: " + userSet2);
+                    if (userPositionEntityList.size() == 0 || userPositionEntityList.toString().equals("[]")) {
+                        for (int i = 0; i < positionList.size(); i++) {
                             String positionId = positionService.getPositionByName(positionList.get(i));
                             PositionEntity positionEntity = new PositionEntity();
                             positionEntity.setUserId(variables.get("userIds").toString());
@@ -817,64 +832,29 @@ public class ActiController{
                             positionEntity.setOrgId(variables.get("orgId").toString());
                             //执行用户关联岗位的add方法
                             int iden = positionService.addUserPosition(positionEntity);
-                        }else {
-                            for (PositionEntity userPos:userPositionEntityList) {
-                                if (userPos.getName().equals(positionList.get(i))) {
-                                    System.out.println("不动的岗位1：" + positionList.get(i));
-                                } else {
-                                   /* unUserPos=positionList.get(i);*/
-                                    //赋值以后的岗位
-                                    String positionId = positionService.getPositionByName(positionList.get(i));
-                                    PositionEntity positionEntity = new PositionEntity();
-                                    positionEntity.setUserId(variables.get("userIds").toString());
-                                    positionEntity.setPositionId(positionId);
-                                    positionEntity.setOrgId(variables.get("orgId").toString());
-                                    //执行用户关联岗位的add方法
-                                    System.out.println("新增的岗位：" + positionEntity.toString());
-                                    int iden = positionService.addUserPosition(positionEntity);
-                                    //添加成功
-                                    if (iden != 0) {
-                                        log.info("==========================" + sn + "授权" + position + "成功!");
-                                    }
-                                }
-                            }
-                         /*   if(unUserPos!=""||unUserPos!=null||StringUtils.isEmpty(unUserPos)||StringUtils.isTrimEmpty(unUserPos)){
-                                //赋值以后的岗位
-                                System.out.println("*****"+unUserPos);
-                                String positionId = positionService.getPositionByName(unUserPos);
-                                PositionEntity positionEntity = new PositionEntity();
-                                positionEntity.setUserId(variables.get("userIds").toString());
-                                positionEntity.setPositionId(positionId);
-                                positionEntity.setOrgId(variables.get("orgId").toString());
-                                //执行用户关联岗位的add方法
-                                System.out.println("新增的岗位：" + positionEntity.toString());
-                                int iden = positionService.addUserPosition(positionEntity);
-                                //添加成功
-                                if (iden != 0) {
-                                    log.info("==========================" + sn + "授权" + position + "成功!");
-                                }
-                            }*/
-
                         }
-                    }
-                    List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userEntity.getId());
-                    for (PositionEntity userPos:userPositionEntityList) {
-                        String unUserPos="";
-                        for (int i=0;i<positionList.size();i++) {
-                            if (positionList.get(i).equals(userPos.getName())) {
-                                System.out.println("不动的岗位2：" + userPos.getName());
-                            } else {
-                               /* unUserPos = userPos.getName();*/
-                                String delPositionId=positionService.getPositionByName(userPos.getName());
-                                positionService.deleteUserPos(userEntity.getId(),delPositionId);
-                            }
-
+                    } else {
+                        Iterator delIte = userSet2.iterator();
+                        while (delIte.hasNext()) {
+                            String delPositionId = positionService.getPositionByName(delIte.next().toString());
+                            positionService.deleteUserPos(userEntity.getId(), delPositionId);
                         }
-                       /* if (unUserPos != "" || unUserPos != null||StringUtils.isEmpty(unUserPos)||StringUtils.isTrimEmpty(unUserPos)) {
-                            System.out.println("删除以前不用的岗位："+unUserPos);
-                            String delPositionId=positionService.getPositionByName(unUserPos);
-                            positionService.deleteUserPos(userId,delPositionId);
-                        }*/
+                        Iterator addIte = newSet.iterator();
+                        while (addIte.hasNext()) {
+                            //赋值以后的岗位
+                            String positionId = positionService.getPositionByName(addIte.next().toString());
+                            PositionEntity positionEntity = new PositionEntity();
+                            positionEntity.setUserId(variables.get("userIds").toString());
+                            positionEntity.setPositionId(positionId);
+                            positionEntity.setOrgId(variables.get("orgId").toString());
+                            //执行用户关联岗位的add方法
+                            System.out.println("新增的岗位：" + positionEntity.toString());
+                            int iden = positionService.addUserPosition(positionEntity);
+                            //添加成功
+                            if (iden != 0) {
+                                log.info("==========================" + sn + "授权" + position + "成功!");
+                            }
+                        }
                     }
                 }
             } else {
