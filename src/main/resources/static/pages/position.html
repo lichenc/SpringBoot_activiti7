@@ -167,7 +167,7 @@
                 用户所属组织：
             </label>
             <div class="layui-input-inline">
-                <input type='text' id='orgId' style='display:none' class=''/>
+                <input type='text' id='orgId' th:value="${{userStr.orgId}}" style='display:none' />
                 <input id="orgName" onfocus="org();" lay-verify="required" lay-vertype="tips" lay-filter='userOrg'  class="layui-input"
                        type="text"  th:value="${{userStr.orgName}}"  required    >
             </div>
@@ -241,7 +241,7 @@
                 用户所属组织：
             </label>
             <div class="layui-input-inline">
-                <input type='text' id='orgId2' style='display:none'/>
+                <input type='text' id='orgId2' th:value="${{userStr.orgId}}"  style='display:none'/>
                 <input id="orgName2" onfocus="org();" lay-verify="required" lay-vertype="tips" lay-filter='userOrg'  class="layui-input"
                        type="text"  th:value="${{userStr.orgName}}"  required    >
             </div>

@@ -496,6 +496,7 @@ function org() {
                             userMove(obj.data.title)
                             $("#orgName").val(obj.data.title);
                             $("#orgId").val(obj.data.id);
+                            $("#orgId2").val(obj.data.id);
                             position(obj.data.id);
                             layer.close(layer.index -1);
                         }

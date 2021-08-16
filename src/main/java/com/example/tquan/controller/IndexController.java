@@ -74,6 +74,7 @@ public class IndexController {
             StringBuilder ifus=iamInterface.userSelect(userStr,user.getAddr(),user.getType());
             JSONObject resultJson = JSONObject.fromObject(ifus.toString());
             request.setAttribute("userStr",resultJson);
+            System.out.println(resultJson.toString());
         }
         return "/position";
     }
