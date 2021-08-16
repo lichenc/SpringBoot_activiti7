@@ -109,7 +109,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
                     }else if(accountName=='ACCOUNT_ORG'){
                         var selectO= "<div id='div actDiv' class='layui-form-item delForm actDiv div'><label class='layui-form-label' style='font-size:12px;'>"+accountRemark +"：</label>"
                             + "<div class='layui-input-inline layui-form' lay-filter='test'>"
-                            +"<input type='text' id='accountOrgId' style='display:none' class='' value='' />"
+                            +"<input type='text' id='accountOrgId' style='display:none' class='' />"
                             +" <input onfocus='org();' type='text' id='accountOrg'  lay-vertype='accountField' required class='layui-input'  value='"+accountValue+"'   ></div></div>"
                         $('#field').append(selectO);
                     }else {
@@ -266,7 +266,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
                         }else if(accountName=='ACCOUNT_ORG'){
                             var selectO= "<div id='div' class='layui-form-item delForm div actDiv actDivs'><label class='layui-form-label' style='font-size:12px;'>"+accountRemark +"：</label>"
                                 + "<div class='layui-input-inline layui-form' lay-filter='test'>"
-                                +"<input type='text' id='accountOrgId' style='display:none' class='' value='' />"
+                                +"<input type='text' id='accountOrgId' style='display:none' class='' />"
                                 +" <input type='text' onfocus='org();' id='accountOrg'  lay-vertype='accountField' required class='layui-input'  value='"+accountValue+"'   ></div></div>"
                             $('#field').append(selectO);
                         }else {
@@ -966,7 +966,7 @@ $(document).ready(function() {
                             }else if(accountName=='ACCOUNT_ORG'){
                                 var selectO= "<div id='div actDiv' class='layui-form-item delForm actDiv div'><label class='layui-form-label' style='font-size:12px;'>"+accountRemark +"：</label>"
                                     + "<div class='layui-input-inline layui-form' lay-filter='test'>"
-                                    +"<input type='text' id='accountOrgId' style='display:none' class='' value='' />"
+                                    +"<input type='text' id='accountOrgId' style='display:none' class=''  />"
                                     +" <input type='text' onfocus='org();' id='accountOrg'  lay-vertype='accountField' required class='layui-input'  value='"+data[0].accountOrg+"'   ></div></div>"
                                 $('#field2').append(selectO);
                             }else {
@@ -1081,7 +1081,7 @@ $(document).ready(function() {
                             }else if(accountName=='ACCOUNT_ORG'){
                                 var selectO= "<div id='div actDiv actDivs' class='layui-form-item delForm actDiv actDivs div'><label class='layui-form-label' style='font-size:12px;'>"+accountRemark +"：</label>"
                                     + "<div class='layui-input-inline layui-form' lay-filter='test'>"
-                                    +"<input type='text' id='accountOrgId' style='display:none' class='' value='' />"
+                                    +"<input type='text' id='accountOrgId' style='display:none' />"
                                     +" <input type='text' onfocus='org();' id='accountOrg'  lay-vertype='accountField' required class='layui-input'  value='"+data[0].accountOrg+"'   ></div></div>"
                                 $('#field2').append(selectO);
                             }else {
@@ -1677,7 +1677,6 @@ $(document).ready(function() {
 
 /*组织树*/
 function org() {
-    $('.select').remove();
     layui.use('form', function () {
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         layui.use('layer', function () {

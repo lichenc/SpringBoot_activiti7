@@ -49,4 +49,10 @@ public interface PositionDao {
      * @return
      */
     List<PositionEntity> orgPosition(String orgId);
+    /**
+     * 根据申请的岗位删除没用的岗位
+     *
+     * @return
+     */
+    int deleteUserPos(String userId,String positionId);
 }

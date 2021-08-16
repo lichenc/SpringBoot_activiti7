@@ -405,7 +405,7 @@ public class ActiController{
         if(audit.equals(login_name)){
             for (int p=0;p<listsl.size();p++){
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(listsl.get(p).getProcessInstanceId().toString());
-                if(!variables.get("taskType").toString().equals("岗位新增")){
+                if(!variables.get("taskType").toString().equals("用户移动")){
                     ActivitiEntity task=new ActivitiEntity();
                     task.setTaskId(listsl.get(p).getId());
                     task.setTaskName(listsl.get(p).getName());
@@ -430,7 +430,7 @@ public class ActiController{
         }else {
             for (int p=0;p<listsl.size();p++){
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(listsl.get(p).getProcessInstanceId().toString());
-                if(!variables.get("taskType").toString().equals("岗位新增")) {
+                if(!variables.get("taskType").toString().equals("用户移动")) {
                     ActivitiEntity task = new ActivitiEntity();
                     task.setTaskId(listsl.get(p).getId());
                     task.setTaskName(listsl.get(p).getName());
@@ -454,7 +454,7 @@ public class ActiController{
             }
             for (int p=0;p<lists2.size();p++) {
                 Map<String, Object> variables = processEngine.getRuntimeService().getVariables(lists2.get(p).getProcessInstanceId().toString());
-                if(!variables.get("taskType").toString().equals("岗位新增")) {
+                if(!variables.get("taskType").toString().equals("用户移动")) {
                     ActivitiEntity task = new ActivitiEntity();
                     task.setTaskId(lists2.get(p).getId());
                     task.setTaskName(lists2.get(p).getName());
@@ -513,7 +513,7 @@ public class ActiController{
                         task.setComment(comments);
                     }
                 }
-                if (!variables.get("taskType").equals("岗位新增")){
+                if (!variables.get("taskType").equals("用户移动")){
                    /* task.setOrgName(variables.get("orgName").toString());*/
                     task.setRole(variables.get("role").toString());
                     task.setAccount(variables.get("account").toString());
@@ -623,7 +623,7 @@ public class ActiController{
                 task.setComment(comments);
             }
         }
-        if (!variables.get("taskType").toString().equals("岗位新增")){
+        if (!variables.get("taskType").toString().equals("用户移动")){
             task.setTaskId(listsl.getId());
             task.setTaskName(listsl.getName());
             task.setTaskAssignee(listsl.getAssignee());
@@ -718,6 +718,9 @@ public class ActiController{
                 }
             }
             task.setDateLists(dateList2);
+        }else {
+            task.setTaskOrgName(variables.get("orgName").toString());
+            task.setPosition(variables.get("position").toString());
         }
         task.setTaskId(listsl.getId());
         task.setTaskName(listsl.getName());
@@ -757,14 +760,9 @@ public class ActiController{
                 .singleResult();
         String processInstanceId = task.getProcessInstanceId();
         Map<String, Object> variables = processEngine.getRuntimeService().getVariables(processInstanceId);
-        for (Map.Entry<String, Object> entry : variables.entrySet()) {
-            System.out.println(entry + "Key = " + entry.getKey() + ", Value = " + entry.getValue());
-        }
         Map<String, Object> variable = new HashMap<>();
         //msg来决定流程是否完成。具体看bpmn图
         variable.put("msg", true);
-        processEngine.getTaskService()// 与正在执行任务相关的Service
-                .complete(task.getId(),variable);
         //如果申请为岗位申请，审批通过之后需要授权申请的岗位
         VariableEntity variableEntity = variableService.getTaskDefByProcInstId(task.getId());
         if (variableEntity != null) {
@@ -779,49 +777,104 @@ public class ActiController{
                 //查询申请人
                 sn = variableService.getTextByName(variableEntity1);
 
-
                 //设置查询岗位的参数
                 VariableEntity variableEntity3 = new VariableEntity();
                 variableEntity3.setProcInstId(processInstanceId);
                 variableEntity3.setName("position");
                 //查询申请的岗位
                 position = variableService.getTextByName(variableEntity3);
-
                 //设置查询用户的参数
                 UserEntity userEntity = new UserEntity();
                 userEntity.setSn(sn);
-                //根据sn获取用户信息
-                UserEntity userEntity1 = userService.getUserByProperty(userEntity);
-                //获取岗位id
-                String positionId = positionService.getPositionByName(position);
 
-                //设置为用户添加岗位的参数
-                PositionEntity positionEntity = new PositionEntity();
-                positionEntity.setUserId(userEntity1.getId());
-                positionEntity.setPositionId(positionId);
-                //用户移动
-                //账号
                 String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
                 if (StringUtils.isEmpty(ifo.toString())) {
                     System.out.println("uuid为空，认证失败，无法移动用户");
                 } else {
-                    /*ids[0]: 1628394176024783_1626841411357127
-                     * newOrgId: 1626841471677700
-                    * */
+
                     List<NameValuePair> params = Lists.newArrayList();
                     params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
                     params.add(new BasicNameValuePair("ids[0]", userId+"_"+defaultService.org(userId)));
-                    params.add(new BasicNameValuePair("newOrgId", variable.get("orgId").toString()));
+                    params.add(new BasicNameValuePair("newOrgId", variables.get("orgId").toString()));
                     //转换为键值对
                     String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
-                    String ifa=iamInterface.movenUser(str,user.getAddr(),user.getType());
-                    System.out.println("======= 用户移动结果：" + ifa);
-                }
-                //执行用户关联岗位的add方法
-                int iden = positionService.addUserPosition(positionEntity);
-                //添加成功
-                if (iden != 0) {
-                    log.info("==========================" + sn + "授权" + position + "成功!");
+                    StringBuilder ifa=iamInterface.movenUser(str,user.getAddr(),user.getType());
+                    System.out.println("======= 用户移动结果：" + ifa.toString());
+                    //岗位转为
+                    List<String> positionList = Arrays.asList(position.split(","));
+                    //多余的岗位记录下来，删除
+
+                    for (int i=0;i<positionList.size();i++) {
+                        String unUserPos="";
+                        //判断是否有岗位
+                        List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+                        if(userPositionEntityList.size()==0||userPositionEntityList.toString().equals("[]")){
+                            String positionId = positionService.getPositionByName(positionList.get(i));
+                            PositionEntity positionEntity = new PositionEntity();
+                            positionEntity.setUserId(variables.get("userIds").toString());
+                            positionEntity.setPositionId(positionId);
+                            positionEntity.setOrgId(variables.get("orgId").toString());
+                            //执行用户关联岗位的add方法
+                            int iden = positionService.addUserPosition(positionEntity);
+                        }else {
+                            for (PositionEntity userPos:userPositionEntityList) {
+                                if (userPos.getName().equals(positionList.get(i))) {
+                                    System.out.println("不动的岗位1：" + positionList.get(i));
+                                } else {
+                                   /* unUserPos=positionList.get(i);*/
+                                    //赋值以后的岗位
+                                    String positionId = positionService.getPositionByName(positionList.get(i));
+                                    PositionEntity positionEntity = new PositionEntity();
+                                    positionEntity.setUserId(variables.get("userIds").toString());
+                                    positionEntity.setPositionId(positionId);
+                                    positionEntity.setOrgId(variables.get("orgId").toString());
+                                    //执行用户关联岗位的add方法
+                                    System.out.println("新增的岗位：" + positionEntity.toString());
+                                    int iden = positionService.addUserPosition(positionEntity);
+                                    //添加成功
+                                    if (iden != 0) {
+                                        log.info("==========================" + sn + "授权" + position + "成功!");
+                                    }
+                                }
+                            }
+                         /*   if(unUserPos!=""||unUserPos!=null||StringUtils.isEmpty(unUserPos)||StringUtils.isTrimEmpty(unUserPos)){
+                                //赋值以后的岗位
+                                System.out.println("*****"+unUserPos);
+                                String positionId = positionService.getPositionByName(unUserPos);
+                                PositionEntity positionEntity = new PositionEntity();
+                                positionEntity.setUserId(variables.get("userIds").toString());
+                                positionEntity.setPositionId(positionId);
+                                positionEntity.setOrgId(variables.get("orgId").toString());
+                                //执行用户关联岗位的add方法
+                                System.out.println("新增的岗位：" + positionEntity.toString());
+                                int iden = positionService.addUserPosition(positionEntity);
+                                //添加成功
+                                if (iden != 0) {
+                                    log.info("==========================" + sn + "授权" + position + "成功!");
+                                }
+                            }*/
+
+                        }
+                    }
+                    List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+                    for (PositionEntity userPos:userPositionEntityList) {
+                        String unUserPos="";
+                        for (int i=0;i<positionList.size();i++) {
+                            if (positionList.get(i).equals(userPos.getName())) {
+                                System.out.println("不动的岗位2：" + userPos.getName());
+                            } else {
+                               /* unUserPos = userPos.getName();*/
+                                String delPositionId=positionService.getPositionByName(userPos.getName());
+                                positionService.deleteUserPos(userId,delPositionId);
+                            }
+
+                        }
+                       /* if (unUserPos != "" || unUserPos != null||StringUtils.isEmpty(unUserPos)||StringUtils.isTrimEmpty(unUserPos)) {
+                            System.out.println("删除以前不用的岗位："+unUserPos);
+                            String delPositionId=positionService.getPositionByName(unUserPos);
+                            positionService.deleteUserPos(userId,delPositionId);
+                        }*/
+                    }
                 }
             } else {
                 //账号
@@ -892,6 +945,8 @@ public class ActiController{
                 }
             }
         }
+        processEngine.getTaskService()// 与正在执行任务相关的Service
+                .complete(task.getId(),variable);
 
         return li;
     }

@@ -4,6 +4,7 @@
     <!--查询用户所属岗位-->
     <select id="getPositionByUserId" parameterType="java.lang.String" resultType="com.example.tquan.entity.PositionEntity">
        SELECT
+       	ip.ID id,
 	     ip.SN sn,
 	     ip.`NAME` name,
 	     ip.REMARK remark,
@@ -24,11 +25,11 @@
 	<!--根据组织Id获取所有岗位-->
 	<select id="orgPosition" resultType="com.example.tquan.entity.PositionEntity">
 		SELECT
-			*
+			orgPos.ORG_ID orgId,orgPos.IS_DEFAULT isDefault,orgPos.POSITION_ID positionId,pos.name
 		FROM
-			im_org_position
+			im_org_position orgPos left join im_position pos on orgPos.POSITION_ID=pos.ID
 		where
-			org_id=#{orgId}
+			orgPos.org_id=#{orgId} and orgPos.is_default=1;
 	</select>
 
 	<!--根据岗位名称获取岗位id-->
@@ -44,7 +45,7 @@
 	<insert id="addUserPosition" parameterType="com.example.tquan.entity.PositionEntity">
 		INSERT INTO im_user_position ( USER_ID, POSITION_ID,ORG_ID)
 		VALUES
-		(#{userId},#{positionId},1606960422556626)
+		(#{userId},#{positionId},#{orgId})
 	</insert>
 	<!--查询用户是否存在某个岗位-->
 	<select id="getInfo" parameterType="com.example.tquan.entity.PositionEntity" resultType="com.example.tquan.entity.PositionEntity">
@@ -56,4 +57,9 @@
 		WHERE
 			USER_ID = #{userId} and POSITION_ID=#{positionId}
 	</select>
+
+    <!--删除用户所属岗位-->
+    <delete id="deleteUserPos" >
+        delete from im_user_position where USER_ID=#{userId} and POSITION_ID=#{positionId}
+    </delete>
 </mapper>

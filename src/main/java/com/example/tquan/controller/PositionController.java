@@ -1,13 +1,15 @@
 package com.example.tquan.controller;
 
-import com.example.tquan.entity.Approver;
-import com.example.tquan.entity.PositionEntity;
+import com.beust.jcommander.internal.Lists;
+import com.example.tquan.entity.*;
 import com.example.tquan.entity.TaskEntity;
-import com.example.tquan.entity.VariableEntity;
 import com.example.tquan.service.ApproverService;
 import com.example.tquan.service.PositionService;
 import com.example.tquan.service.TasksService;
 import com.example.tquan.service.VariableService;
+import com.example.tquan.util.IamInterface;
+import com.ninghang.core.util.StringUtils;
+import net.sf.json.JSONObject;
 import org.activiti.bpmn.model.BpmnModel;
 import org.activiti.bpmn.model.FlowNode;
 import org.activiti.bpmn.model.SequenceFlow;
@@ -20,6 +22,11 @@ import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Task;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.Consts;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,29 +54,50 @@ public class PositionController {
     @Autowired
     private TasksService tasksService;
     ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
-
-
-
-
+    @Autowired
+    private IamUserEntity user;
+    @Autowired
+    private IamOauthEntity iam;
     private Log log = LogFactory.getLog(getClass());
+    IamInterface iamInterface=new IamInterface();
+
 
     /**
      * 获取岗位列表
      * @return
      */
     @RequestMapping("/getPositionList")
-    public PositionEntity getpositionList(HttpSession session,String type,String id){
+    public PositionEntity getpositionList(HttpSession session,String type,String uuid,String id,String orgId){
        String userSn= String.valueOf(session.getAttribute("userSn"));
+        String userId=session.getAttribute("UserId").toString();
+       List<Map> positionList=new ArrayList<>();
         PositionEntity positionEntity=new PositionEntity();
+        //用户所属组织
+
        try{
            //获取所有岗位
            List<PositionEntity> positionEntityList= positionService.findAll();
-           positionEntity.setPositionEntityList(positionEntityList);
+           List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+           for (PositionEntity pos:positionEntityList){
+               Map map=new HashMap();
+               map.put("name",pos.getName());
+               map.put("value",pos.getName());
+               for (PositionEntity defPos:orgPosition(uuid,session)){
+                    if(defPos.getPositionId().equals(pos.getId())){
+                        map.put("selected",true);
+                    }
+               }
+               for (PositionEntity userPos:userPositionEntityList){
+                   if (userPos.getId().equals(pos.getId())){
+                       map.put("selected",true);
+                   }
+               }
+               positionList.add(map);
+           }
+           System.out.println(positionList.toString());
+           positionEntity.setPositionEntityList(positionList);
            positionEntity.setUserSn(userSn);
-
-
            positionEntity.setApproverList(approverService.audit(userSn));
-
            //修改岗位申请，回显数据
            if (type!=null){
                VariableEntity variableEntity=new VariableEntity(id,"applyReason");
@@ -93,15 +121,66 @@ public class PositionController {
         return positionEntity;
     }
 
+    public String userOrg(String uuid,  HttpSession session) throws Exception{
+        String userId=session.getAttribute("UserId").toString();
+        String ifo=iamInterface.oauth(uuid,iam.getKey(),iam.getPassword(),iam.getAddr(),iam.getUsername(),iam.getType(),iam.getCharset());
+        JSONObject resultJson = null;
+        if(StringUtils.isEmpty(ifo)) {
+            log.info("==========================uuid为空！");
+        }else {
+            //调用统权的接口，获取用户信息
+            List<NameValuePair> params = Lists.newArrayList();
+            params.add(new BasicNameValuePair("id", userId));
+            params.add(new BasicNameValuePair("uim-login-user-id", ifo));
+            //转换为键值对
+            String userStr = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+            StringBuilder ifus=iamInterface.userSelect(userStr,user.getAddr(),user.getType());
+            resultJson = JSONObject.fromObject(ifus.toString());
+        }
+        return resultJson.get("orgId").toString();
+    }
+
     /**
-     * 根据组织查询岗位
+     * 根据选择组织查询岗位
      */
     @RequestMapping("/userOrg")
-    public List<PositionEntity> orgPosition(String orgId){
-        List<PositionEntity> positionEntityList= positionService.orgPosition(orgId);
-        return positionEntityList;
+    public List<Map> newOrgPosition(String org,String uuid, HttpSession session) throws Exception {
+        String userId=session.getAttribute("UserId").toString();
+        List<Map> positionList=new ArrayList<>();
+        System.out.println(userOrg(uuid,session).toString()+"====="+org);
+        if(userOrg(uuid,session).toString().equals(org)){
+            List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
+            for (PositionEntity userPos:userPositionEntityList){
+                Map map = new HashMap();
+                map.put("name", userPos.getName());
+                map.put("value", userPos.getName());
+                map.put("selected",true);
+                positionList.add(map);
+            }
+        }else {
+            List<PositionEntity> positionEntityList= positionService.orgPosition(org);
+            for (PositionEntity defPos:positionEntityList) {
+                Map map = new HashMap();
+                map.put("name", defPos.getName());
+                map.put("value", defPos.getName());
+                map.put("selected", true);
+                positionList.add(map);
+            }
+        }
+        return positionList;
     };
-
+    /**
+     * 组织默认岗位
+     */
+    public List<PositionEntity> orgPosition(String uuid, HttpSession session){
+        List<PositionEntity> positionEntityList= null;
+        try {
+            positionEntityList = positionService.orgPosition(userOrg(uuid,session).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return positionEntityList;
+    }
 
     /**
      * 添加岗位流程
@@ -130,7 +209,7 @@ public class PositionController {
                PositionEntity positionEntity1= positionService.getInfo(positionEntity);
 
                //用户未拥有申请的岗位
-               if (positionEntity1==null){
+             /*  if (positionEntity1==null){*/
                    RuntimeService runtimeService = processEngine.getRuntimeService();
                    String sn = (String) session.getAttribute("userSn");
                    Map<String,Object> map = new HashMap<String,Object>();
@@ -139,18 +218,18 @@ public class PositionController {
                    map.put("applyReason",applyReason);
                    map.put("orgName",orgName);
                    map.put("orgId",orgId);
-                   map.put("taskType","岗位新增");
+                   map.put("userIds",userId);
+                   map.put("taskType","用户移动");
                    map.put("approvedPerson",approvedPersonStr);
                    ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("positionApply",map);
                    log.info("=========================="+sn+"申请了"+position+"岗位申请！");
                    iden=2;
-
                    findTask(/*firstResult,maxResults,*/sn,request);
 
                    //用户已拥有申请的岗位
-               }else{
+               /*}else{
                    iden=1;
-               }
+               }*/
            }else{
                log.info("==========================申请岗位或申请原因为空，添加失败！");
            }
@@ -158,8 +237,6 @@ public class PositionController {
            log.info("==========================申请岗位或申请原因为空，添加失败！"+e);
            e.printStackTrace();
        }
-
-
        return iden;
     }
     /**

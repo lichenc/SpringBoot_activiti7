@@ -65,4 +65,13 @@ public class PositionService {
     public List<PositionEntity> orgPosition(String orgId){
         return positionDao.orgPosition(orgId);
     };
+    /**
+     * 根据申请的岗位删除没用的岗位
+     *
+     * @return
+     */
+    public int deleteUserPos(String userId,String positionId){
+
+        return positionDao.deleteUserPos(userId,positionId);
+    };
 }

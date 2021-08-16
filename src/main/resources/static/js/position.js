@@ -137,10 +137,10 @@ function updatePosition() {
         layer.alert("请选择岗位!")
         return false;
     }
-    /*  if(approvedPerson==null){
+     if(approvedPerson==null){
           layer.alert("请选择审批人!")
           return false;
-      }*/
+      }
     if (applyReasonUpdate==null||applyReasonUpdate==""){
         layer.alert("输入申请理由!")
         return false;
@@ -159,7 +159,7 @@ function updatePosition() {
                 if(data==1){
                     layer.alert("你已拥有该岗位，请勿重复申请！");
                 }else{
-                    layer.alert("修改成功！");
+                    layer.alert("修改成功！",{icon: 6,time:3000});
                     layer.close(layer.index - 1);
                     document.getElementById("selectTask").click()
                 }
@@ -171,68 +171,68 @@ function updatePosition() {
 function getPositionList() {
     //渲染分页
     layui.use('laypage', function () {
-    //清空之前的列表记录
-    $('.tbody tr').remove()
-    var startTime=document.getElementById("startTime").value;
-    var endTime=document.getElementById("endTime").value;
-    var approvedPerson=document.getElementById("approvedPerson").value;
-    $.ajax({
-        url: "/getPositionParamList",
-        type: "POST",
-        data:{
-            startTime:startTime,
-            endTime:endTime,
-            approvedPerson:approvedPerson
-        },
-        success: function (data) {
-            if(data!=null){
-                var laypage = layui.laypage;
-                //账号Tab分页
-                laypage.render({
-                    elem: 'positionPage',
-                    count: data.length, //数据总数，从服务端得到
-                    limit:10,
-                    limits:[10,20,30],
-                    layout: ['prev', 'page', 'count','next',  'skip'],
-                    jump: function(obj){
-                        //模拟渲染
-                        document.getElementById('positionList').innerHTML = function(){
-                            var arr =[]
-                            thisData =data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
-                            layui.each(thisData, function(index, item){
-                                var positionStr= "<tr>"
-                                    +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.applyPerson+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;'></td>"
-                                  /*  +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"*/
-                                    +"<td><input type='text' value='"+item.applyReason+"' id='applyReasonlist' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
-                                    +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;'></td>"
-                                    +"<td style='width: 300px'>";
+        //清空之前的列表记录
+        $('.tbody tr').remove()
+        var startTime=document.getElementById("startTime").value;
+        var endTime=document.getElementById("endTime").value;
+        var approvedPerson=document.getElementById("approvedPerson").value;
+        $.ajax({
+            url: "/getPositionParamList",
+            type: "POST",
+            data:{
+                startTime:startTime,
+                endTime:endTime,
+                approvedPerson:approvedPerson
+            },
+            success: function (data) {
+                if(data!=null){
+                    var laypage = layui.laypage;
+                    //账号Tab分页
+                    laypage.render({
+                        elem: 'positionPage',
+                        count: data.length, //数据总数，从服务端得到
+                        limit:10,
+                        limits:[10,20,30],
+                        layout: ['prev', 'page', 'count','next',  'skip'],
+                        jump: function(obj){
+                            //模拟渲染
+                            document.getElementById('positionList').innerHTML = function(){
+                                var arr =[]
+                                thisData =data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
+                                layui.each(thisData, function(index, item){
+                                    var positionStr= "<tr>"
+                                        +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.applyPerson+"' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;'></td>"
+                                        /*  +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"*/
+                                        +"<td><input type='text' value='"+item.applyReason+"' id='applyReasonlist' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;'></td>"
+                                        +"<td style='width: 300px'>";
 
-                                //如果是待审批的状态，只可以撤回，不可编辑和重新提交
-                                if (item.processName=="审批岗位"){
+                                    //如果是待审批的状态，只可以撤回，不可编辑和重新提交
+                                    if (item.processName=="审批岗位"){
 
-                                   positionStr=positionStr + "<button value='" + item.procInstId + "' class='layui-btn' id='backProcess'>撤回</button>";
-                                   //还在申请结点，可以编辑之后重新提交
-                                }else{
-                                    positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='update'>编辑</button>"
-                                        + "<button value='" + item.id + "' class='layui-btn' id='reSubmit'>发起审批</button>";
-                                }
-                                positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='history'>查看进度</button></td>"
-                                +"</tr>";
-                                arr.push(positionStr);
-                            });
-                            return arr.join('');
-                        }();
+                                        positionStr=positionStr + "<button value='" + item.procInstId + "' class='layui-btn' id='backProcess'>撤回</button>";
+                                        //还在申请结点，可以编辑之后重新提交
+                                    }else{
+                                        positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='update'>编辑</button>"
+                                            + "<button value='" + item.id + "' class='layui-btn' id='reSubmit'>发起审批</button>";
+                                    }
+                                    positionStr=positionStr+ "<button value='" + item.procInstId + "' class='layui-btn' id='history'>查看进度</button></td>"
+                                        +"</tr>";
+                                    arr.push(positionStr);
+                                });
+                                return arr.join('');
+                            }();
 
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }
+        });
     });
-});
 }
 
 
@@ -242,58 +242,58 @@ function getPositionList() {
 $(document).ready(function() {
 
     $("body").on("click", "#backProcess", function (e) {
-            var layer = layui.layer;
-            var r = confirm("确定要撤回吗？");
-            if (r == true) {
-                //获取taskId
-                var value = $(this).val();
-                $.ajax({
-                    url: "/backProcess",
-                    type: "POST",
-                    data: {
-                        id: value
-                    },
-                    success: function (data) {
-                        //撤回成功
-                        if (data == 1) {
-                            alert("撤回成功!")
-                            document.getElementById("selectTask").click();
-                        } else if (data == 2) {
-                            alert("流程未启动或已执行完成，无法撤回!");
-                        } else {
-                            alert("撤回失败!")
-                            document.getElementById("selectTask").click();
-                        }
+        var layer = layui.layer;
+        var r = confirm("确定要撤回吗？");
+        if (r == true) {
+            //获取taskId
+            var value = $(this).val();
+            $.ajax({
+                url: "/backProcess",
+                type: "POST",
+                data: {
+                    id: value
+                },
+                success: function (data) {
+                    //撤回成功
+                    if (data == 1) {
+                        layer.alert("撤回成功!", {icon: 6,time:3000})
+                        document.getElementById("selectTask").click();
+                    } else if (data == 2) {
+                        layer.alert("流程未启动或已执行完成，无法撤回!");
+                    } else {
+                        layer.alert("撤回失败!",{icon: 5,time:3000})
+                        document.getElementById("selectTask").click();
                     }
-                });
-            } else {
-            }
+                }
+            });
+        } else {
+        }
     });
     $("body").on("click", "#reSubmit", function (e) {
-            var r = confirm("确定要重新发起审批吗？");
-            if (r == true) {
-                //获取taskId
-                var value = $(this).val();
-                $.ajax({
-                    url: "/reSubmit",
-                    type: "POST",
-                    data: {
-                        id: value
-                    },
-                    success: function (data) {
-                        //撤回成功
-                        if (data == 1) {
-                            alert("重新发起审批成功!")
-                            document.getElementById("selectTask").click();
-                        } else {
-                            alert("发起审批失败!")
-                            document.getElementById("selectTask").click();
-                        }
+        var r = confirm("确定要重新发起审批吗？");
+        if (r == true) {
+            //获取taskId
+            var value = $(this).val();
+            $.ajax({
+                url: "/reSubmit",
+                type: "POST",
+                data: {
+                    id: value
+                },
+                success: function (data) {
+                    //撤回成功
+                    if (data == 1) {
+                        alert("重新发起审批成功!")
+                        document.getElementById("selectTask").click();
+                    } else {
+                        alert("发起审批失败!")
+                        document.getElementById("selectTask").click();
                     }
-                });
-            } else {
-            }
-        });
+                }
+            });
+        } else {
+        }
+    });
 });
 
 
@@ -302,17 +302,17 @@ $(document).ready(function() {
 /**
  * 打开岗位申请弹窗
  */
+var demo1;
 function positionApply() {
     $('.select option').remove();
     document.getElementById("applyReason").value=null;
     layui.use('form', function(){
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
-
         layui.use('layer', function () {
             var layer = layui.layer;
             layer.open({
                 type: 1,
-                title: "岗位申请",   //标题
+                title: "用户岗位申请",   //标题
                 area: ['400px', '450px'],    //弹窗大小
                 shadeClose: false,      //禁止点击空白关闭
                 scrollbar: false,      //禁用滚动条
@@ -331,16 +331,30 @@ function positionApply() {
             type: "POST",
             dataType: "json",
             success: function (data) {
-                var po  ="";
+
                 if(data.positionEntityList!=null){
-                    var positionStro=data.positionEntityList;
-                    for(var i=0;i<positionStro.length;i++){
-                        po=po+  "<option   value='"+positionStro[i].name+"'>"+positionStro[i].name+"</option>";
-                    }
-                    $('#position').append(po);
-                    //默认选中
-                  /*  var div = document.getElementsByClassName("layui-form-checkbox");
-                    div.setAttribute("class", "layui-form-checked");*/
+                    layui.config({
+                        base: '../js/'
+                    }).extend({
+                        xmSelect: 'xm-select'
+                    }).use(['xmSelect'], function(){
+                        var xmSelect = layui.xmSelect;
+                        //渲染多选
+                        demo1 = xmSelect.render({
+                            el: '#positions',
+                            paging: true,
+                            pageSize: 2,
+                            filterable: true,
+                            pageEmptyShow: false,
+                            toolbar: {show: true,},
+                            autoRow: true,
+                            tips:'请选择岗位',
+                            searchTips: '您需要什么岗位',
+                            empty: '呀, 还没有岗位呢',
+                            data: data.positionEntityList,
+                        })
+
+                    })
                     document.getElementById("applyPerson").value=data.userSn;
                 }
                 var approverStr  ="<option value='0'>请选择审批人</option>";
@@ -354,25 +368,24 @@ function positionApply() {
                 }
                 //渲染select，不然无法显示值
                 form.render();
-
             }
         });
 
-    }); }
+    });
+}
 
 /**
  * 添加岗位申请流程
  */
-function addPosition() {
-    //岗位
-    var position=document.getElementById("position").value;
-    //申请原因
-    var applyReason=document.getElementById("applyReason").value;
+function addPosition(classNames) {
     //审批人
     var approvedPerson=document.getElementById("approvedPerson").value;
+    //岗位
+    var position=(document.getElementsByClassName("label-content"))[0].title;
+    //申请原因
+    var applyReason=document.getElementById("applyReason").value;
     //用户所属组织
     var orgName = document.getElementById("orgName").value;
-    alert(orgName);
     //用户所属组织ID
     var orgId = document.getElementById("orgId").value;
     if (orgName==null||orgName==""){
@@ -408,8 +421,8 @@ function addPosition() {
                 if(data==1){
                     layer.alert("你已拥有该岗位，请勿重复申请！");
                 }else{
-                    layer.alert("申请成功！");
-                    layer.close(layer.index - 1);
+                    layer.close(layer.index-1);
+                    layer.alert("申请成功！", {icon: 6,time:3000});
                     document.getElementById("selectTask").click();
                 }
             }
@@ -428,7 +441,6 @@ function reset() {
 
 /*组织树*/
 function org() {
-    $('.select').remove();
     layui.use('form', function () {
         var form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         layui.use('layer', function () {
@@ -443,9 +455,9 @@ function org() {
                 scrolling: 'no',
                 resize: false,
                 closeBtn: 1,
-                content: $('#orgTree'),
+                content: $('#userOrgTree'),
                 end: function () {
-                    $('#orgTree').hide();
+                    $('#userOrgTree').hide();
                 }
             });
         });
@@ -460,22 +472,24 @@ function org() {
                         , data = orgTrees
 
                     tree.render({
-                        elem: '#test13',
+                        elem: '#test',
                         data: data,
                         showLine: true,  //是否开启连接线,
+                        spread:false,
                         click:function (obj) {
                             userMove(obj.data.title)
-                             $("#orgName").val(obj.data.title);
-                             $("#orgId").val(obj.data.id);
-                           /* $("#accountOrg").val(obj.data.title);
-                            $("#accountOrgId").val(obj.data.id);*/
+                            $("#orgName").val(obj.data.title);
+                            $("#orgId").val(obj.data.id);
+                            position(obj.data.id);
                             layer.close(layer.index -1);
                         }
                     });
                 })
+                form.render();
             }
         })
     })
+
 }
 
 
@@ -532,25 +546,22 @@ function userMove(nameOrg) {
     })
 }
 
-layui.use(['layer', 'jquery', 'form'], function () {
-    var layer = layui.layer,
-        $ = layui.jquery;
-    form = layui.form;
+/*
+* 修改组织时获取默认值
+* */
+function position(org) {
+    $.ajax({
+        url: "/userOrg",
+        type: 'POST',
+        data: {org: org},
+        dataType: "json",
+        success: function (res) {
+            //清空默认选项
+            demo1.setValue([ ])
+            //重新赋默认选项
+            demo1.setValue(res);
 
-    form.on('input(userOrg)', function (data) {
-        var org = data.value;
-        $('.div').remove();
-        // $('#div').empty();
-        $.ajax({
-            url: "/userOrg",
-            type: 'POST',
-            data: {org: org},
-            dataType: "json",
-            success: function (res) {
-                var div = document.getElementsByClassName("layui-form-checkbox");
-                div.setAttribute("class", "layui-form-checked");
-            }
-        })
+        }
+    })
 
-    });
-})
+}

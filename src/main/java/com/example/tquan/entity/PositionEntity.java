@@ -2,6 +2,7 @@ package com.example.tquan.entity;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by chenjin on 2021/6/1 21:16
@@ -17,12 +18,39 @@ public class PositionEntity {
     //辅助字段：岗位id，用户id   用来添加用户与岗位的关联
     private String userId;
     private String positionId;
+    private String orgId;
     private List<Approver> approverList;    //审批人集合
+    private int isDefault;
 
 
     private String applyReason;
     private String approvedPerson;
     private String position;
+    private List<PositionEntity> defaultPosition;
+
+    public List<PositionEntity> getDefaultPosition() {
+        return defaultPosition;
+    }
+
+    public void setDefaultPosition(List<PositionEntity> defaultPosition) {
+        this.defaultPosition = defaultPosition;
+    }
+
+    public int getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(int isDefault) {
+        this.isDefault = isDefault;
+    }
+
+    public String getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(String orgId) {
+        this.orgId = orgId;
+    }
 
     public String getPosition() {
         return position;
@@ -72,14 +100,14 @@ public class PositionEntity {
         this.positionId = positionId;
     }
 
-    private List<PositionEntity> positionEntityList;
+    private List<Map> positionEntityList;
     private String userSn;
 
-    public List<PositionEntity> getPositionEntityList() {
+    public List<Map> getPositionEntityList() {
         return positionEntityList;
     }
 
-    public void setPositionEntityList(List<PositionEntity> positionEntityList) {
+    public void setPositionEntityList(List<Map> positionEntityList) {
         this.positionEntityList = positionEntityList;
     }
 

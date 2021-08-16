@@ -34,6 +34,7 @@ public class ActivitiEntity {
         private String taskActType;
         private String taskAccount;
         private String taskTypes;
+        private String position;
         private String taskApplyPerson;
         private String taskApprovedPerson;
         private List<Comment> comment;
@@ -41,6 +42,14 @@ public class ActivitiEntity {
         private List<DefaultsEntity> passwordLists;
         private List<DefaultsEntity> selectLists;
         private List<DefaultsEntity> dateLists;
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public List<DefaultsEntity> getTextLists() {
         return textLists;

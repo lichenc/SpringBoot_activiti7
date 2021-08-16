@@ -373,9 +373,50 @@ public class IamInterface {
      *
      * @return
      */
-    public String movenUser (String str, String addr, String type) throws Exception {
+    public StringBuilder movenUser (String str, String addr, String type) throws Exception {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(addr+"moveOrg");
+        StringBuilder result = new StringBuilder();
+        httppost.setEntity(new StringEntity(str, Charset.forName("UTF-8")));
+        httppost.addHeader("Content-type", type);
+        HttpResponse response;
+        try {
+
+            response = httpclient.execute(httppost);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+                InputStream instream = entity.getContent();
+                BufferedReader br = new BufferedReader(new InputStreamReader(instream));
+                String temp = "";
+                while ((temp = br.readLine()) != null) {
+                    String str2 = new String(temp.getBytes(), "utf-8");
+                    result.append(str2).append("\r\n");
+                }
+                br.close();
+                JSONObject resultJson = JSONObject.fromObject(result.toString());
+                if (resultJson.get("success").toString().equals("true")) {
+                    System.out.println("======= 新增账号结果：msg:" + resultJson.get("msg"));
+                } else {
+                    System.out.println("======= 新增账号结果：msg:" + resultJson.get("msg"));
+                }
+            }
+        } catch (ClientProtocolException e) {
+
+        } catch (IOException e) {
+
+        }
+
+        return result;
+    }
+    /**
+     *
+     * 用户移动时，修改用户所属岗位
+     *
+     * @return
+     */
+    public StringBuilder userPosition (String str, String addr, String type) throws Exception {
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost(addr+"authPosition");
         StringBuilder result = new StringBuilder();
         httppost.setEntity(new StringEntity(str, Charset.forName("UTF-8")));
         httppost.addHeader("Content-type", type);
@@ -395,19 +436,13 @@ public class IamInterface {
                 JSONObject resultJson = JSONObject.fromObject(result.toString());
                 if (resultJson.get("success").toString().equals("true")) {
                     System.out.println("======= 新增账号结果：msg:" + resultJson.get("msg"));
-                    /* return new ResultCode(SUCCESS,resultJson.get("message").toString());*/
-                } else {
-                    System.out.println("======= 新增账号结果：" + resultJson.get("msg"));
-                    /* return new ResultCode(FAIL,resultJson.get("message").toString());*/
                 }
             }
         } catch (ClientProtocolException e) {
-            /* return new ResultCode(FAIL, e.getMessage());*/
-        } catch (IOException e) {
-            /*return new ResultCode(FAIL, e.getMessage());*/
+
         }
-        /* return new ResultCode(FAIL, "新增账号请求失败");*/
-        return str;
+
+        return result;
     }
 
 }
