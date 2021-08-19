@@ -1,5 +1,11 @@
 var value1;
 
+var xmlayui=layui.config({
+                base: '../js/'
+            }).extend({
+                xmSelect: 'xm-select'
+            })
+
 function over(e){
     var ca=e;
     if(ca!=null && ca!=""){
@@ -27,6 +33,7 @@ function over1(e){
 /**
  * 加载岗位申请列表
  * */
+var demo2;
 $(document).ready(function(){
 
 
@@ -95,12 +102,8 @@ $(document).ready(function(){
                 },
                 success: function (data) {
                     if(data.positionEntityList!=null){
-                        layui.config({
-                            base: '../js/'
-                        }).extend({
-                            xmSelect2: 'xm-select'
-                        }).use(['xmSelect2'], function(){
-                            var xmSelect = layui.xmSelect2;
+                        xmlayui.use(['xmSelect'], function(){
+                            var xmSelect = layui.xmSelect;
                             //渲染多选
                             demo1 = xmSelect.render({
                                 el: '#positions2',
@@ -117,7 +120,7 @@ $(document).ready(function(){
                             })
 
                         })
-                        document.getElementById("applyPerson").value=data.userSn;
+                        document.getElementById("applyPersonUpdate").value=data.userSn;
                     }
                     // 遍历select
                     $("#positionUpdate").each(function() {
@@ -131,6 +134,10 @@ $(document).ready(function(){
                     })
                     document.getElementById("approvedPersonUpdate").value = data.approvedPerson;
                     document.getElementById("applyReasonUpdate").value = data.applyReason;
+                    document.getElementById("orgName2").value = data.orgName;
+                    document.getElementById("orgId2").value = data.orgId;
+                    var role  ="<option selected>"+data.role+"</option>";
+                    $('#role2').append(role);
                     //渲染select，不然无法显示值
                     form.render();
                 }
@@ -144,11 +151,21 @@ $(document).ready(function(){
  */
 function updatePosition() {
     //岗位
-    var positionUpdate=document.getElementById("positionUpdate").value;
+    var positionUpdate= (document.getElementsByClassName("label-content"))[0].title;
     //申请原因
     var applyReasonUpdate=document.getElementById("applyReasonUpdate").value;
     //审批人
     var approvedPersonUpdate=document.getElementById("approvedPersonUpdate").value;
+    //用户所属组织
+    var orgName = document.getElementById("orgName2").value;
+    //用户所属组织ID
+    var orgId = document.getElementById("orgId2").value;
+    //审批角色
+    var role = document.getElementById("role2").value;
+    if (orgName==null||orgName==""){
+        layer.alert("请选择用户所属组织!")
+        return false;
+    }
     if (positionUpdate==0){
         layer.alert("请选择岗位!")
         return false;
@@ -161,6 +178,10 @@ function updatePosition() {
         layer.alert("输入申请理由!")
         return false;
     }
+    if (role==null||role==""){
+        layer.alert("请选择角色!")
+        return false;
+    }
     if(positionUpdate != 0 && positionUpdate !=null && applyReasonUpdate != null && applyReasonUpdate !="" && approvedPersonUpdate !=0 && approvedPersonUpdate != null) {
         $.ajax({
             url: "/updatePosition",
@@ -169,13 +190,16 @@ function updatePosition() {
             data: {
                 position: positionUpdate,
                 applyReason: applyReasonUpdate,
+                orgName:orgName,
+                orgId:orgId,
+                role:role,
                 id:value1
             },
             success: function (data) {
                 if(data==1){
                     layer.alert("你已拥有该岗位，请勿重复申请！");
                 }else{
-                    layer.alert("修改成功！",{icon: 6,time:3000});
+                    layer.alert("修改成功！",{icon: 6,time:2000});
                     layer.close(layer.index - 1);
                     document.getElementById("selectTask").click()
                 }
@@ -217,14 +241,14 @@ function getPositionList() {
                                 thisData =data.concat().splice(obj.curr*obj.limit - obj.limit, obj.limit);
                                 layui.each(thisData, function(index, item){
                                     var positionStr= "<tr>"
-                                        +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;'></td>"
-                                        +"<td><input type='text' value='"+item.applyPerson+"' class='layui-input' style='border:none;'></td>"
-                                        +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;'></td>"
-                                        +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;'></td>"
-                                        +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.procInstId+"'  class='layui-input' style='border:none;' readonly='readonly'></td>"
+                                        +"<td><input type='text' value='"+item.applyPerson+"' class='layui-input' style='border:none;' readonly='readonly'></td>"
+                                        +"<td><input type='text' value='"+item.applyCreateTime.slice(0,item.applyCreateTime.indexOf("."))+"' class='layui-input' style='border:none;' readonly='readonly'></td>"
+                                        +"<td><input type='text' value='"+item.position+"' class='layui-input' style='border:none;' readonly='readonly'></td>"
+                                        +"<td><input type='text' value='"+item.approvedPerson+"' class='layui-input' style='border:none;' readonly='readonly'></td>"
                                         /*  +"<td><input type='text' value='"+item.taskType+"' class='layui-input' style='border:none;'></td>"*/
-                                        +"<td><input type='text' value='"+item.applyReason+"' id='applyReasonlist' onmouseover='over1(this.value)' class='layui-input' style='border:none;'></td>"
-                                        +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;'></td>"
+                                        +"<td><input type='text' value='"+item.applyReason+"' id='applyReasonlist' onmouseover='over1(this.value)' class='layui-input' style='border:none;' readonly='readonly'></td>"
+                                        +"<td><input type='text' value='"+item.repulseReason+"' id='repulseReason' onmouseover='over(this.value)' class='layui-input' style='border:none;' readonly='readonly'></td>"
                                         +"<td style='width: 300px'>";
 
                                     //如果是待审批的状态，只可以撤回，不可编辑和重新提交
@@ -349,11 +373,7 @@ function positionApply() {
             success: function (data) {
 
                 if(data.positionEntityList!=null){
-                    layui.config({
-                        base: '../js/'
-                    }).extend({
-                        xmSelect: 'xm-select'
-                    }).use(['xmSelect'], function(){
+                    xmlayui.use(['xmSelect'], function(){
                         var xmSelect = layui.xmSelect;
                         //渲染多选
                         demo1 = xmSelect.render({
@@ -382,6 +402,8 @@ function positionApply() {
                     $('#approvedPerson').append(approverStr);
 
                 }
+                var role  ="<option value='0'></option><option >审批角色</option>";
+                $('#role').append(role);
                 //渲染select，不然无法显示值
                 form.render();
             }
@@ -404,6 +426,8 @@ function addPosition(classNames) {
     var orgName = document.getElementById("orgName").value;
     //用户所属组织ID
     var orgId = document.getElementById("orgId").value;
+    //审批角色
+    var role = document.getElementById("role").value;
     if (orgName==null||orgName==""){
 
         layer.alert("请选择用户所属组织!")
@@ -421,6 +445,10 @@ function addPosition(classNames) {
         layer.alert("请输入申请理由!")
         return false;
     }
+    if (role==null||role==""){
+        layer.alert("请选择审批角色!")
+        return false;
+    }
     if(position != 0 && position !=null && applyReason != null && applyReason!="" && approvedPerson !=0 && approvedPerson != null) {
         $.ajax({
             url: "/addPositionProcess",
@@ -431,7 +459,8 @@ function addPosition(classNames) {
                 applyReason: applyReason,
                 approvedPerson:approvedPerson,
                 orgName:orgName,
-                orgId:orgId
+                orgId:orgId,
+                role:role
             },
             success: function (data) {
                 if(data==1){
@@ -496,6 +525,7 @@ function org() {
                             userMove(obj.data.title)
                             $("#orgName").val(obj.data.title);
                             $("#orgId").val(obj.data.id);
+                            $("#orgName2").val(obj.data.title);
                             $("#orgId2").val(obj.data.id);
                             position(obj.data.id);
                             layer.close(layer.index -1);

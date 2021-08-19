@@ -633,7 +633,6 @@ public class ActiController{
             task.setTaskApprovedPerson(audits.get(0).getAudit());
            /* task.setTaskOrgName(variables.get("orgName").toString());*/
             task.setTaskApplyReason(variables.get("applyReason").toString());
-            task.setTaskRole(variables.get("role").toString());
             task.setTaskTypes(variables.get("taskType").toString());
             task.setTaskAccount(variables.get("account").toString());
             task.setTaskActType(variables.get("actType").toString());
@@ -729,7 +728,7 @@ public class ActiController{
         task.setTaskExecutionId(listsl.getExecutionId());
         task.setTaskProcessInstanceId(listsl.getProcessInstanceId());
         task.setTaskApprovedPerson(audits.get(0).getAudit());
-
+        task.setTaskRole(variables.get("role").toString());
         task.setTaskApplyReason(variables.get("applyReason").toString());
 
         task.setTaskTypes(variables.get("taskType").toString());

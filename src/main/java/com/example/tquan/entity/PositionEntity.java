@@ -11,6 +11,8 @@ public class PositionEntity {
     private String id;
     private String sn;
     private String name;
+    private String role;
+    private String orgName;
     private String remark;
     private Date createTime;
     private  String companySn;
@@ -27,6 +29,22 @@ public class PositionEntity {
     private String approvedPerson;
     private String position;
     private List<PositionEntity> defaultPosition;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public List<PositionEntity> getDefaultPosition() {
         return defaultPosition;
@@ -173,9 +191,22 @@ public class PositionEntity {
                 "id='" + id + '\'' +
                 ", sn='" + sn + '\'' +
                 ", name='" + name + '\'' +
+                ", role='" + role + '\'' +
+                ", orgName='" + orgName + '\'' +
                 ", remark='" + remark + '\'' +
                 ", createTime=" + createTime +
                 ", companySn='" + companySn + '\'' +
+                ", userId='" + userId + '\'' +
+                ", positionId='" + positionId + '\'' +
+                ", orgId='" + orgId + '\'' +
+                ", approverList=" + approverList +
+                ", isDefault=" + isDefault +
+                ", applyReason='" + applyReason + '\'' +
+                ", approvedPerson='" + approvedPerson + '\'' +
+                ", position='" + position + '\'' +
+                ", defaultPosition=" + defaultPosition +
+                ", positionEntityList=" + positionEntityList +
+                ", userSn='" + userSn + '\'' +
                 '}';
     }
 }

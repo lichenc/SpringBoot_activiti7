@@ -35,10 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by chenjin on 2021/6/8 9:54
@@ -67,7 +64,7 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/getPositionList")
-    public PositionEntity getpositionList(HttpSession session,String type,String uuid,String id,String orgId){
+    public PositionEntity getpositionList(HttpSession session,String type,String uuid,String id){
        String userSn= String.valueOf(session.getAttribute("userSn"));
         String userId=session.getAttribute("UserId").toString();
        List<Map> positionList=new ArrayList<>();
@@ -75,25 +72,12 @@ public class PositionController {
         //用户所属组织
 
        try{
-           //获取所有岗位
+           //获取所有岗位和默认岗位
            List<PositionEntity> positionEntityList= positionService.findAll();
            List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
-           for (PositionEntity pos:positionEntityList){
-               Map map=new HashMap();
-               map.put("name",pos.getName());
-               map.put("value",pos.getName());
-               for (PositionEntity defPos:orgPosition(uuid,session)){
-                    if(defPos.getPositionId().equals(pos.getId())){
-                        map.put("selected",true);
-                    }
-               }
-               for (PositionEntity userPos:userPositionEntityList){
-                   if (userPos.getId().equals(pos.getId())){
-                       map.put("selected",true);
-                   }
-               }
-               positionList.add(map);
-           }
+
+
+
            System.out.println(positionList.toString());
            positionEntity.setPositionEntityList(positionList);
            positionEntity.setUserSn(userSn);
@@ -103,15 +87,52 @@ public class PositionController {
                VariableEntity variableEntity=new VariableEntity(id,"applyReason");
                VariableEntity variableEntity1=new VariableEntity(id,"approvedPerson");
                VariableEntity variableEntity2=new VariableEntity(id,"position");
+               VariableEntity variableEntity3=new VariableEntity(id,"orgName");
+               VariableEntity variableEntity4=new VariableEntity(id,"orgId");
+               VariableEntity variableEntity5=new VariableEntity(id,"role");
                //查询申请原因
                String applyReason= variableService.getTextByName(variableEntity);
                //查询审批人
                String approvedPerson=variableService.getTextByName(variableEntity1);
                //查询申请岗位
                String position=variableService.getTextByName(variableEntity2);
+               String orgName=variableService.getTextByName(variableEntity3);
+               String orgId=variableService.getTextByName(variableEntity4);
+               String role=variableService.getTextByName(variableEntity5);
                positionEntity.setApplyReason(applyReason);
                positionEntity.setApprovedPerson(approvedPerson);
-               positionEntity.setPosition(position);
+               positionEntity.setRole(role);
+               positionEntity.setOrgId(orgId);
+               positionEntity.setOrgName(orgName);
+               List<String> positionArr = Arrays.asList(position.split(","));
+               for (PositionEntity pos:positionEntityList){
+                   Map map=new HashMap();
+                   map.put("name",pos.getName());
+                   map.put("value",pos.getName());
+                   for (int r=0;r<positionArr.size();r++){
+                       if (positionArr.get(r).equals(pos.getName())){
+                           map.put("selected",true);
+                       }
+                   }
+                   positionList.add(map);
+               }
+           }else {
+               for (PositionEntity pos:positionEntityList){
+                   Map map=new HashMap();
+                   map.put("name",pos.getName());
+                   map.put("value",pos.getName());
+                   for (PositionEntity defPos:orgPosition(uuid,session)){
+                       if(defPos.getPositionId().equals(pos.getId())){
+                           map.put("selected",true);
+                       }
+                   }
+                   for (PositionEntity userPos:userPositionEntityList){
+                       if (userPos.getId().equals(pos.getId())){
+                           map.put("selected",true);
+                       }
+                   }
+                   positionList.add(map);
+               }
            }
        }catch (Exception e){
            log.info("==========================查询失败！"+e
@@ -519,7 +540,7 @@ public class PositionController {
      * @return
      */
     @RequestMapping("/updatePosition")
-    public int updatePosition(String position, String applyReason,String id,HttpSession session){
+    public int updatePosition(String position, String applyReason,String orgName,String orgId,String role, String id,HttpSession session){
         int iden=0;
 
         try{
@@ -538,7 +559,7 @@ public class PositionController {
                 PositionEntity positionEntity1= positionService.getInfo(positionEntity);
 
                 //用户未拥有申请的岗位
-                if (positionEntity1==null){
+              /*  if (positionEntity1==null){*/
                     //修改申请岗位
                     VariableEntity variableEntity=new VariableEntity();
                     variableEntity.setProcInstId(id);
@@ -551,12 +572,29 @@ public class PositionController {
                     variableEntity1.setName("applyReason");
                     variableEntity1.setText(applyReason);
                     variableService.updateTaskParam(variableEntity1);
-
+                    //修改用户所属组织
+                    VariableEntity variableEntity2=new VariableEntity();
+                    variableEntity1.setProcInstId(id);
+                    variableEntity1.setName("orgName");
+                    variableEntity1.setText(orgName);
+                    variableService.updateTaskParam(variableEntity2);
+                    //修改用户所属组织id
+                    VariableEntity variableEntity3=new VariableEntity();
+                    variableEntity1.setProcInstId(id);
+                    variableEntity1.setName("orgId");
+                    variableEntity1.setText(orgId);
+                    variableService.updateTaskParam(variableEntity3);
+                    //修改角色
+                    VariableEntity variableEntity4=new VariableEntity();
+                    variableEntity1.setProcInstId(id);
+                    variableEntity1.setName("role");
+                    variableEntity1.setText(role);
+                    variableService.updateTaskParam(variableEntity4);
                     iden=2;
                     //用户已拥有申请的岗位
-                }else{
+                /*}else{
                     iden=1;
-                }
+                }*/
             }else{
                 log.info("==========================岗位修改失败！");
             }

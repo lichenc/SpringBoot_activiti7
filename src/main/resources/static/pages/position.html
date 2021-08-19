@@ -191,6 +191,17 @@
         </div>
         <div class="layui-form-item">
             <label class="layui-form-label" style="font-size:12px;">
+                审批角色：
+            </label>
+            <div class="layui-input-inline">
+                <select id="role" lay-verify="required" name="role"    class="select">
+                    <option ></option>
+                    <option >审批角色</option>
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
                 申请理由：
             </label>
             <div class="layui-input-inline">
@@ -241,9 +252,9 @@
                 用户所属组织：
             </label>
             <div class="layui-input-inline">
-                <input type='text' id='orgId2' th:value="${{userStr.orgId}}"  style='display:none'/>
+                <input type='text' id='orgId2'   style='display:none'/>
                 <input id="orgName2" onfocus="org();" lay-verify="required" lay-vertype="tips" lay-filter='userOrg'  class="layui-input"
-                       type="text"  th:value="${{userStr.orgName}}"  required    >
+                       type="text"   required    >
             </div>
             <div class="layui-form-mid layui-word-aux"></div>
         </div>
@@ -260,6 +271,16 @@
             <div class="layui-input-inline">
                 <input id="approvedPersonUpdate" lay-verify="required" lay-vertype="tips" autocomplete="off" class="layui-input"
                        type="text"  readonly="readonly">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" style="font-size:12px;">
+                审批角色：
+            </label>
+            <div class="layui-input-inline">
+                <select id="role2" lay-verify="required" name="role"  required  class="select">
+
+                </select>
             </div>
         </div>
         <div class="layui-form-item">
