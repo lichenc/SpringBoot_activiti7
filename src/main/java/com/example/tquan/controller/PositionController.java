@@ -574,21 +574,21 @@ public class PositionController {
                     variableService.updateTaskParam(variableEntity1);
                     //修改用户所属组织
                     VariableEntity variableEntity2=new VariableEntity();
-                    variableEntity1.setProcInstId(id);
-                    variableEntity1.setName("orgName");
-                    variableEntity1.setText(orgName);
+                    variableEntity2.setProcInstId(id);
+                    variableEntity2.setName("orgName");
+                    variableEntity2.setText(orgName);
                     variableService.updateTaskParam(variableEntity2);
                     //修改用户所属组织id
                     VariableEntity variableEntity3=new VariableEntity();
-                    variableEntity1.setProcInstId(id);
-                    variableEntity1.setName("orgId");
-                    variableEntity1.setText(orgId);
+                    variableEntity3.setProcInstId(id);
+                    variableEntity3.setName("orgId");
+                    variableEntity3.setText(orgId);
                     variableService.updateTaskParam(variableEntity3);
                     //修改角色
                     VariableEntity variableEntity4=new VariableEntity();
-                    variableEntity1.setProcInstId(id);
-                    variableEntity1.setName("role");
-                    variableEntity1.setText(role);
+                    variableEntity4.setProcInstId(id);
+                    variableEntity4.setName("role");
+                    variableEntity4.setText(role);
                     variableService.updateTaskParam(variableEntity4);
                     iden=2;
                     //用户已拥有申请的岗位

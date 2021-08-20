@@ -47,9 +47,9 @@
     <!--修改task参数-->
     <update id="updateTaskParam" parameterType="com.example.tquan.entity.VariableEntity">
         UPDATE act_ru_variable
-        SET TEXT_ = #{text}
+        SET TEXT_= #{text}
         WHERE
-	        PROC_INST_ID_ =#{procInstId}
+	        PROC_INST_ID_=#{procInstId}
 	    AND NAME_=#{name}
     </update>
     <!--新增打回原因-->
