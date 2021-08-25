@@ -212,7 +212,6 @@ public class ActiController{
                 map.put("status","1");
                 map.put("usersId",userId);
                 /*map.put("orgName",orgName);*/
-
                 map.put("accountOrgId",accountOrgId);
                 map.put("actType",actType);
                 map.put("accountOrg",accountOrg);
@@ -884,6 +883,33 @@ public class ActiController{
                         params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
                         params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
                         params.add(new BasicNameValuePair("status", variables.get("status").toString()));
+                        JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
+                        JSONArray textListKey = JSONArray.fromObject(textList.keySet());
+                        JSONArray textListValue = JSONArray.fromObject(textList.values());
+                        List<DefaultsEntity> textList2=new ArrayList<>();
+                        for (int text=0;text<textList.size();text++) {
+                            params.add(new BasicNameValuePair("extraAttrs["+textListKey.get(text).toString()+"]", textListValue.get(text).toString()));
+                        }
+                        JSONObject passwordList = JSONObject.fromObject(variables.get("passwordList").toString());
+                        JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                        JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                        List<DefaultsEntity> passwordList2=new ArrayList<>();
+                        for (int text=0;text<passwordList.size();text++) {
+                            params.add(new BasicNameValuePair("extraAttrs["+passwordListKey.get(text).toString()+"]", passwordListValue.get(text).toString()));
+                        }
+                        JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
+                        JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                        JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                        for (int text=0;text<selectList.size();text++) {
+                            params.add(new BasicNameValuePair("extraAttrs["+selectListKey.get(text).toString()+"]", selectListValue.get(text).toString()));
+                        }
+                        JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
+                        JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                        JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                        for (int text=0;text<dateList.size();text++) {
+                            params.add(new BasicNameValuePair("extraAttrs["+dateListKey.get(text).toString()+"]", dateListValue.get(text).toString()));
+
+                        }
                        /* params.add(new BasicNameValuePair("extraAttrs["++"]", variables.get("status").toString()));*/
 
                         //转换为键值对
