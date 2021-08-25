@@ -75,9 +75,6 @@ public class PositionController {
            //获取所有岗位和默认岗位
            List<PositionEntity> positionEntityList= positionService.findAll();
            List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
-
-
-
            System.out.println(positionList.toString());
            positionEntity.setPositionEntityList(positionList);
            positionEntity.setUserSn(userSn);
@@ -168,9 +165,8 @@ public class PositionController {
     public List<Map> newOrgPosition(String org,String uuid, HttpSession session) throws Exception {
         String userId=session.getAttribute("UserId").toString();
         List<Map> positionList=new ArrayList<>();
-        System.out.println(userOrg(uuid,session).toString()+"====="+org);
+        List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
         if(userOrg(uuid,session).toString().equals(org)){
-            List<PositionEntity> userPositionEntityList=positionService.getPositionByUserId(userId);
             for (PositionEntity userPos:userPositionEntityList){
                 Map map = new HashMap();
                 map.put("name", userPos.getName());
@@ -180,6 +176,16 @@ public class PositionController {
             }
         }else {
             List<PositionEntity> positionEntityList= positionService.orgPosition(org);
+            for (PositionEntity userPos:userPositionEntityList){
+                String counts = positionService.orgPosCount(userOrg(uuid,session),userPos.getId());
+                if ("0".equals(counts)){
+                    Map map = new HashMap();
+                    map.put("name", userPos.getName());
+                    map.put("value", userPos.getName());
+                    map.put("selected", true);
+                    positionList.add(map);
+                }
+            }
             for (PositionEntity defPos:positionEntityList) {
                 Map map = new HashMap();
                 map.put("name", defPos.getName());

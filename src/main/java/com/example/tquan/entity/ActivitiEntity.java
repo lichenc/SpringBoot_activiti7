@@ -33,6 +33,7 @@ public class ActivitiEntity {
         private String taskApp;
         private String taskActType;
         private String taskAccount;
+        private String taskAccountOrg;
         private String taskTypes;
         private String position;
         private String taskApplyPerson;
@@ -42,6 +43,14 @@ public class ActivitiEntity {
         private List<DefaultsEntity> passwordLists;
         private List<DefaultsEntity> selectLists;
         private List<DefaultsEntity> dateLists;
+
+    public String getTaskAccountOrg() {
+        return taskAccountOrg;
+    }
+
+    public void setTaskAccountOrg(String taskAccountOrg) {
+        this.taskAccountOrg = taskAccountOrg;
+    }
 
     public String getPosition() {
         return position;
@@ -322,7 +331,7 @@ public class ActivitiEntity {
                 ", description='" + description + '\'' +
                 ", taskId='" + taskId + '\'' +
                 ", taskName='" + taskName + '\'' +
-                ", taskCreateTime=" + taskCreateTime +
+                ", taskCreateTime='" + taskCreateTime + '\'' +
                 ", taskApplyReason='" + taskApplyReason + '\'' +
                 ", taskRole='" + taskRole + '\'' +
                 ", taskAssignee='" + taskAssignee + '\'' +
@@ -333,7 +342,9 @@ public class ActivitiEntity {
                 ", taskApp='" + taskApp + '\'' +
                 ", taskActType='" + taskActType + '\'' +
                 ", taskAccount='" + taskAccount + '\'' +
+                ", taskAccountOrg='" + taskAccountOrg + '\'' +
                 ", taskTypes='" + taskTypes + '\'' +
+                ", position='" + position + '\'' +
                 ", taskApplyPerson='" + taskApplyPerson + '\'' +
                 ", taskApprovedPerson='" + taskApprovedPerson + '\'' +
                 ", comment=" + comment +

@@ -74,4 +74,11 @@ public class PositionService {
 
         return positionDao.deleteUserPos(userId,positionId);
     };
+    /**
+     * 根据岗位id查询岗位
+     * @return
+     */
+    public String orgPosCount(String orgId,String positionId){
+        return positionDao.orgPosCount(orgId,positionId);
+    };
 }

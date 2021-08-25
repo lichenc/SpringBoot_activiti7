@@ -6,8 +6,6 @@ import com.example.tquan.entity.*;
 import com.example.tquan.service.*;
 import com.example.tquan.util.IamInterface;
 import com.example.tquan.util.PwdNum;
-import com.example.tquan.util.RsaUtil;
-/*import net.sf.json.JSONObject;*/
 import com.ninghang.core.util.StringUtils;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -18,16 +16,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.http.Consts;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-/*import net.sf.json.JSONObject;*/
 
 
 import org.activiti.bpmn.model.BpmnModel;
@@ -41,9 +31,6 @@ import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Task;
 
-import java.io.*;
-import java.nio.charset.Charset;
-import java.security.PublicKey;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
@@ -69,12 +56,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 
-
-
-
-
-
-
 @Controller
 
 //@RequestMapping("/audit")
@@ -87,6 +68,8 @@ public class ActiController{
     private  IamUserEntity user;
     @Autowired
     private DefaultService defaultService;
+    @Autowired
+    private PositionController positionController;
     @Autowired
     private ImAppService imAppService;
     @Autowired
@@ -148,7 +131,7 @@ public class ActiController{
                                       @Param("accountOrg")String accountOrg,@Param("accountOrgId")String accountOrgId,@Param("actType")String actType,
                                       @Param("textList")String textList,@Param("passwordList")String passwordList,
                                       @Param("dateList")String dateList,@Param("selectList")String selectList,
-                                      HttpSession session) {
+                                      HttpSession session,String uuid) throws Exception {
         List<ActivitiEntity> listTask=new ArrayList<>();
         RuntimeService runtimeService = processEngine.getRuntimeService();
         //可根据id、key、message启动流程
@@ -191,9 +174,12 @@ public class ActiController{
                     map.put("account",accountName);
                     map.put("status","1");
                     map.put("usersId",userId);
-                    /*map.put("orgName",orgName);*/
-
-                    map.put("accountOrgId",accountOrgId);
+                    if (accountOrgId==null||accountOrgId==""){
+                        System.out.println("组织id："+positionController.userOrg(uuid,session));
+                        map.put("accountOrgId",positionController.userOrg(uuid,session));
+                    }else {
+                        map.put("accountOrgId",accountOrgId);
+                    }
                     map.put("actType",actType);
                     map.put("accountOrg",accountOrg);
                     map.put("applyReason",applyReason);
@@ -303,9 +289,12 @@ public class ActiController{
                             map.put("account",accountName);
                             map.put("status","1");
                             map.put("usersId",userId);
-                            /*map.put("orgName",orgName);*/
-
-                            map.put("accountOrgId",accountOrgId);
+                            if (accountOrgId==null||accountOrgId==""){
+                                System.out.println("组织id："+positionController.userOrg(uuid,session));
+                                map.put("accountOrgId",positionController.userOrg(uuid,session));
+                            }else {
+                                map.put("accountOrgId",accountOrgId);
+                            }
                             map.put("actType",actType);
                             map.put("accountOrg",accountOrg);
                             map.put("applyReason",applyReason);
@@ -600,10 +589,10 @@ public class ActiController{
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         TaskService taskService=processEngine.getTaskService();
         //默认当前人拾取任务
-        Task listClaim = taskService.createTaskQuery()//创建任务查询对象
+       /* Task listClaim = taskService.createTaskQuery()//创建任务查询对象
                 .processInstanceId(id)
                 .singleResult();
-        taskService.claim(listClaim.getId(),login_name);
+        taskService.claim(listClaim.getId(),login_name);*/
         List<Approver> audits=approverService.audit(login_name);
         Map<String, Object> variables = processEngine.getRuntimeService().getVariables(id);
         ActivitiEntity task=new ActivitiEntity();
@@ -635,6 +624,7 @@ public class ActiController{
             task.setTaskApplyReason(variables.get("applyReason").toString());
             task.setTaskTypes(variables.get("taskType").toString());
             task.setTaskAccount(variables.get("account").toString());
+            task.setTaskAccountOrg(variables.get("accountOrg").toString());
             task.setTaskActType(variables.get("actType").toString());
             task.setTaskApplyPerson(variables.get("applyPerson").toString());
             task.setTaskApp(variables.get("app").toString());
@@ -867,20 +857,22 @@ public class ActiController{
                         //默认密码
                         List<ActEntity> accountField=defaultService.act(variables.get("app").toString());
                         for (int i=0;i<accountField.size();i++) {
-                            if (StringUtils.isEmpty(accountField.get(i).getDefaultValue())) {
-                                if ("LOGIN_PWD".equals(accountField.get(i).getName()) ){
-                                    pwds = accountField.get(i).getDefaultValue();
-                                }
-                            } else {
-                                if (account.getRandomSwitch().equals("true") && !account.getImmobilizationSwitch().equals("true")) {
-                                    //随机数
-                                    PwdNum pwd = new PwdNum();
-                                    pwds = pwd.Pwd(account.getPwdRank(), account.getStrLength(), pwds);
+                            if ("LOGIN_PWD".equals(accountField.get(i).getName()) ){
+                                System.out.println("默认密码："+accountField.get(i).getDefaultValue());
+                                if (StringUtils.isEmpty(accountField.get(i).getDefaultValue())) {
+                                        pwds = accountField.get(i).getDefaultValue();
 
-                                } else if (account.getImmobilizationSwitch().equals("true") && !account.getRandomSwitch().equals("true")) {
-                                    pwds = account.getPwdDefault();
                                 } else {
-                                    pwds = "000000";
+                                    if (account.getRandomSwitch().equals("true") && !account.getImmobilizationSwitch().equals("true")) {
+                                        //随机数
+                                        PwdNum pwd = new PwdNum();
+                                        pwds = pwd.Pwd(account.getPwdRank(), account.getStrLength(), pwds);
+
+                                    } else if (account.getImmobilizationSwitch().equals("true") && !account.getRandomSwitch().equals("true")) {
+                                        pwds = account.getPwdDefault();
+                                    } else {
+                                        pwds = "000000";
+                                    }
                                 }
                             }
                         }
@@ -892,6 +884,8 @@ public class ActiController{
                         params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
                         params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
                         params.add(new BasicNameValuePair("status", variables.get("status").toString()));
+                       /* params.add(new BasicNameValuePair("extraAttrs["++"]", variables.get("status").toString()));*/
+
                         //转换为键值对
                         String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
                         String ifa=iamInterface.accountSave(str,account.getAddr(),account.getType());

@@ -57,7 +57,15 @@
 		WHERE
 			USER_ID = #{userId} and POSITION_ID=#{positionId}
 	</select>
-
+    <!--根据岗位id查询组织内默认岗位个数-->
+    <select id="orgPosCount"  resultType="java.lang.String">
+		SELECT
+			count(*) as counts
+		FROM
+			im_org_position
+		WHERE
+			 ORG_ID = #{orgId} and POSITION_ID=#{positionId}
+	</select>
     <!--删除用户所属岗位-->
     <delete id="deleteUserPos" >
         delete from im_user_position where USER_ID=#{userId} and POSITION_ID=#{positionId}

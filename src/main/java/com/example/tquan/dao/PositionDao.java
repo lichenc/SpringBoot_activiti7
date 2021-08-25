@@ -55,4 +55,9 @@ public interface PositionDao {
      * @return
      */
     int deleteUserPos(String userId,String positionId);
+    /**
+     * 根据岗位id查询岗位
+     * @return
+     */
+    String orgPosCount(String orgId,String positionId);
 }
