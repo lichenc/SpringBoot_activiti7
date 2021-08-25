@@ -94,9 +94,7 @@ public class PwdNum {
                 }
             }
             pwd=sb.toString();
-            System.out.println("密码："+pwd);
         }
-        System.out.println("密码："+pwd);
         return pwd;
     }
 }

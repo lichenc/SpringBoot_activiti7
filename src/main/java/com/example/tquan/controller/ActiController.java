@@ -807,10 +807,8 @@ public class ActiController{
                     }
                     //要新增的岗位，新申请岗位比原始岗位集合多的数据
                     newSet.removeAll(userSet);
-                    System.out.println("要添加的岗位: " + newSet);
                     //要删除的岗位，原始岗位比新申请岗位集合多的数据
                     userSet2.removeAll(newSet2);
-                    System.out.println("要删除的岗位: " + userSet2);
                     if (userPositionEntityList.size() == 0 || userPositionEntityList.toString().equals("[]")) {
                         for (int i = 0; i < positionList.size(); i++) {
                             String positionId = positionService.getPositionByName(positionList.get(i));
@@ -836,7 +834,6 @@ public class ActiController{
                             positionEntity.setPositionId(positionId);
                             positionEntity.setOrgId(variables.get("orgId").toString());
                             //执行用户关联岗位的add方法
-                            System.out.println("新增的岗位：" + positionEntity.toString());
                             int iden = positionService.addUserPosition(positionEntity);
                             //添加成功
                             if (iden != 0) {
@@ -857,10 +854,8 @@ public class ActiController{
                         List<ActEntity> accountField=defaultService.act(variables.get("app").toString());
                         for (int i=0;i<accountField.size();i++) {
                             if ("LOGIN_PWD".equals(accountField.get(i).getName()) ){
-                                System.out.println("默认密码："+accountField.get(i).getDefaultValue());
-                                if (StringUtils.isEmpty(accountField.get(i).getDefaultValue())) {
+                                if (accountField.get(i).getDefaultValue()!=null||accountField.get(i).getDefaultValue()!="") {
                                         pwds = accountField.get(i).getDefaultValue();
-
                                 } else {
                                     if (account.getRandomSwitch().equals("true") && !account.getImmobilizationSwitch().equals("true")) {
                                         //随机数
@@ -880,38 +875,41 @@ public class ActiController{
                         params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
                         params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
                         params.add(new BasicNameValuePair("loginPwd", pwds));
+                        params.add(new BasicNameValuePair("loginConfirmPwd", pwds));
                         params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
                         params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
                         params.add(new BasicNameValuePair("status", variables.get("status").toString()));
+                        params.add(new BasicNameValuePair("acctType", variables.get("actType").toString()));
                         JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
                         JSONArray textListKey = JSONArray.fromObject(textList.keySet());
                         JSONArray textListValue = JSONArray.fromObject(textList.values());
                         List<DefaultsEntity> textList2=new ArrayList<>();
                         for (int text=0;text<textList.size();text++) {
-                            params.add(new BasicNameValuePair("extraAttrs["+textListKey.get(text).toString()+"]", textListValue.get(text).toString()));
+                            String textName="extraAttrs["+textListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(textName, textListValue.get(text).toString()));
                         }
                         JSONObject passwordList = JSONObject.fromObject(variables.get("passwordList").toString());
                         JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
                         JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
                         List<DefaultsEntity> passwordList2=new ArrayList<>();
                         for (int text=0;text<passwordList.size();text++) {
-                            params.add(new BasicNameValuePair("extraAttrs["+passwordListKey.get(text).toString()+"]", passwordListValue.get(text).toString()));
+                            String passwordName="extraAttrs["+passwordListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(passwordName, passwordListValue.get(text).toString()));
                         }
                         JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
                         JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
                         JSONArray selectListValue = JSONArray.fromObject(selectList.values());
                         for (int text=0;text<selectList.size();text++) {
-                            params.add(new BasicNameValuePair("extraAttrs["+selectListKey.get(text).toString()+"]", selectListValue.get(text).toString()));
+                            String selectName="extraAttrs["+selectListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(selectName, selectListValue.get(text).toString()));
                         }
                         JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
                         JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
                         JSONArray dateListValue = JSONArray.fromObject(dateList.values());
                         for (int text=0;text<dateList.size();text++) {
-                            params.add(new BasicNameValuePair("extraAttrs["+dateListKey.get(text).toString()+"]", dateListValue.get(text).toString()));
-
+                            String dateName="extraAttrs["+dateListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(dateName, dateListValue.get(text).toString()));
                         }
-                       /* params.add(new BasicNameValuePair("extraAttrs["++"]", variables.get("status").toString()));*/
-
                         //转换为键值对
                         String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
                         String ifa=iamInterface.accountSave(str,account.getAddr(),account.getType());
@@ -936,6 +934,38 @@ public class ActiController{
                         params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
                         params.add(new BasicNameValuePair("status", variables.get("status").toString()));
                         params.add(new BasicNameValuePair("id", list1.toString()));
+                        params.add(new BasicNameValuePair("acctType", variables.get("actType").toString()));
+                        JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
+                        JSONArray textListKey = JSONArray.fromObject(textList.keySet());
+                        JSONArray textListValue = JSONArray.fromObject(textList.values());
+                        List<DefaultsEntity> textList2=new ArrayList<>();
+                        for (int text=0;text<textList.size();text++) {
+                            String textName="extraAttrs["+textListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(textName, textListValue.get(text).toString()));
+                        }
+                        JSONObject passwordList = JSONObject.fromObject(variables.get("passwordList").toString());
+                        JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                        JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                        List<DefaultsEntity> passwordList2=new ArrayList<>();
+                        for (int text=0;text<passwordList.size();text++) {
+                            String passwordName="extraAttrs["+passwordListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(passwordName, passwordListValue.get(text).toString()));
+                        }
+                        JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
+                        JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                        JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                        for (int text=0;text<selectList.size();text++) {
+                            String selectName="extraAttrs["+selectListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(selectName, selectListValue.get(text).toString()));
+                        }
+                        JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
+                        JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                        JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                        for (int text=0;text<dateList.size();text++) {
+                            String dateName="extraAttrs["+dateListKey.get(text).toString()+"]";
+                            params.add(new BasicNameValuePair(dateName, dateListValue.get(text).toString()));
+
+                        }
                         //转换为键值对
                         String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
                         String ifa=iamInterface.accountUpdate(str,account.getAddr(),account.getType());
