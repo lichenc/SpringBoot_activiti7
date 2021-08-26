@@ -42,6 +42,13 @@ public interface DefaultDao {
      */
     List<ActEntity> actField(String app,String act);
     /**
+     * 根据应用查询启用账号属性
+     *
+     * @param
+     * @return
+     */
+    List<ActEntity> actFieldUp(String app,String act);
+    /**
      * 查询当前人应用的账号
      *
      * @param

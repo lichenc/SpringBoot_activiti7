@@ -22,6 +22,11 @@
         select act.id from im_app app left join im_account act on act.app_id=app.id
         where app.name=#{app} and act.login_name=#{act} and act.status=2;
     </select>
+    <!-- 根据选择的应用查询启用账号属性-->
+    <select id="actFieldUp" resultType="com.example.tquan.entity.ActEntity">
+        select act.id from im_app app left join im_account act on act.app_id=app.id
+        where app.name=#{app} and act.login_name=#{act} and act.status=1;
+    </select>
     <!-- 当前用户有账号禁用的应用-->
     <select id="actEnable" resultType="com.example.tquan.entity.DefaultEntity">
         select act.login_name loName from im_app app left join im_account act on act.app_id=app.id

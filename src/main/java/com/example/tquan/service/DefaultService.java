@@ -52,6 +52,15 @@ public class DefaultService {
         return  defaultDao.actField(app,act);
     }
     /**
+     * 根据应用查询所有启用的账号
+     *
+     * @param
+     * @return
+     */
+    public List<ActEntity> actFieldUp(String app,String act){
+        return  defaultDao.actFieldUp(app,act);
+    }
+    /**
      * 查询当前人应用的账号
      *
      * @param

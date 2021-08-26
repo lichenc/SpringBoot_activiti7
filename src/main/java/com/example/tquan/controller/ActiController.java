@@ -919,24 +919,23 @@ public class ActiController{
                         System.out.println("======= 新增账号结果：" + ifa);
 
                     }else if("帐号启用".equals(variables.get("taskType").toString())){
-                        List list1=defaultService.actField(variables.get("app").toString(),variables.get("account").toString());
+                        List<ActEntity> list1=defaultService.actField(variables.get("app").toString(),variables.get("account").toString());
                         List<NameValuePair> params = Lists.newArrayList();
                         params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
-                        params.add(new BasicNameValuePair("ids", list1.toString()));
-
+                        params.add(new BasicNameValuePair("ids[0]", list1.get(0).getId().toString()));
                         //转换为键值对
                         String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
                         String ifa=iamInterface.accountStart(str,account.getAddr(),account.getType());
                         System.out.println("======= 启用账号结果：" + ifa);
                     }else if("帐号修改".equals(variables.get("taskType").toString())){
-                        List list1=defaultService.actField(variables.get("app").toString(),variables.get("account").toString());
+                        List<ActEntity> list1=defaultService.actFieldUp(variables.get("app").toString(),variables.get("account").toString());
                         List<NameValuePair> params = Lists.newArrayList();
                         params.add(new BasicNameValuePair("uim-login-user-id",ifo.toString()));
                         params.add(new BasicNameValuePair("loginName", variables.get("account").toString()));
                         params.add(new BasicNameValuePair("appId", variables.get("appId").toString()));
                         params.add(new BasicNameValuePair("userId", variables.get("usersId").toString()));
                         params.add(new BasicNameValuePair("status", variables.get("status").toString()));
-                        params.add(new BasicNameValuePair("id", list1.toString()));
+                        params.add(new BasicNameValuePair("id", list1.get(0).getId().toString()));
                         params.add(new BasicNameValuePair("acctType", variables.get("actType").toString()));
                         JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
                         JSONArray textListKey = JSONArray.fromObject(textList.keySet());
@@ -971,6 +970,7 @@ public class ActiController{
                         }
                         //转换为键值对
                         String str = EntityUtils.toString(new UrlEncodedFormEntity(params, Consts.UTF_8));
+                        System.out.println("======= 修改账号：" + str);
                         String ifa=iamInterface.accountUpdate(str,account.getAddr(),account.getType());
                         System.out.println("======= 修改账号结果：" + ifa);
                     }
@@ -1170,21 +1170,11 @@ public class ActiController{
                             }else {
                                 hisTask.setComment(comments);
                             }
-
-                            if("account".equals(hvi.getVariableName())){
-                                hisTask.setAccount(hvi.getValue().toString());
-                            }
                             if("role".equals(hvi.getVariableName())){
                                 hisTask.setRole(hvi.getValue().toString());
                             }
-                            /*if("orgName".equals(hvi.getVariableName())){
-                                hisTask.setOrgName(hvi.getValue().toString());
-                            }*/
                             if("applyReason".equals(hvi.getVariableName())){
                                 hisTask.setApplyReason(hvi.getValue().toString());
-                            }
-                            if("accountOrg".equals(hvi.getVariableName())){
-                                hisTask.setAccountOrg(hvi.getValue().toString());
                             }
                             if("applyPerson".equals(hvi.getVariableName())){
                                 hisTask.setApplyPerson(hvi.getValue().toString());
@@ -1198,101 +1188,115 @@ public class ActiController{
                             if("name".equals(hvi.getVariableName())){
                                 hisTask.setNames(hvi.getValue().toString());
                             }
-                            if("actType".equals(hvi.getVariableName())){
-                                hisTask.setActType(hvi.getValue().toString());
-                            }
-                            if("app".equals(hvi.getVariableName())){
-                                hisTask.setApp(hvi.getValue().toString());
-                                accountField=defaultService.act(hvi.getValue().toString());
-                            }
-                            if("textList".equals(hvi.getVariableName())){
-                                JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
-                                JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
-                                JSONArray textListValue = JSONArray.fromObject(textLists.values());
-                                List<DefaultsEntity> textList2=new ArrayList<>();
-                                for (int text=0;text<textLists.size();text++) {
-                                    for (int i=0;i<accountField.size();i++) {
-                                        if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
-                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                            defaultsEntity.setNames(textListKey.get(text).toString());
-                                            defaultsEntity.setDefaultValues(textListValue.get(text).toString());
-                                            textList2.add(defaultsEntity);
-                                        }
+                            if("taskType".equals(hvi.getVariableName())){
+                                if(!"用户移动".equals(hvi.getValue().toString())){
+                                    if("app".equals(hvi.getVariableName())){
+                                        hisTask.setApp(hvi.getValue().toString());
+                                        accountField=defaultService.act(hvi.getValue().toString());
                                     }
-                                }
-                                hisTask.setTextLists(textList2);
-                            }
-                            if("passwordList".equals(hvi.getVariableName())){
-
-                                JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
-                                JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
-                                JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
-                                List<DefaultsEntity> passwordList2=new ArrayList<>();
-                                for (int text=0;text<passwordList.size();text++) {
-                                    for (int i=0;i<accountField.size();i++) {
-                                        if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
-                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                            defaultsEntity.setNames(passwordListKey.get(text).toString());
-                                            defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
-                                            passwordList2.add(defaultsEntity);
-                                        }
+                                    if("account".equals(hvi.getVariableName())){
+                                        hisTask.setAccount(hvi.getValue().toString());
                                     }
-                                }
-                                hisTask.setPasswordLists(passwordList2);
-                            }
-                            if("selectList".equals(hvi.getVariableName())){
-                                JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
-                                JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
-                                JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-                                List<DefaultsEntity> selectList2=new ArrayList<>();
-                                //获取下拉框的value值
-                                for (int text=0;text<selectList.size();text++) {
-                                    for (int i=0;i<accountField.size();i++) {
-                                        if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
-                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                            if(StringUtils.isEmpty(accountField.get(i).getCompant())){
+                                    if(!"帐号启用".equals(hvi.getValue().toString())) {
+                                        if ("accountOrg".equals(hvi.getVariableName())) {
+                                            hisTask.setAccountOrg(hvi.getValue().toString());
+                                        }
+                                        if ("actType".equals(hvi.getVariableName())) {
+                                            hisTask.setActType(hvi.getValue().toString());
+                                        }
 
-                                            }else {
-                                                String compantStr = accountField.get(i).getCompant();
-                                                List<String> result = Arrays.asList(compantStr.split(","));
-                                                for(int c=0;c<result.size();c++){
-                                                    String [] com= result.get(c).split("[=]");
-                                                    String keys= com[0];
-                                                    String values= com[1];
-                                                    if(keys.equals(selectListValue.get(text).toString())){
-                                                        defaultsEntity.setDefaultValues(values);
+                                        if ("textList".equals(hvi.getVariableName())) {
+                                            JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
+                                            JSONArray textListValue = JSONArray.fromObject(textLists.values());
+                                            List<DefaultsEntity> textList2 = new ArrayList<>();
+                                            for (int text = 0; text < textLists.size(); text++) {
+                                                for (int i = 0; i < accountField.size(); i++) {
+                                                    if (accountField.get(i).getName().equals(textListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(textListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(textListValue.get(text).toString());
+                                                        textList2.add(defaultsEntity);
                                                     }
                                                 }
                                             }
-                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                            defaultsEntity.setNames(selectListKey.get(text).toString());
-                                            selectList2.add(defaultsEntity);
+                                            hisTask.setTextLists(textList2);
                                         }
-                                    }
-                                }
-                                hisTask.setSelectLists(selectList2);
-                            }
-                            if("dateList".equals(hvi.getVariableName())){
-                                JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
-                                JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
-                                JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-                                List<DefaultsEntity> dateList2=new ArrayList<>();
-                                for (int text=0;text<dateList.size();text++) {
-                                    for (int i=0;i<accountField.size();i++) {
-                                        if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
-                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                            defaultsEntity.setNames(dateListKey.get(text).toString());
-                                            defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
-                                            dateList2.add(defaultsEntity);
-                                        }
-                                    }
-                                }
-                                hisTask.setDateLists(dateList2);
+                                        if ("passwordList".equals(hvi.getVariableName())) {
 
+                                            JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                                            JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                                            List<DefaultsEntity> passwordList2 = new ArrayList<>();
+                                            for (int text = 0; text < passwordList.size(); text++) {
+                                                for (int i = 0; i < accountField.size(); i++) {
+                                                    if (accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(passwordListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
+                                                        passwordList2.add(defaultsEntity);
+                                                    }
+                                                }
+                                            }
+                                            hisTask.setPasswordLists(passwordList2);
+                                        }
+                                        if ("selectList".equals(hvi.getVariableName())) {
+                                            JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                                            JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                                            List<DefaultsEntity> selectList2 = new ArrayList<>();
+                                            //获取下拉框的value值
+                                            for (int text = 0; text < selectList.size(); text++) {
+                                                for (int i = 0; i < accountField.size(); i++) {
+                                                    if (accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        if (StringUtils.isEmpty(accountField.get(i).getCompant())) {
+
+                                                        } else {
+                                                            String compantStr = accountField.get(i).getCompant();
+                                                            List<String> result = Arrays.asList(compantStr.split(","));
+                                                            for (int c = 0; c < result.size(); c++) {
+                                                                String[] com = result.get(c).split("[=]");
+                                                                String keys = com[0];
+                                                                String values = com[1];
+                                                                if (keys.equals(selectListValue.get(text).toString())) {
+                                                                    defaultsEntity.setDefaultValues(values);
+                                                                }
+                                                            }
+                                                        }
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(selectListKey.get(text).toString());
+                                                        selectList2.add(defaultsEntity);
+                                                    }
+                                                }
+                                            }
+                                            hisTask.setSelectLists(selectList2);
+                                        }
+                                        if ("dateList".equals(hvi.getVariableName())) {
+                                            JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                                            JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                                            List<DefaultsEntity> dateList2 = new ArrayList<>();
+                                            for (int text = 0; text < dateList.size(); text++) {
+                                                for (int i = 0; i < accountField.size(); i++) {
+                                                    if (accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(dateListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
+                                                        dateList2.add(defaultsEntity);
+                                                    }
+                                                }
+                                            }
+                                            hisTask.setDateLists(dateList2);
+
+                                        }
+                                    }
+                                }
                             }
+
                         }
                     }
                     listTask.add(hisTask);
@@ -1327,20 +1331,12 @@ public class ActiController{
                                 }else {
                                     hisTask.setComment(comments);
                                 }
-                                if("account".equals(hvi.getVariableName())){
-                                    hisTask.setAccount(hvi.getValue().toString());
-                                }
+
                                 if("role".equals(hvi.getVariableName())){
                                     hisTask.setRole(hvi.getValue().toString());
                                 }
-                                /*if("orgName".equals(hvi.getVariableName())){
-                                    hisTask.setOrgName(hvi.getValue().toString());
-                                }*/
                                 if("applyReason".equals(hvi.getVariableName())){
                                     hisTask.setApplyReason(hvi.getValue().toString());
-                                }
-                                if("accountOrg".equals(hvi.getVariableName())){
-                                    hisTask.setAccountOrg(hvi.getValue().toString());
                                 }
                                 if("applyPerson".equals(hvi.getVariableName())){
                                     hisTask.setApplyPerson(hvi.getValue().toString());
@@ -1354,101 +1350,115 @@ public class ActiController{
                                 if("name".equals(hvi.getVariableName())){
                                     hisTask.setNames(hvi.getValue().toString());
                                 }
-                                if("actType".equals(hvi.getVariableName())){
-                                    hisTask.setActType(hvi.getValue().toString());
-                                }
-                                if("app".equals(hvi.getVariableName())){
-                                    hisTask.setApp(hvi.getValue().toString());
-                                    accountField=defaultService.act(hvi.getValue().toString());
-                                }
-                                if("textList".equals(hvi.getVariableName())){
-                                    JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
-                                    JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
-                                    JSONArray textListValue = JSONArray.fromObject(textLists.values());
-                                    List<DefaultsEntity> textList2=new ArrayList<>();
-                                    for (int text=0;text<textLists.size();text++) {
-                                        for (int i=0;i<accountField.size();i++) {
-                                            if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
-                                                DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                defaultsEntity.setNames(textListKey.get(text).toString());
-                                                defaultsEntity.setDefaultValues(textListValue.get(text).toString());
-                                                textList2.add(defaultsEntity);
-                                            }
+                                if("taskType".equals(hvi.getVariableName())) {
+                                    if (!"用户移动".equals(hvi.getValue().toString())) {
+                                        if("accountOrg".equals(hvi.getVariableName())){
+                                            hisTask.setAccountOrg(hvi.getValue().toString());
                                         }
-                                    }
-                                    hisTask.setTextLists(textList2);
-                                }
-                                if("passwordList".equals(hvi.getVariableName())){
-
-                                    JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
-                                    JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
-                                    JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
-                                    List<DefaultsEntity> passwordList2=new ArrayList<>();
-                                    for (int text=0;text<passwordList.size();text++) {
-                                        for (int i=0;i<accountField.size();i++) {
-                                            if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
-                                                DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                defaultsEntity.setNames(passwordListKey.get(text).toString());
-                                                defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
-                                                passwordList2.add(defaultsEntity);
-                                            }
+                                        if("actType".equals(hvi.getVariableName())){
+                                            hisTask.setActType(hvi.getValue().toString());
                                         }
-                                    }
-                                    hisTask.setPasswordLists(passwordList2);
-                                }
-                                if("selectList".equals(hvi.getVariableName())){
-                                    JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
-                                    JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
-                                    JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-                                    List<DefaultsEntity> selectList2=new ArrayList<>();
-                                    //获取下拉框的value值
-                                    for (int text=0;text<selectList.size();text++) {
-                                        for (int i=0;i<accountField.size();i++) {
-                                            if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
-                                                DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                if(StringUtils.isEmpty(accountField.get(i).getCompant())){
-
-                                                }else {
-                                                    String compantStr = accountField.get(i).getCompant();
-                                                    List<String> result = Arrays.asList(compantStr.split(","));
-                                                    for(int c=0;c<result.size();c++){
-                                                        String [] com= result.get(c).split("[=]");
-                                                        String keys= com[0];
-                                                        String values= com[1];
-                                                        if(keys.equals(selectListValue.get(text).toString())){
-                                                            defaultsEntity.setDefaultValues(values);
+                                        if(!"帐号启用".equals(hvi.getValue().toString())) {
+                                            if ("account".equals(hvi.getVariableName())) {
+                                                hisTask.setAccount(hvi.getValue().toString());
+                                            }
+                                            if ("app".equals(hvi.getVariableName())) {
+                                                hisTask.setApp(hvi.getValue().toString());
+                                                accountField = defaultService.act(hvi.getValue().toString());
+                                            }
+                                            if("textList".equals(hvi.getVariableName())){
+                                                JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
+                                                JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
+                                                JSONArray textListValue = JSONArray.fromObject(textLists.values());
+                                                List<DefaultsEntity> textList2=new ArrayList<>();
+                                                for (int text=0;text<textLists.size();text++) {
+                                                    for (int i=0;i<accountField.size();i++) {
+                                                        if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
+                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                            defaultsEntity.setNames(textListKey.get(text).toString());
+                                                            defaultsEntity.setDefaultValues(textListValue.get(text).toString());
+                                                            textList2.add(defaultsEntity);
                                                         }
                                                     }
                                                 }
-                                                defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                defaultsEntity.setNames(selectListKey.get(text).toString());
-                                                selectList2.add(defaultsEntity);
+                                                hisTask.setTextLists(textList2);
                                             }
+                                            if("passwordList".equals(hvi.getVariableName())){
+
+                                                JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
+                                                JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                                                JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                                                List<DefaultsEntity> passwordList2=new ArrayList<>();
+                                                for (int text=0;text<passwordList.size();text++) {
+                                                    for (int i=0;i<accountField.size();i++) {
+                                                        if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
+                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                            defaultsEntity.setNames(passwordListKey.get(text).toString());
+                                                            defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
+                                                            passwordList2.add(defaultsEntity);
+                                                        }
+                                                    }
+                                                }
+                                                hisTask.setPasswordLists(passwordList2);
+                                            }
+                                            if("selectList".equals(hvi.getVariableName())){
+                                                JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
+                                                JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                                                JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                                                List<DefaultsEntity> selectList2=new ArrayList<>();
+                                                //获取下拉框的value值
+                                                for (int text=0;text<selectList.size();text++) {
+                                                    for (int i=0;i<accountField.size();i++) {
+                                                        if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
+                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                            if(StringUtils.isEmpty(accountField.get(i).getCompant())){
+
+                                                            }else {
+                                                                String compantStr = accountField.get(i).getCompant();
+                                                                List<String> result = Arrays.asList(compantStr.split(","));
+                                                                for(int c=0;c<result.size();c++){
+                                                                    String [] com= result.get(c).split("[=]");
+                                                                    String keys= com[0];
+                                                                    String values= com[1];
+                                                                    if(keys.equals(selectListValue.get(text).toString())){
+                                                                        defaultsEntity.setDefaultValues(values);
+                                                                    }
+                                                                }
+                                                            }
+                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                            defaultsEntity.setNames(selectListKey.get(text).toString());
+                                                            selectList2.add(defaultsEntity);
+                                                        }
+                                                    }
+                                                }
+                                                hisTask.setSelectLists(selectList2);
+                                            }
+                                            System.out.println("=====:  "+hvi.getVariableName());
+                                            if("dateList".equals(hvi.getVariableName())){
+                                                JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
+                                                JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                                                JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                                                List<DefaultsEntity> dateList2=new ArrayList<>();
+                                                for (int text=0;text<dateList.size();text++) {
+                                                    for (int i=0;i<accountField.size();i++) {
+                                                        if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
+                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                            defaultsEntity.setNames(dateListKey.get(text).toString());
+                                                            defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
+                                                            dateList2.add(defaultsEntity);
+                                                        }
+                                                    }
+                                                }
+                                                hisTask.setDateLists(dateList2);
+                                            }
+
                                         }
                                     }
-                                    hisTask.setSelectLists(selectList2);
                                 }
-                                System.out.println("=====:  "+hvi.getVariableName());
-                                if("dateList".equals(hvi.getVariableName())){
-                                    JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
-                                    JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
-                                    JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-                                    List<DefaultsEntity> dateList2=new ArrayList<>();
-                                    for (int text=0;text<dateList.size();text++) {
-                                        for (int i=0;i<accountField.size();i++) {
-                                            if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
-                                                DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                defaultsEntity.setNames(dateListKey.get(text).toString());
-                                                defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
-                                                dateList2.add(defaultsEntity);
-                                            }
-                                        }
-                                    }
-                                    hisTask.setDateLists(dateList2);
-                                }
+
                             }
                             listTask.add(hisTask);
                         }
