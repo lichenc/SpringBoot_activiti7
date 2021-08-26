@@ -187,7 +187,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
                             + "<select id='accountName'   lay-filter='appAccount'   required  class='select'>"
                             + "  <option></option>"
                         for (var z = 0; z < disable.length; z++) {
-                            select = select + "<option value='" + disable[z].loginName + "'>" + disable[z].loginName + "</option>"
+                            select = select + "<option value='" + disable[z].loName + "'>" + disable[z].loName + "</option>"
                         }
                         select = select + "</select></div></div>"
 
@@ -870,7 +870,7 @@ $(document).ready(function() {
 
                         var selectTs = "<div id='div' class='layui-form-item delForm'><label class='layui-form-label' style='font-size:12px;'>任务类型： </label>"
                             + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            + "<select id='taskType'   lay-filter='taskty2'  lay-verify='required'   required  >"
+                            + "<select id='taskType2'   lay-filter='taskty2'  lay-verify='required'   required  >"
                         for (var t = 0; t < data[0].taskTypeAll.length; t++) {
                             if (data[0].taskTypeAll[t].taskTypes == data[0].taskType) {
                                 selectTs = selectTs + "<option selected='selected'>" + data[0].taskTypeAll[t].taskTypes + "</option>"
@@ -884,7 +884,7 @@ $(document).ready(function() {
                         form.render('select', 'test2');
                         var selectA = "<div id='div' class='layui-form-item delForm div'><label class='layui-form-label' style='font-size:12px;'>系统资源： </label>"
                             + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            + "<select id='appName'  lay-filter='app2'  lay-verify='required'   required  class='select'>"
+                            + "<select id='appName2'  lay-filter='app2'  lay-verify='required'   required  class='select'>"
 
                         for (var t = 0; t < data[0].imApp.length; t++) {
                             if (data[0].imApp[t].name == data[0].app) {
@@ -904,7 +904,6 @@ $(document).ready(function() {
                             + "<option >" + data[0].approvedPerson + "</option>"
                             + "</select></div></div>"
                         $('#aud2').append(selectSa);
-
 
                         if (data[0].taskType == '帐号新增') {
                             for (var j = 0; j < data.length; j++) {
@@ -1015,10 +1014,10 @@ $(document).ready(function() {
                                 + "<div class='layui-input-inline layui-form' lay-filter='disable'>"
                                 + "<select id='accountName'   lay-filter='appAccount2'   required  class='select'>"
                             for (var z = 0; z < data[0].actAll.length; z++) {
-                                if (data[0].account == data[0].actAll[0].loginName) {
-                                    selectAcc = selectAcc + "  <option selected='selected'>" + data[0].actAll[0].loginName + "</option>"
+                                if (data[0].account == data[0].actAll[z].loName) {
+                                    selectAcc = selectAcc + "  <option selected='selected'>" + data[0].actAll[z].loName + "</option>"
                                 } else {
-                                    selectAcc = selectAcc + "  <option>" + data[0].actAll[0].loginName + "</option>"
+                                    selectAcc = selectAcc + "  <option>" + data[0].actAll[z].loName + "</option>"
                                 }
                             }
                             selectAcc = selectAcc + "</select></div></div>"
@@ -1112,14 +1111,14 @@ $(document).ready(function() {
                                         var selectP = "<div id='div' class='layui-form-item delForm actDiv actDivs div'><label class='layui-form-label labelPassword' style='font-size:12px;'>" + accountRemark + "：</label>"
                                             + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                                             + "<input type='text' style='display:none' class='passwordKey' value='" + accountName + "' />"
-                                            + " <input type='password'  class='password layui-input'   lay-vertype='accountField' required   value='" + accountBasic + "'  ></div></div>"
+                                            + " <input type='password'  class='password layui-input'   lay-vertype='accountField' required   value='" + accountBasic + "'  /></div></div>"
                                         $('#field2').append(selectP);
 
                                     } else if (accountType == 'date') {
                                         var selectD = "<div id='div' class='layui-form-item delForm actDiv actDivs div'><label class='layui-form-label labelDate' style='font-size:12px;'>" + accountRemark + "：</label>"
                                             + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                                             + "<input type='text' style='display:none' class='dateKey' value='" + accountName + "' />"
-                                            + " <input type='date'  class='date layui-input' placeholder='yyyy-MM-dd'  lay-vertype='accountField' required   value='" + accountBasic + "'   ></div></div>"
+                                            + " <input type='date'  class='date layui-input' placeholder='yyyy-MM-dd'  lay-vertype='accountField' required   value='" + accountBasic + "'   /></div></div>"
                                         $('#field2').append(selectD);
                                     }
                                 }
@@ -1129,10 +1128,10 @@ $(document).ready(function() {
                                 + "<div class='layui-input-inline layui-form' lay-filter='disable'>"
                                 + "<select id='accountName'      required  class='select'>"
                             for (var z = 0; z < data[0].actAll.length; z++) {
-                                if (data[0].account == data[0].actAll[0].loginName) {
-                                    selectAcc = selectAcc + "  <option selected='selected'>" + data[0].actAll[0].loginName + "</option>"
+                                if (data[0].account == data[0].actAll[z].loName) {
+                                    selectAcc = selectAcc + "  <option selected='selected'>" + data[0].actAll[z].loName + "</option>"
                                 } else {
-                                    selectAcc = selectAcc + "  <option>" + data[0].actAll[0].loginName + "</option>"
+                                    selectAcc = selectAcc + "  <option>" + data[0].actAll[z].loName + "</option>"
                                 }
                             }
                             selectAcc = selectAcc + "</select></div></div>"
@@ -1195,7 +1194,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
                 } else {
                     var selectName = "<div id='div' class='layui-form-item delForm div'><label class='layui-form-label' style='font-size:12px;'>系统资源： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test'>"
-                        + "<select id='appName'  lay-filter='app2'   lay-verify='required'   required   class='select'>"
+                        + "<select id='appName2'  lay-filter='app2'   lay-verify='required'   required   class='select'>"
                         + "  <option></option>"
                     for (var i = 0; i < res.length; i++) {
                         selectName = selectName + "<option value='" + res[i].name + "'>" + res[i].name + "</option>"
@@ -1212,7 +1211,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
 
     form.on('select(app2)', function (data) {
         $('.actDiv').remove();
-        var ActType = document.getElementById("taskType").value;
+        var ActType = document.getElementById("taskType2").value;
         var app = data.value;
         if (ActType == '帐号新增') {
             $.ajax({
@@ -1304,13 +1303,13 @@ layui.use(['layer', 'jquery', 'form'], function () {
                                 var selectP = "<div id='div actDiv' class='layui-form-item delForm actDiv div'><label class='layui-form-label labelPassword' style='font-size:12px;'>" + accountRemark + "：</label>"
                                     + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                                     + "<input type='text' style='display:none' class='passwordKey' value='" + accountName + "' />"
-                                    + " <input type='password'  class='passwords layui-input'   lay-vertype='accountField' required   value='" + accountValue + "' /> ></div></div>"
+                                    + " <input type='password'  class='passwords layui-input'   lay-vertype='accountField' required   value='" + accountValue + "' /> </div></div>"
                                 $('#field2').append(selectP);
                             } else if (accountType == 'date') {
                                 var selectD = "<div id='div actDiv' class='layui-form-item delForm actDiv div'><label class='layui-form-label labelDate' style='font-size:12px;'>" + accountRemark + "：</label>"
                                     + "<div class='layui-input-inline layui-form' lay-filter='test'>"
                                     + "<input type='text' style='display:none' class='dateKey' value='" + accountName + "' />"
-                                    + "<input type='date'  class='dates layui-input' placeholder='yyyy-MM-dd'  lay-vertype='accountField' required   value='" + accountValue + "'  /> ></div></div>"
+                                    + "<input type='date'  class='dates layui-input' placeholder='yyyy-MM-dd'  lay-vertype='accountField' required   value='" + accountValue + "'  /> </div></div>"
                                 $('#field2').append(selectD);
                             }
                         }
@@ -1349,7 +1348,7 @@ layui.use(['layer', 'jquery', 'form'], function () {
                         + "<select id='accountName'   lay-filter='appAccount2'   required  class='select'>"
                         + "  <option></option>"
                     for (var z = 0; z < disable.length; z++) {
-                        select = select + "<option value='" + disable[z].loginName + "'>" + disable[z].loginName + "</option>"
+                        select = select + "<option value='" + disable[z].loName + "'>" + disable[z].loName + "</option>"
                     }
                     select = select + "</select></div></div>"
 
@@ -1366,9 +1365,9 @@ layui.use(['layer', 'jquery', 'form'], function () {
 
     form.on('select(appAccount2)', function (data) {
         $('.actDivs').remove();
-        var taskType = document.getElementById("taskType").value;
+        var taskType = document.getElementById("taskType2").value;
         //应用系统
-        var appName = document.getElementById("appName").value;
+        var appName = document.getElementById("appName2").value;
         if (taskType == '帐号修改') {
             var app = appName;
             var act = data.value;
@@ -1500,9 +1499,9 @@ function againAddAccount() {
    /* var orgId = document.getElementById("orgId").value;*/
     //任务类型
     var taskTypes = document.getElementsByClassName("layui-this");
-    var taskType=  document.getElementById("taskType").value;
+    var taskType=  document.getElementById("taskType2").value;
     //应用系统
-    var appName = document.getElementById("appName").value;
+    var appName = document.getElementById("appName2").value;
     //审批人audit
     var audit = document.getElementById("audit").value;
     //审批角色
@@ -1763,7 +1762,7 @@ function againAddAccount() {
 
     } else if (taskType == '帐号启用') {
 
-        var accountEnable = document.getElementById("account").value;
+        var accountEnable = document.getElementById("accountName").value;
         if (accountEnable == null || accountEnable == "") {
             layer.alert("请选择要禁用的帐号!")
             return false;
@@ -1775,6 +1774,7 @@ function againAddAccount() {
                 type: "POST",
                 dataType: "json",
                 data: {
+                    id:id,
                     taskType:taskType,
                     appName: appName,
                     accountName: accountEnable,
@@ -1915,49 +1915,50 @@ $(document).ready(function() {
                         + " <input type='text' id='accountName' disabled lay-vertype='accountField' required class='layui-input' value='" + data[0].taskAccount + "'  ></div></div>"
 
                     $('#field3').append(selectName2);
-                    var selectOrg = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>账号所属组织： </label>"
-                        + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                        + " <input type='text' id='accountOrg' disabled lay-vertype='accountField' required class='layui-input' value='" + data[0].taskAccountOrg + "'  ></div></div>"
-
-                    $('#field3').append(selectOrg);
-                    var select = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>帐号类型： </label>"
-                        + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                    if (data[0].taskActType == "1") {
-                        select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='一般账号'></div></div>"
-
-                    } else if (data[0].taskActType == "2") {
-                        select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='公共账号'></div></div>"
-
-                    } else if (data[0].taskActType == "3") {
-                        select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='接口账号'></div></div>"
-
-                    }
-                    $('#field3').append(select);
-                    for(var textVl=0;textVl<data[0].textLists.length;textVl++){
-                        var textVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].textLists[textVl].remarks +"：</label>"
+                    if (data[0].taskTypes!="帐号启用"){
+                        var selectOrg = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>账号所属组织： </label>"
                             + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            +" <input type='text' class='text layui-input' disabled  required   value='"+data[0].textLists[textVl].defaultValues+"'  name='account' ></div></div>"
-                        $('#field3').append(textVls);
-                    }
-                    for(var passwordVl=0;passwordVl<data[0].passwordLists.length;passwordVl++){
-                        var passwordVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].passwordLists[passwordVl].remarks +"：</label>"
-                            + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            +" <input type='password' class='text layui-input' disabled  required   value='"+data[0].passwordLists[passwordVl].defaultValues+"'  name='account' ></div></div>"
-                        $('#field3').append(passwordVls);
-                    }
-                    for(var selectVl=0;selectVl<data[0].selectLists.length;selectVl++){
-                        var selectVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].selectLists[selectVl].remarks +"：</label>"
-                            + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            +" <input type='text' class='text layui-input'  disabled required   value='"+data[0].selectLists[selectVl].defaultValues+"'  name='account' ></div></div>"
-                        $('#field3').append(selectVls);
-                    }
-                    for(var dateVl=0;dateVl<data[0].dateLists.length;dateVl++){
-                        var dateVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].dateLists[dateVl].remarks +"：</label>"
-                            + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
-                            +" <input type='text' class='text layui-input' disabled  required   value='"+data[0].dateLists[dateVl].defaultValues+"'  name='account' ></div></div>"
-                        $('#field3').append(dateVls);
-                    }
+                            + " <input type='text' id='accountOrg' disabled lay-vertype='accountField' required class='layui-input' value='" + data[0].taskAccountOrg + "'  ></div></div>"
 
+                        $('#field3').append(selectOrg);
+                        var select = "<div class='layui-form-item div'><label class='layui-form-label' style='font-size:12px;'>帐号类型： </label>"
+                            + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
+                        if (data[0].taskActType == "1") {
+                            select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='一般账号'></div></div>"
+
+                        } else if (data[0].taskActType == "2") {
+                            select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='公共账号'></div></div>"
+
+                        } else if (data[0].taskActType == "3") {
+                            select = select + "<input id='actType' class='layui-input' disabled lay-filter='accountType'  lay-verify='required'   required  value='接口账号'></div></div>"
+
+                        }
+                        $('#field3').append(select);
+                        for(var textVl=0;textVl<data[0].textLists.length;textVl++){
+                            var textVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].textLists[textVl].remarks +"：</label>"
+                                + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
+                                +" <input type='text' class='text layui-input' disabled  required   value='"+data[0].textLists[textVl].defaultValues+"'  name='account' ></div></div>"
+                            $('#field3').append(textVls);
+                        }
+                        for(var passwordVl=0;passwordVl<data[0].passwordLists.length;passwordVl++){
+                            var passwordVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].passwordLists[passwordVl].remarks +"：</label>"
+                                + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
+                                +" <input type='password' class='text layui-input' disabled  required   value='"+data[0].passwordLists[passwordVl].defaultValues+"'  name='account' ></div></div>"
+                            $('#field3').append(passwordVls);
+                        }
+                        for(var selectVl=0;selectVl<data[0].selectLists.length;selectVl++){
+                            var selectVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].selectLists[selectVl].remarks +"：</label>"
+                                + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
+                                +" <input type='text' class='text layui-input'  disabled required   value='"+data[0].selectLists[selectVl].defaultValues+"'  name='account' ></div></div>"
+                            $('#field3').append(selectVls);
+                        }
+                        for(var dateVl=0;dateVl<data[0].dateLists.length;dateVl++){
+                            var dateVls= "<div id='div' class='layui-form-item delForm actDiv actDivs'><label class='layui-form-label labelText' style='font-size:12px;'>"+data[0].dateLists[dateVl].remarks +"：</label>"
+                                + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
+                                +" <input type='text' class='text layui-input' disabled  required   value='"+data[0].dateLists[dateVl].defaultValues+"'  name='account' ></div></div>"
+                            $('#field3').append(dateVls);
+                        }
+                    }
                     var applyReasont = "<div  class='layui-form-item div' id='div'><label class='layui-form-label' style='font-size:12px;'>申请理由： </label>"
                         + "<div class='layui-input-inline layui-form' lay-filter='test2'>"
                         + " <p  id='applyReason' required  disabled autocomplete='off' class='layui-text'  >" + data[0].taskApplyReason + "</p></div></div>"

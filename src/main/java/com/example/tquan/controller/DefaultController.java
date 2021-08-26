@@ -284,85 +284,88 @@ public class DefaultController {
                 }
 
             }
-            JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
-            JSONArray textListKey = JSONArray.fromObject(textList.keySet());
-            JSONArray textListValue = JSONArray.fromObject(textList.values());
-            List<DefaultsEntity> textList2=new ArrayList<>();
-            for (int text=0;text<textList.size();text++) {
-                    if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
-                        base=textListValue.get(text).toString();
+            if (!variables.get("taskType").toString().equals("帐号启用")) {
+                JSONObject textList = JSONObject.fromObject(variables.get("textList").toString());
+                JSONArray textListKey = JSONArray.fromObject(textList.keySet());
+                JSONArray textListValue = JSONArray.fromObject(textList.values());
+                List<DefaultsEntity> textList2 = new ArrayList<>();
+                for (int text = 0; text < textList.size(); text++) {
+                    if (accountField.get(i).getName().equals(textListKey.get(text).toString())) {
+                        base = textListValue.get(text).toString();
                     }
-            }
-            JSONObject passwordList = JSONObject.fromObject(variables.get("passwordList").toString());
-            JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
-            JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
-            List<DefaultsEntity> passwordList2=new ArrayList<>();
-            for (int text=0;text<passwordList.size();text++) {
-                    if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
-                        base=passwordListValue.get(text).toString();
+                }
+                JSONObject passwordList = JSONObject.fromObject(variables.get("passwordList").toString());
+                JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                List<DefaultsEntity> passwordList2 = new ArrayList<>();
+                for (int text = 0; text < passwordList.size(); text++) {
+                    if (accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
+                        base = passwordListValue.get(text).toString();
                     }
-            }
-            JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
-            JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
-            JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-            for (int text=0;text<selectList.size();text++) {
-                    if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
-                        base=selectListValue.get(text).toString();
+                }
+                JSONObject selectList = JSONObject.fromObject(variables.get("selectList").toString());
+                JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                for (int text = 0; text < selectList.size(); text++) {
+                    if (accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
+                        base = selectListValue.get(text).toString();
                     }
-            }
-            JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
-            JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
-            JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-            for (int text=0;text<dateList.size();text++) {
-                    if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
-                        base=dateListValue.get(text).toString();
+                }
+                JSONObject dateList = JSONObject.fromObject(variables.get("dateList").toString());
+                JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                for (int text = 0; text < dateList.size(); text++) {
+                    if (accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
+                        base = dateListValue.get(text).toString();
                     }
+                }
             }
             defaultsEntity.setId(id);
             defaultsEntity.setApprovedPerson(audits.get(0).getAudit());
-            /*defaultsEntity.setOrgName(variables.get("orgName").toString());*/
             defaultsEntity.setApplyReason(variables.get("applyReason").toString());
             defaultsEntity.setRole(variables.get("role").toString());
             defaultsEntity.setTaskType(variables.get("taskType").toString());
             defaultsEntity.setAccount(variables.get("account").toString());
-            defaultsEntity.setAccountOrg(variables.get("accountOrg").toString());
             defaultsEntity.setApplyPerson(variables.get("applyPerson").toString());
             defaultsEntity.setApp(variables.get("app").toString());
-            defaultsEntity.setActType(variables.get("actType").toString());
-            defaultsEntity.setNames(accountField.get(i).getName());
-            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-            defaultsEntity.setDefaultValues(defaultValues);
-            defaultsEntity.setBasic(base);
-            defaultsEntity.setInputTypes(accountField.get(i).getInputType());
-            defaultsEntity.setIsRequrieds(accountField.get(i).getIsRequried());
-            defaultsEntity.setIsInserts(accountField.get(i).getIsInsert());
-            defaultsEntity.setIsEdits(accountField.get(i).getIsEdit());
-            if(StringUtils.isEmpty(accountField.get(i).getInputType())){
-                defaultsEntity.setCompants(accountField.get(i).getCompant());
-            }else {
-                if(accountField.get(i).getInputType().equals("select")==true){
-
-                    if(StringUtils.isEmpty(accountField.get(i).getCompant())){
-                        defaultsEntity.setCompants(accountField.get(i).getCompant());
-                    }else {
-                        String compantStr = accountField.get(i).getCompant();
-                        List<Map<String, Object>> compant= new ArrayList<>();
-                        List<String> result = Arrays.asList(compantStr.split(","));
-                        Map<String, Object> map = new HashMap<String, Object>();
-
-                        for(int c=0;c<result.size();c++){
-                            String [] com= result.get(c).split("[=]");
-                            String keys= com[0];
-                            String values= com[1];
-                            map.put(keys,values);
-                        }
-                        compant.add(map);
-                        defaultsEntity.setListCompants(compant);
-                    }
-                }else {
+            if (!variables.get("taskType").toString().equals("帐号启用")) {
+                defaultsEntity.setAccountOrg(variables.get("accountOrg").toString());
+                defaultsEntity.setActType(variables.get("actType").toString());
+                defaultsEntity.setBasic(base);
+                defaultsEntity.setNames(accountField.get(i).getName());
+                defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                defaultsEntity.setDefaultValues(defaultValues);
+                defaultsEntity.setInputTypes(accountField.get(i).getInputType());
+                defaultsEntity.setIsRequrieds(accountField.get(i).getIsRequried());
+                defaultsEntity.setIsInserts(accountField.get(i).getIsInsert());
+                defaultsEntity.setIsEdits(accountField.get(i).getIsEdit());
+                if (StringUtils.isEmpty(accountField.get(i).getInputType())) {
                     defaultsEntity.setCompants(accountField.get(i).getCompant());
-                }
+                } else {
+                    if (accountField.get(i).getInputType().equals("select") == true) {
 
+                        if (StringUtils.isEmpty(accountField.get(i).getCompant())) {
+                            defaultsEntity.setCompants(accountField.get(i).getCompant());
+                        } else {
+                            String compantStr = accountField.get(i).getCompant();
+                            List<Map<String, Object>> compant = new ArrayList<>();
+                            List<String> result = Arrays.asList(compantStr.split(","));
+                            Map<String, Object> map = new HashMap<String, Object>();
+
+                            for (int c = 0; c < result.size(); c++) {
+                                String[] com = result.get(c).split("[=]");
+                                String keys = com[0];
+                                String values = com[1];
+                                map.put(keys, values);
+                            }
+                            compant.add(map);
+                            defaultsEntity.setListCompants(compant);
+                        }
+                    } else {
+                        defaultsEntity.setCompants(accountField.get(i).getCompant());
+                    }
+
+                }
             }
             String taskTypeAll="";
             //查询任务类型
@@ -375,9 +378,6 @@ public class DefaultController {
             }
             defaultsEntity.setAudit(audits.get(0).getAudit());
             defaultsEntity.setTaskTypeAll(listTasks);
-            //系统资源
-            List<ImApp> appList = imAppService.findAll();
-            defaultsEntity.setImApp(appList);
             //批注
             TaskService taskService=processEngine.getTaskService();
             Task li = taskService.createTaskQuery()//创建任务查询对象
@@ -398,10 +398,20 @@ public class DefaultController {
                 }
             }
             //全部账号
-            if("帐号修改".equals(variables.get("taskType").toString())){
+            if ("帐号新增".equals(variables.get("taskType").toString())){
+                //系统资源
+                List<ImApp> appList = imAppService.findAll();
+                defaultsEntity.setImApp(appList);
+            } else if("帐号修改".equals(variables.get("taskType").toString())){
+                String userId = (String) session.getAttribute("UserId");
+                List<ImApp> appList =imAppService.actAppUp(userId);
+                defaultsEntity.setImApp(appList);
                 List<ActEntity> actDisable = defaultService.actDisable(variables.get("app").toString(), usId);
                 defaultsEntity.setActAll(actDisable);
             }else if ("帐号启用".equals(variables.get("taskType").toString())){
+                String userId = (String) session.getAttribute("UserId");
+                List<ImApp> appList =imAppService.actAppEn(userId);
+                defaultsEntity.setImApp(appList);
                 List<ActEntity> actDisable = defaultService.actEnable(variables.get("app").toString(), usId);
                 defaultsEntity.setActAll(actDisable);
             }

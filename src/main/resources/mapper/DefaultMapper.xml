@@ -30,7 +30,7 @@
     </select>
     <!-- 当前用户有账号的应用-->
     <select id="actDisable" resultType="com.example.tquan.entity.DefaultEntity">
-        select act.login_name loginName from im_app app left join im_account act on act.app_id=app.id
+        select act.login_name loName from im_app app left join im_account act on act.app_id=app.id
         where act.user_id=#{usId} and app.name=#{app} and act.status=1;
 
     </select>
