@@ -231,9 +231,9 @@ function getPositionList() {
                     laypage.render({
                         elem: 'positionPage',
                         count: data.length, //数据总数，从服务端得到
-                        limit:10,
-                        limits:[10,20,30],
-                        layout: ['prev', 'page', 'count','next',  'skip'],
+                        limit:3,
+                        limits:[1,2,3,4,5,10,20,30,50,100],
+                        layout: ['prev', 'page', 'count','next',  'skip','limit'],
                         jump: function(obj){
                             //模拟渲染
                             document.getElementById('positionList').innerHTML = function(){
