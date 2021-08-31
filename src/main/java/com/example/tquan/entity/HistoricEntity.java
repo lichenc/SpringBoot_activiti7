@@ -34,12 +34,20 @@ public class HistoricEntity {
     private String audit;
     private String accountOrg;
     private String status;
+    private String position;
     private List<Comment> comment;
     private List<DefaultsEntity> textLists;
     private List<DefaultsEntity> passwordLists;
     private List<DefaultsEntity> selectLists;
     private List<DefaultsEntity> dateLists;
 
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
 
     public String getStatus() {
         return status;
@@ -335,6 +343,8 @@ public class HistoricEntity {
                 ", actType='" + actType + '\'' +
                 ", audit='" + audit + '\'' +
                 ", accountOrg='" + accountOrg + '\'' +
+                ", status='" + status + '\'' +
+                ", position='" + position + '\'' +
                 ", comment=" + comment +
                 ", textLists=" + textLists +
                 ", passwordLists=" + passwordLists +

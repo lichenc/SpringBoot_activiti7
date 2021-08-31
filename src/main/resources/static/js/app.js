@@ -329,14 +329,14 @@ function getPositionLists(){
 layui.use(['laypage','table', 'layer'], function () {
     var layer = layui.layer, table = layui.table;
     //清空之前的列表记录
-    var startTime=document.getElementById("startTime").value;
-    var endTime=document.getElementById("endTime").value;
+    var times=document.getElementById("times").value;
+    var taskTy=document.getElementById("taskTy").value;
     $.ajax({
         url: "/selectApplyTast",
         type: "POST",
         data:{
-            startTime:startTime,
-            endTime:endTime
+            times:times,
+            taskTy:taskTy
         },
         success: function (data) {
             if(data!=null){

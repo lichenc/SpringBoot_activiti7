@@ -326,7 +326,7 @@ public class DefaultController {
             defaultsEntity.setRole(variables.get("role").toString());
             defaultsEntity.setTaskType(variables.get("taskType").toString());
             defaultsEntity.setAccount(variables.get("account").toString());
-            defaultsEntity.setApplyPerson(variables.get("applyPerson").toString());
+            defaultsEntity.setApplyPerson(variables.get("applyPersonName").toString());
             defaultsEntity.setApp(variables.get("app").toString());
             if (!variables.get("taskType").toString().equals("帐号启用")) {
                 defaultsEntity.setAccountOrg(variables.get("accountOrg").toString());

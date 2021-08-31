@@ -31,6 +31,7 @@ import org.activiti.engine.impl.persistence.entity.VariableInstance;
 import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.task.Task;
 
+import java.text.ParseException;
 import java.util.*;
 import java.text.SimpleDateFormat;
 
@@ -47,11 +48,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -91,7 +90,7 @@ public class ActiController{
 
     private Log log = LogFactory.getLog(getClass());
     IamInterface iamInterface=new IamInterface();
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",Locale.US);
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
 
     /**
      * 根据配置文件activiti.cfg.xml创建ProcessEngine
@@ -131,7 +130,7 @@ public class ActiController{
                                       @Param("accountOrg")String accountOrg,@Param("accountOrgId")String accountOrgId,@Param("actType")String actType,
                                       @Param("textList")String textList,@Param("passwordList")String passwordList,
                                       @Param("dateList")String dateList,@Param("selectList")String selectList,
-                                      HttpSession session,String uuid) throws Exception {
+                                      HttpSession session,String uuid,String times,String taskTy) throws Exception {
         List<ActivitiEntity> listTask=new ArrayList<>();
         RuntimeService runtimeService = processEngine.getRuntimeService();
         //可根据id、key、message启动流程
@@ -141,7 +140,6 @@ public class ActiController{
         //查询申请的账号
         List<ImApp> list=imAppService.findApply(appName);
         Map<String,Object> map = new HashMap<String,Object>();
-        System.out.println(name+":当前申请人账号："+sn+":id:"+id);
         TaskService taskSer=processEngine.getTaskService();
         List<Task> listAlles= taskSer.createTaskQuery()//创建任务查询对象
                 .taskAssignee(sn)//指定个人任务查询
@@ -164,6 +162,7 @@ public class ActiController{
                     }
                 }else {
                     map.put("applyPerson",sn);
+                    map.put("applyPersonName",name);
                     String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                     map.put("approvedPerson",audits);
                     map.put("name",audits);
@@ -194,13 +193,12 @@ public class ActiController{
                             .orderByTaskCreateTime()//根据时间倒叙
                             .desc()
                             .list();
-                    System.out.println("时间倒叙的id："+lists.get(0).getId());
                     processEngine.getTaskService()// 与正在执行任务相关的Service
                             .complete(lists.get(0).getId());
-                    findTasks(session);
                 }
             }if(taskType.equals("帐号修改")==true){
                 map.put("applyPerson",sn);
+                map.put("applyPersonName",name);
                 String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                 map.put("approvedPerson",audits);
                 map.put("name",audits);
@@ -229,9 +227,9 @@ public class ActiController{
                         .list();
                 processEngine.getTaskService()// 与正在执行任务相关的Service
                         .complete(lists.get(0).getId());
-                findTasks(session);
             } else if(taskType.equals("帐号启用")==true){
                 map.put("applyPerson",sn);
+                map.put("applyPersonName",name);
                 String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                 map.put("approvedPerson",audits);
                 map.put("name",audits);
@@ -242,8 +240,6 @@ public class ActiController{
                 map.put("account",accountName);
                 map.put("status","1");
                 map.put("usersId",userId);
-                /*map.put("orgName",orgName);*/
-                map.put("accountOrg",accountOrg);
                 map.put("applyReason",applyReason);
                 ExecutionEntity pi1 = (ExecutionEntity)runtimeService.startProcessInstanceByKey("myProcess_1",map);
                 TaskService taskService=processEngine.getTaskService();
@@ -254,7 +250,6 @@ public class ActiController{
                         .list();
                 processEngine.getTaskService()// 与正在执行任务相关的Service
                         .complete(lists.get(0).getId());
-                findTasks(session);
             }
         }else {
             for (int p=0;p<listAlles.size();p++) {
@@ -278,6 +273,7 @@ public class ActiController{
                             }
                         }else {
                             map.put("applyPerson",sn);
+                            map.put("applyPersonName",name);
                             String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                             map.put("approvedPerson",audits);
                             map.put("name",audits);
@@ -308,10 +304,10 @@ public class ActiController{
                                     .singleResult();
                             processEngine.getTaskService()// 与正在执行任务相关的Service
                                     .complete(lists.getId());
-                            findTasks(session);
                         }
                     }if(taskType.equals("帐号修改")==true){
                         map.put("applyPerson",sn);
+                        map.put("applyPersonName",name);
                         String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                         map.put("approvedPerson",audits);
                         map.put("name",audits);
@@ -322,8 +318,6 @@ public class ActiController{
                         map.put("account",accountName);
                         map.put("status","1");
                         map.put("usersId",userId);
-                        /*map.put("orgName",orgName);*/
-
                         map.put("accountOrgId",accountOrgId);
                         map.put("actType",actType);
                         map.put("accountOrg",accountOrg);
@@ -339,9 +333,9 @@ public class ActiController{
                                 .singleResult();
                         processEngine.getTaskService()// 与正在执行任务相关的Service
                                 .complete(lists.getId());
-                        findTasks(session);
                     } else if(taskType.equals("帐号启用")==true){
                         map.put("applyPerson",sn);
+                        map.put("applyPersonName",name);
                         String audits=audit.substring(audit.indexOf("(")+1,audit.indexOf(")"));
                         map.put("approvedPerson",audits);
                         map.put("name",audits);
@@ -352,8 +346,6 @@ public class ActiController{
                         map.put("account",accountName);
                         map.put("status","1");
                         map.put("usersId",userId);
-                        /*map.put("orgName",orgName);*/
-                        map.put("accountOrg",accountOrg);
                         map.put("applyReason",applyReason);
                         runtimeService.setVariables(id,map);
                         TaskService taskService=processEngine.getTaskService();
@@ -362,12 +354,13 @@ public class ActiController{
                                 .singleResult();
                         processEngine.getTaskService()// 与正在执行任务相关的Service
                                 .complete(lists.getId());
-                        findTasks(session);
+
                     }
                 }
             }
         }
-        return findTasks(session);
+        findTasks(session,times,taskTy);
+        return findTasks(session,times,taskTy);
     }
 
     /**
@@ -376,8 +369,7 @@ public class ActiController{
      */
     @RequestMapping("/selectApplyTast")
     @ResponseBody
-    public  List<ActivitiEntity> findTasks(HttpSession session){
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",Locale.US);
+    public  List<ActivitiEntity> findTasks(HttpSession session,String times,String taskTy) throws ParseException {
         String name = (String) session.getAttribute("userName");
         String login_name = (String) session.getAttribute("userSn");
         List<ActivitiEntity> listTask=new ArrayList<>();
@@ -408,7 +400,27 @@ public class ActiController{
                     task.setTaskApprovedPerson(audits.get(0).getAudit());
                     for (Map.Entry<String, Object> entry : variables.entrySet()) {
                         if ("applyPerson".equals(entry.getKey())&&login_name.equals(entry.getValue())) {
-                            listTask.add(task);
+                             if(times==null||times==""){
+                                if (taskTy==null||taskTy==""){
+                                    listTask.add(task);
+                                }else {
+                                    if (variables.get("taskType").toString().matches(".*"+taskTy+".*")){
+                                        listTask.add(task);
+                                    }
+                                }
+                            }else {
+                                 String startTime=times.substring(0, times.indexOf(" - "));
+                                 String endTime=times.substring(startTime.length()+3, times.length());
+                                if (df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1){
+                                    if (taskTy==null||taskTy==""){
+                                        listTask.add(task);
+                                    }else {
+                                        if ((variables.get("taskType").toString().matches(".*"+taskTy+".*"))&&(df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1)){
+                                            listTask.add(task);
+                                        }
+                                    }
+                                }
+                            }
                         }else {
 
                         }
@@ -433,7 +445,27 @@ public class ActiController{
                     task.setTaskApprovedPerson(audits.get(0).getAudit());
                     for (Map.Entry<String, Object> entry : variables.entrySet()) {
                         if ("applyPerson".equals(entry.getKey()) && login_name.equals(entry.getValue())) {
-                            listTask.add(task);
+                            if(times==null||times==""){
+                                if (taskTy==null||taskTy==""){
+                                    listTask.add(task);
+                                }else {
+                                    if (variables.get("taskType").toString().matches(".*"+taskTy+".*")){
+                                        listTask.add(task);
+                                    }
+                                }
+                            }else {
+                                String startTime=times.substring(0, times.indexOf(" - "));
+                                String endTime=times.substring(startTime.length()+3, times.length());
+                                if (df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1){
+                                    if (taskTy==null||taskTy==""){
+                                        listTask.add(task);
+                                    }else {
+                                        if ((variables.get("taskType").toString().matches(".*"+taskTy+".*"))&&(df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1)){
+                                            listTask.add(task);
+                                        }
+                                    }
+                                }
+                            }
                         } else {
 
                         }
@@ -455,7 +487,27 @@ public class ActiController{
                     task.setTaskAccount(variables.get("account").toString());
                     task.setTaskApplyPerson(name);
                     task.setTaskApprovedPerson(audits.get(0).getAudit());
-                    listTask.add(task);
+                    if(times==null||times==""){
+                        if (taskTy==null||taskTy==""){
+                            listTask.add(task);
+                        }else {
+                            if (variables.get("taskType").toString().matches(".*"+taskTy+".*")){
+                                listTask.add(task);
+                            }
+                        }
+                    }else {
+                        String startTime=times.substring(0, times.indexOf(" - "));
+                        String endTime=times.substring(startTime.length()+3, times.length());
+                        if (df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1){
+                            if (taskTy==null||taskTy==""){
+                                listTask.add(task);
+                            }else {
+                                if ((variables.get("taskType").toString().matches(".*"+taskTy+".*"))&&(df.parse(startTime).compareTo(listsl.get(p).getCreateTime())==-1&&df.parse(endTime).compareTo(listsl.get(p).getCreateTime())==1)){
+                                    listTask.add(task);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -469,8 +521,7 @@ public class ActiController{
      */
     @RequestMapping("/able")
     @ResponseBody
-    public List<AuditEntity> able(HttpSession session) {
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss",Locale.US);
+    public List<AuditEntity> able(HttpSession session,String taskTy,String applyPer) {
         //1:得到ProcessEngine对象
         ProcessEngine processEngine= ProcessEngines.getDefaultProcessEngine();
         //2：得到TaskService对象
@@ -517,9 +568,27 @@ public class ActiController{
                 task.setProcessInstanceId(li.getProcessInstanceId());
                 task.setApprovedPerson(audits.get(0).getAudit());
                 task.setTypes(variables.get("taskType").toString());
-                task.setApplyPerson(variables.get("applyPerson").toString());
-                lists.add(task);
-                System.out.println(lists);
+                task.setApplyPerson(variables.get("applyPersonName").toString());
+                //搜索
+                if(taskTy==null||taskTy==""){
+                    if(applyPer==null||applyPer=="") {
+                        lists.add(task);
+                    }else {
+                        if (variables.get("applyPersonName").toString().matches(".*"+applyPer+".*")){
+                            lists.add(task);
+                        }
+                    }
+                }else {
+                    if(applyPer==null||applyPer=="") {
+                        if (variables.get("taskType").toString().matches(".*"+taskTy+".*")){
+                            lists.add(task);
+                        }
+                    }else {
+                        if (variables.get("applyPersonName").toString().matches(".*"+applyPer+".*")&&variables.get("taskType").toString().matches(".*"+taskTy+".*")){
+                            lists.add(task);
+                        }
+                    }
+                }
             }
         }
         return lists;
@@ -624,7 +693,7 @@ public class ActiController{
             task.setTaskTypes(variables.get("taskType").toString());
             task.setTaskAccount(variables.get("account").toString());
             task.setTaskApp(variables.get("app").toString());
-            task.setTaskApplyPerson(variables.get("applyPerson").toString());
+            task.setTaskApplyPerson(variables.get("applyPersonName").toString());
             if (!variables.get("taskType").toString().equals("帐号启用")){
                 task.setTaskAccountOrg(variables.get("accountOrg").toString());
                 task.setTaskActType(variables.get("actType").toString());
@@ -725,7 +794,7 @@ public class ActiController{
 
         task.setTaskTypes(variables.get("taskType").toString());
 
-        task.setTaskApplyPerson(variables.get("applyPerson").toString());
+        task.setTaskApplyPerson(variables.get("applyPersonName").toString());
         list.add(task);
         System.out.println(list.toString());
         return list;
@@ -1116,8 +1185,9 @@ public class ActiController{
 
     @RequestMapping("/hisTask")
     @ResponseBody
-    public List<HistoricEntity> queryDoneTasks (@RequestParam("id") String id, HttpSession session){
+    public List<HistoricEntity> queryDoneTasks (@RequestParam("id") String id,String applyPer,String taskTy,String taskStatus, HttpSession session){
         List<HistoricEntity> listTask=new ArrayList<>();
+        String createTime="";
         //1:得到ProcessEngine对象
         ProcessEngine processEngine = ProcessEngines.getDefaultProcessEngine();
         //2：得到HistoryService对象
@@ -1146,6 +1216,10 @@ public class ActiController{
             for (HistoricActivityInstance tasks:pIdTasks){
                 HistoricEntity hisTask=new HistoricEntity();
                 //已完成结束的任务
+                if("startEvent".equals(tasks.getActivityType())){
+                    System.out.println("任务开始时间："+df.format(tasks.getStartTime()));
+                    createTime=df.format(tasks.getStartTime());
+                }
                 if("endEvent".equals(tasks.getActivityType())){
                     System.out.println("结束的任务："+tasks.getProcessInstanceId()+"###"+tasks.getActivityName());
                     List<HistoricVariableInstance> list = processEngine.getHistoryService()
@@ -1155,41 +1229,103 @@ public class ActiController{
                     if(list !=null && list.size()>0){
                         hisTask.setId(tasks.getId());
                         hisTask.setProcessInstanceId(tasks.getProcessInstanceId());
-                        hisTask.setCreateTime(df.format(tasks.getStartTime()));
+                        hisTask.setCreateTime(createTime);
                         hisTask.setEndTime(df.format(tasks.getEndTime()));
                         hisTask.setStatus("已完成");
                         List<ActEntity> accountField = null;
                         //任务结束的变量值，字段不同可根据任务类型判断
-
-                        for(HistoricVariableInstance hvi:list){
-                            List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
-                            //如果当前任务有批注信息，添加到集合中
-                            System.out.println(comments.size());
-                            if(comments!=null && comments.size()>0){
-                                hisTask.setComment(comments);
-                            }else {
-                                hisTask.setComment(comments);
-                            }
-                            if("role".equals(hvi.getVariableName())){
-                                hisTask.setRole(hvi.getValue().toString());
-                            }
-                            if("applyReason".equals(hvi.getVariableName())){
-                                hisTask.setApplyReason(hvi.getValue().toString());
-                            }
-                            if("applyPerson".equals(hvi.getVariableName())){
-                                hisTask.setApplyPerson(hvi.getValue().toString());
-                            }
-                            if("approvedPerson".equals(hvi.getVariableName())){
-                                hisTask.setApprovedPerson(hvi.getValue().toString());
-                            }
-                            if("taskType".equals(hvi.getVariableName())){
-                                hisTask.setTaskType(hvi.getValue().toString());
-                            }
-                            if("name".equals(hvi.getVariableName())){
-                                hisTask.setNames(hvi.getValue().toString());
-                            }
-                            if("taskType".equals(hvi.getVariableName())){
-                                if(!"用户移动".equals(hvi.getValue().toString())){
+                        for(HistoricVariableInstance historicVariableInstance:list){
+                            if ("taskType".equals(historicVariableInstance.getVariableName())&&"用户移动".equals(historicVariableInstance.getValue().toString())){
+                                for(HistoricVariableInstance hvi:list) {
+                                    List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                    //如果当前任务有批注信息，添加到集合中
+                                    if (comments != null && comments.size() > 0) {
+                                        hisTask.setComment(comments);
+                                    } else {
+                                        hisTask.setComment(comments);
+                                    }
+                                    if ("role".equals(hvi.getVariableName())) {
+                                        hisTask.setRole(hvi.getValue().toString());
+                                    }
+                                    if ("applyReason".equals(hvi.getVariableName())) {
+                                        hisTask.setApplyReason(hvi.getValue().toString());
+                                    }
+                                    if ("applyPersonName".equals(hvi.getVariableName())) {
+                                        hisTask.setApplyPerson(hvi.getValue().toString());
+                                    }
+                                    if ("approvedPerson".equals(hvi.getVariableName())) {
+                                        hisTask.setApprovedPerson(hvi.getValue().toString());
+                                    }
+                                    if ("taskType".equals(hvi.getVariableName())) {
+                                        hisTask.setTaskType(hvi.getValue().toString());
+                                    }
+                                    if ("orgName".equals(hvi.getVariableName())) {
+                                        hisTask.setOrgName(hvi.getValue().toString());
+                                    }
+                                    if ("position".equals(hvi.getVariableName())) {
+                                        hisTask.setPosition(hvi.getValue().toString());
+                                    }
+                                }
+                            }else if ("taskType".equals(historicVariableInstance.getVariableName())&&"帐号启用".equals(historicVariableInstance.getValue().toString())){
+                                for(HistoricVariableInstance hvi:list) {
+                                    List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                    //如果当前任务有批注信息，添加到集合中
+                                    if (comments != null && comments.size() > 0) {
+                                        hisTask.setComment(comments);
+                                    } else {
+                                        hisTask.setComment(comments);
+                                    }
+                                    if ("role".equals(hvi.getVariableName())) {
+                                        hisTask.setRole(hvi.getValue().toString());
+                                    }
+                                    if("app".equals(hvi.getVariableName())){
+                                        hisTask.setApp(hvi.getValue().toString());
+                                        accountField=defaultService.act(hvi.getValue().toString());
+                                    }
+                                    if ("applyReason".equals(hvi.getVariableName())) {
+                                        hisTask.setApplyReason(hvi.getValue().toString());
+                                    }
+                                    if ("applyPersonName".equals(hvi.getVariableName())) {
+                                        hisTask.setApplyPerson(hvi.getValue().toString());
+                                    }
+                                    if ("approvedPerson".equals(hvi.getVariableName())) {
+                                        hisTask.setApprovedPerson(hvi.getValue().toString());
+                                    }
+                                    if ("taskType".equals(hvi.getVariableName())) {
+                                        hisTask.setTaskType(hvi.getValue().toString());
+                                    }
+                                    if("account".equals(hvi.getVariableName())){
+                                        hisTask.setAccount(hvi.getValue().toString());
+                                    }
+                                }
+                            }else if ("帐号新增".equals(historicVariableInstance.getValue().toString())||"帐号修改".equals(historicVariableInstance.getValue().toString())) {
+                                for(HistoricVariableInstance hvi:list){
+                                    List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                    //如果当前任务有批注信息，添加到集合中
+                                    System.out.println(comments.size());
+                                    if(comments!=null && comments.size()>0){
+                                        hisTask.setComment(comments);
+                                    }else {
+                                        hisTask.setComment(comments);
+                                    }
+                                    if("role".equals(hvi.getVariableName())){
+                                        hisTask.setRole(hvi.getValue().toString());
+                                    }
+                                    if("applyReason".equals(hvi.getVariableName())){
+                                        hisTask.setApplyReason(hvi.getValue().toString());
+                                    }
+                                    if("applyPersonName".equals(hvi.getVariableName())){
+                                        hisTask.setApplyPerson(hvi.getValue().toString());
+                                    }
+                                    if("approvedPerson".equals(hvi.getVariableName())){
+                                        hisTask.setApprovedPerson(hvi.getValue().toString());
+                                    }
+                                    if("taskType".equals(hvi.getVariableName())){
+                                        hisTask.setTaskType(hvi.getValue().toString());
+                                    }
+                                    if("name".equals(hvi.getVariableName())){
+                                        hisTask.setNames(hvi.getValue().toString());
+                                    }
                                     if("app".equals(hvi.getVariableName())){
                                         hisTask.setApp(hvi.getValue().toString());
                                         accountField=defaultService.act(hvi.getValue().toString());
@@ -1197,109 +1333,141 @@ public class ActiController{
                                     if("account".equals(hvi.getVariableName())){
                                         hisTask.setAccount(hvi.getValue().toString());
                                     }
-                                    if(!"帐号启用".equals(hvi.getValue().toString())) {
-                                        if ("accountOrg".equals(hvi.getVariableName())) {
-                                            hisTask.setAccountOrg(hvi.getValue().toString());
-                                        }
-                                        if ("actType".equals(hvi.getVariableName())) {
-                                            hisTask.setActType(hvi.getValue().toString());
-                                        }
+                                    if ("accountOrg".equals(hvi.getVariableName())) {
+                                        hisTask.setAccountOrg(hvi.getValue().toString());
+                                    }
+                                    if ("actType".equals(hvi.getVariableName())) {
+                                        hisTask.setActType(hvi.getValue().toString());
+                                    }
 
-                                        if ("textList".equals(hvi.getVariableName())) {
-                                            JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
-                                            JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
-                                            JSONArray textListValue = JSONArray.fromObject(textLists.values());
-                                            List<DefaultsEntity> textList2 = new ArrayList<>();
-                                            for (int text = 0; text < textLists.size(); text++) {
-                                                for (int i = 0; i < accountField.size(); i++) {
-                                                    if (accountField.get(i).getName().equals(textListKey.get(text).toString())) {
-                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                        defaultsEntity.setNames(textListKey.get(text).toString());
-                                                        defaultsEntity.setDefaultValues(textListValue.get(text).toString());
-                                                        textList2.add(defaultsEntity);
-                                                    }
+                                    if ("textList".equals(hvi.getVariableName())) {
+                                        JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
+                                        JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
+                                        JSONArray textListValue = JSONArray.fromObject(textLists.values());
+                                        List<DefaultsEntity> textList2 = new ArrayList<>();
+                                        for (int text = 0; text < textLists.size(); text++) {
+                                            for (int i = 0; i < accountField.size(); i++) {
+                                                if (accountField.get(i).getName().equals(textListKey.get(text).toString())) {
+                                                    DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                    defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                    defaultsEntity.setNames(textListKey.get(text).toString());
+                                                    defaultsEntity.setDefaultValues(textListValue.get(text).toString());
+                                                    textList2.add(defaultsEntity);
                                                 }
                                             }
-                                            hisTask.setTextLists(textList2);
                                         }
-                                        if ("passwordList".equals(hvi.getVariableName())) {
+                                        hisTask.setTextLists(textList2);
+                                    }
+                                    if ("passwordList".equals(hvi.getVariableName())) {
 
-                                            JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
-                                            JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
-                                            JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
-                                            List<DefaultsEntity> passwordList2 = new ArrayList<>();
-                                            for (int text = 0; text < passwordList.size(); text++) {
-                                                for (int i = 0; i < accountField.size(); i++) {
-                                                    if (accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
-                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                        defaultsEntity.setNames(passwordListKey.get(text).toString());
-                                                        defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
-                                                        passwordList2.add(defaultsEntity);
-                                                    }
+                                        JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
+                                        JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                                        JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                                        List<DefaultsEntity> passwordList2 = new ArrayList<>();
+                                        for (int text = 0; text < passwordList.size(); text++) {
+                                            for (int i = 0; i < accountField.size(); i++) {
+                                                if (accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
+                                                    DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                    defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                    defaultsEntity.setNames(passwordListKey.get(text).toString());
+                                                    defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
+                                                    passwordList2.add(defaultsEntity);
                                                 }
                                             }
-                                            hisTask.setPasswordLists(passwordList2);
                                         }
-                                        if ("selectList".equals(hvi.getVariableName())) {
-                                            JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
-                                            JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
-                                            JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-                                            List<DefaultsEntity> selectList2 = new ArrayList<>();
-                                            //获取下拉框的value值
-                                            for (int text = 0; text < selectList.size(); text++) {
-                                                for (int i = 0; i < accountField.size(); i++) {
-                                                    if (accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
-                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                        if (StringUtils.isEmpty(accountField.get(i).getCompant())) {
+                                        hisTask.setPasswordLists(passwordList2);
+                                    }
+                                    if ("selectList".equals(hvi.getVariableName())) {
+                                        JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
+                                        JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                                        JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                                        List<DefaultsEntity> selectList2 = new ArrayList<>();
+                                        //获取下拉框的value值
+                                        for (int text = 0; text < selectList.size(); text++) {
+                                            for (int i = 0; i < accountField.size(); i++) {
+                                                if (accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
+                                                    DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                    if (StringUtils.isEmpty(accountField.get(i).getCompant())) {
 
-                                                        } else {
-                                                            String compantStr = accountField.get(i).getCompant();
-                                                            List<String> result = Arrays.asList(compantStr.split(","));
-                                                            for (int c = 0; c < result.size(); c++) {
-                                                                String[] com = result.get(c).split("[=]");
-                                                                String keys = com[0];
-                                                                String values = com[1];
-                                                                if (keys.equals(selectListValue.get(text).toString())) {
-                                                                    defaultsEntity.setDefaultValues(values);
-                                                                }
+                                                    } else {
+                                                        String compantStr = accountField.get(i).getCompant();
+                                                        List<String> result = Arrays.asList(compantStr.split(","));
+                                                        for (int c = 0; c < result.size(); c++) {
+                                                            String[] com = result.get(c).split("[=]");
+                                                            String keys = com[0];
+                                                            String values = com[1];
+                                                            if (keys.equals(selectListValue.get(text).toString())) {
+                                                                defaultsEntity.setDefaultValues(values);
                                                             }
                                                         }
-                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                        defaultsEntity.setNames(selectListKey.get(text).toString());
-                                                        selectList2.add(defaultsEntity);
                                                     }
+                                                    defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                    defaultsEntity.setNames(selectListKey.get(text).toString());
+                                                    selectList2.add(defaultsEntity);
                                                 }
                                             }
-                                            hisTask.setSelectLists(selectList2);
                                         }
-                                        if ("dateList".equals(hvi.getVariableName())) {
-                                            JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
-                                            JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
-                                            JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-                                            List<DefaultsEntity> dateList2 = new ArrayList<>();
-                                            for (int text = 0; text < dateList.size(); text++) {
-                                                for (int i = 0; i < accountField.size(); i++) {
-                                                    if (accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
-                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                        defaultsEntity.setNames(dateListKey.get(text).toString());
-                                                        defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
-                                                        dateList2.add(defaultsEntity);
-                                                    }
+                                        hisTask.setSelectLists(selectList2);
+                                    }
+                                    if ("dateList".equals(hvi.getVariableName())) {
+                                        JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
+                                        JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                                        JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                                        List<DefaultsEntity> dateList2 = new ArrayList<>();
+                                        for (int text = 0; text < dateList.size(); text++) {
+                                            for (int i = 0; i < accountField.size(); i++) {
+                                                if (accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
+                                                    DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                    defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                    defaultsEntity.setNames(dateListKey.get(text).toString());
+                                                    defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
+                                                    dateList2.add(defaultsEntity);
                                                 }
                                             }
-                                            hisTask.setDateLists(dateList2);
-
+                                        }
+                                        hisTask.setDateLists(dateList2);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (taskStatus==null||taskStatus==""||"已完成".matches(".*"+taskStatus+".*")){
+                        if(applyPer==null||applyPer==""){
+                            if (taskTy==null||taskTy==""){
+                                listTask.add(hisTask);
+                            }else {
+                                for(HistoricVariableInstance hvi:list) {
+                                    if("taskType".equals(hvi.getVariableName())){
+                                        if (hvi.getValue().toString().matches(".*"+taskTy+".*")){
+                                            listTask.add(hisTask);
                                         }
                                     }
                                 }
                             }
-
+                        }else {
+                            if(taskTy==null||taskTy==""){
+                                for(HistoricVariableInstance hvi:list) {
+                                    if("applyPersonName".equals(hvi.getVariableName())){
+                                        if (hvi.getValue().toString().matches(".*"+applyPer+".*")){
+                                            listTask.add(hisTask);
+                                        }
+                                    }
+                                }
+                            }else {
+                                for(HistoricVariableInstance hvi:list) {
+                                    if("taskType".equals(hvi.getVariableName())){
+                                        for(HistoricVariableInstance hvi2:list) {
+                                            if("applyPersonName".equals(hvi2.getVariableName())){
+                                                if ((hvi.getValue().toString().matches(".*"+taskTy+".*"))&&(hvi2.getValue().toString().matches(".*"+applyPer+".*"))){
+                                                    listTask.add(hisTask);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                    listTask.add(hisTask);
                 }else if("startEvent".equals(tasks.getActivityType())){
                     HistoricActivityInstance unTasks =historyService.createHistoricActivityInstanceQuery()
                             .processInstanceId(hset)
@@ -1312,155 +1480,255 @@ public class ActiController{
                                 .createHistoricVariableInstanceQuery() //创建一个历史的流程变量查询对象
                                 .processInstanceId(tasks.getProcessInstanceId())
                                 .list();
-                        if(list !=null && list.size()>0){
+                        if(list !=null && list.size()>0) {
                             hisTask.setId(tasks.getId());
                             hisTask.setProcessInstanceId(tasks.getProcessInstanceId());
                             hisTask.setCreateTime(df.format(tasks.getStartTime()));
-                            hisTask.setEndTime(df.format(tasks.getEndTime()));
+                            hisTask.setEndTime("");
                             hisTask.setStatus("未完成");
 
                             List<ActEntity> accountField = null;
                             //任务未结束的变量值，字段不同可根据任务类型判断
+                            for (HistoricVariableInstance historicVariableInstance : list) {
+                                System.out.println("扩展字段："+historicVariableInstance.getValue().toString());
+                                if ("用户移动".equals(historicVariableInstance.getValue().toString())) {
+                                    for (HistoricVariableInstance hvi : list) {
+                                        List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                        //如果当前任务有批注信息，添加到集合中
+                                        if (comments != null && comments.size() > 0) {
+                                            hisTask.setComment(comments);
+                                        } else {
+                                            hisTask.setComment(comments);
+                                        }
+                                        if ("role".equals(hvi.getVariableName())) {
+                                            hisTask.setRole(hvi.getValue().toString());
+                                        }
+                                        if ("applyReason".equals(hvi.getVariableName())) {
+                                            hisTask.setApplyReason(hvi.getValue().toString());
+                                        }
+                                        if ("applyPersonName".equals(hvi.getVariableName())) {
+                                            hisTask.setApplyPerson(hvi.getValue().toString());
+                                        }
+                                        if ("approvedPerson".equals(hvi.getVariableName())) {
+                                            hisTask.setApprovedPerson(hvi.getValue().toString());
+                                        }
+                                        if ("taskType".equals(hvi.getVariableName())) {
+                                            hisTask.setTaskType(hvi.getValue().toString());
+                                        }
+                                        if ("orgName".equals(hvi.getVariableName())) {
+                                            hisTask.setOrgName(hvi.getValue().toString());
+                                        }
+                                        if ("position".equals(hvi.getVariableName())) {
+                                            hisTask.setPosition(hvi.getValue().toString());
+                                        }
+                                    }
+                                } else if ("帐号启用".equals(historicVariableInstance.getValue().toString())) {
+                                    for (HistoricVariableInstance hvi : list) {
+                                        List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                        //如果当前任务有批注信息，添加到集合中
+                                        if (comments != null && comments.size() > 0) {
+                                            hisTask.setComment(comments);
+                                        } else {
+                                            hisTask.setComment(comments);
+                                        }
+                                        if ("role".equals(hvi.getVariableName())) {
+                                            hisTask.setRole(hvi.getValue().toString());
+                                        }
+                                        if ("app".equals(hvi.getVariableName())) {
+                                            hisTask.setApp(hvi.getValue().toString());
+                                            accountField = defaultService.act(hvi.getValue().toString());
+                                        }
+                                        if ("applyReason".equals(hvi.getVariableName())) {
+                                            hisTask.setApplyReason(hvi.getValue().toString());
+                                        }
+                                        if ("applyPersonName".equals(hvi.getVariableName())) {
+                                            hisTask.setApplyPerson(hvi.getValue().toString());
+                                        }
+                                        if ("approvedPerson".equals(hvi.getVariableName())) {
+                                            hisTask.setApprovedPerson(hvi.getValue().toString());
+                                        }
+                                        if ("taskType".equals(hvi.getVariableName())) {
+                                            hisTask.setTaskType(hvi.getValue().toString());
+                                        }
+                                        if ("account".equals(hvi.getVariableName())) {
+                                            hisTask.setAccount(hvi.getValue().toString());
+                                        }
+                                    }
+                                } else if ("帐号新增".equals(historicVariableInstance.getValue().toString())||"帐号修改".equals(historicVariableInstance.getValue().toString())) {
+                                    for(HistoricVariableInstance hvi:list){
+                                        List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
+                                        //如果当前任务有批注信息，添加到集合中
+                                        System.out.println(comments.size());
+                                        if(comments!=null && comments.size()>0){
+                                            hisTask.setComment(comments);
+                                        }else {
+                                            hisTask.setComment(comments);
+                                        }
 
-                            for(HistoricVariableInstance hvi:list){
-                                List<Comment> comments = taskService.getTaskComments(hvi.getTaskId());
-                                //如果当前任务有批注信息，添加到集合中
-                                System.out.println(comments.size());
-                                if(comments!=null && comments.size()>0){
-                                    hisTask.setComment(comments);
-                                }else {
-                                    hisTask.setComment(comments);
-                                }
-
-                                if("role".equals(hvi.getVariableName())){
-                                    hisTask.setRole(hvi.getValue().toString());
-                                }
-                                if("applyReason".equals(hvi.getVariableName())){
-                                    hisTask.setApplyReason(hvi.getValue().toString());
-                                }
-                                if("applyPerson".equals(hvi.getVariableName())){
-                                    hisTask.setApplyPerson(hvi.getValue().toString());
-                                }
-                                if("approvedPerson".equals(hvi.getVariableName())){
-                                    hisTask.setApprovedPerson(hvi.getValue().toString());
-                                }
-                                if("taskType".equals(hvi.getVariableName())){
-                                    hisTask.setTaskType(hvi.getValue().toString());
-                                }
-                                if("name".equals(hvi.getVariableName())){
-                                    hisTask.setNames(hvi.getValue().toString());
-                                }
-                                if("taskType".equals(hvi.getVariableName())) {
-                                    if (!"用户移动".equals(hvi.getValue().toString())) {
+                                        if("role".equals(hvi.getVariableName())){
+                                            hisTask.setRole(hvi.getValue().toString());
+                                        }
+                                        if ("app".equals(hvi.getVariableName())) {
+                                            hisTask.setApp(hvi.getValue().toString());
+                                            accountField = defaultService.act(hvi.getValue().toString());
+                                        }
+                                        if("applyReason".equals(hvi.getVariableName())){
+                                            hisTask.setApplyReason(hvi.getValue().toString());
+                                        }
+                                        if("applyPersonName".equals(hvi.getVariableName())){
+                                            hisTask.setApplyPerson(hvi.getValue().toString());
+                                        }
+                                        if("approvedPerson".equals(hvi.getVariableName())){
+                                            hisTask.setApprovedPerson(hvi.getValue().toString());
+                                        }
+                                        if("taskType".equals(hvi.getVariableName())){
+                                            hisTask.setTaskType(hvi.getValue().toString());
+                                        }
+                                        if("name".equals(hvi.getVariableName())){
+                                            hisTask.setNames(hvi.getValue().toString());
+                                        }
                                         if("accountOrg".equals(hvi.getVariableName())){
                                             hisTask.setAccountOrg(hvi.getValue().toString());
                                         }
                                         if("actType".equals(hvi.getVariableName())){
                                             hisTask.setActType(hvi.getValue().toString());
                                         }
-                                        if(!"帐号启用".equals(hvi.getValue().toString())) {
-                                            if ("account".equals(hvi.getVariableName())) {
-                                                hisTask.setAccount(hvi.getValue().toString());
-                                            }
-                                            if ("app".equals(hvi.getVariableName())) {
-                                                hisTask.setApp(hvi.getValue().toString());
-                                                accountField = defaultService.act(hvi.getValue().toString());
-                                            }
-                                            if("textList".equals(hvi.getVariableName())){
-                                                JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
-                                                JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
-                                                JSONArray textListValue = JSONArray.fromObject(textLists.values());
-                                                List<DefaultsEntity> textList2=new ArrayList<>();
-                                                for (int text=0;text<textLists.size();text++) {
-                                                    for (int i=0;i<accountField.size();i++) {
-                                                        if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
-                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                            defaultsEntity.setNames(textListKey.get(text).toString());
-                                                            defaultsEntity.setDefaultValues(textListValue.get(text).toString());
-                                                            textList2.add(defaultsEntity);
-                                                        }
+
+                                        if ("account".equals(hvi.getVariableName())) {
+                                            hisTask.setAccount(hvi.getValue().toString());
+                                        }
+                                        if("textList".equals(hvi.getVariableName())){
+                                            JSONObject textLists = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray textListKey = JSONArray.fromObject(textLists.keySet());
+                                            JSONArray textListValue = JSONArray.fromObject(textLists.values());
+                                            List<DefaultsEntity> textList2=new ArrayList<>();
+                                            for (int text=0;text<textLists.size();text++) {
+                                                for (int i=0;i<accountField.size();i++) {
+                                                    if(accountField.get(i).getName().equals(textListKey.get(text).toString())){
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(textListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(textListValue.get(text).toString());
+                                                        textList2.add(defaultsEntity);
                                                     }
                                                 }
-                                                hisTask.setTextLists(textList2);
                                             }
-                                            if("passwordList".equals(hvi.getVariableName())){
+                                            hisTask.setTextLists(textList2);
+                                        }
+                                        if("passwordList".equals(hvi.getVariableName())){
 
-                                                JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
-                                                JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
-                                                JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
-                                                List<DefaultsEntity> passwordList2=new ArrayList<>();
-                                                for (int text=0;text<passwordList.size();text++) {
-                                                    for (int i=0;i<accountField.size();i++) {
-                                                        if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
-                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                            defaultsEntity.setNames(passwordListKey.get(text).toString());
-                                                            defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
-                                                            passwordList2.add(defaultsEntity);
-                                                        }
+                                            JSONObject passwordList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray passwordListKey = JSONArray.fromObject(passwordList.keySet());
+                                            JSONArray passwordListValue = JSONArray.fromObject(passwordList.values());
+                                            List<DefaultsEntity> passwordList2=new ArrayList<>();
+                                            for (int text=0;text<passwordList.size();text++) {
+                                                for (int i=0;i<accountField.size();i++) {
+                                                    if(accountField.get(i).getName().equals(passwordListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(passwordListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(passwordListValue.get(text).toString());
+                                                        passwordList2.add(defaultsEntity);
                                                     }
                                                 }
-                                                hisTask.setPasswordLists(passwordList2);
                                             }
-                                            if("selectList".equals(hvi.getVariableName())){
-                                                JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
-                                                JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
-                                                JSONArray selectListValue = JSONArray.fromObject(selectList.values());
-                                                List<DefaultsEntity> selectList2=new ArrayList<>();
-                                                //获取下拉框的value值
-                                                for (int text=0;text<selectList.size();text++) {
-                                                    for (int i=0;i<accountField.size();i++) {
-                                                        if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
-                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                            if(StringUtils.isEmpty(accountField.get(i).getCompant())){
+                                            hisTask.setPasswordLists(passwordList2);
+                                        }
+                                        if("selectList".equals(hvi.getVariableName())){
+                                            JSONObject selectList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray selectListKey = JSONArray.fromObject(selectList.keySet());
+                                            JSONArray selectListValue = JSONArray.fromObject(selectList.values());
+                                            List<DefaultsEntity> selectList2=new ArrayList<>();
+                                            //获取下拉框的value值
+                                            for (int text=0;text<selectList.size();text++) {
+                                                for (int i=0;i<accountField.size();i++) {
+                                                    if(accountField.get(i).getName().equals(selectListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        if(StringUtils.isEmpty(accountField.get(i).getCompant())){
 
-                                                            }else {
-                                                                String compantStr = accountField.get(i).getCompant();
-                                                                List<String> result = Arrays.asList(compantStr.split(","));
-                                                                for(int c=0;c<result.size();c++){
-                                                                    String [] com= result.get(c).split("[=]");
-                                                                    String keys= com[0];
-                                                                    String values= com[1];
-                                                                    if(keys.equals(selectListValue.get(text).toString())){
-                                                                        defaultsEntity.setDefaultValues(values);
-                                                                    }
+                                                        }else {
+                                                            String compantStr = accountField.get(i).getCompant();
+                                                            List<String> result = Arrays.asList(compantStr.split(","));
+                                                            for(int c=0;c<result.size();c++){
+                                                                String [] com= result.get(c).split("[=]");
+                                                                String keys= com[0];
+                                                                String values= com[1];
+                                                                if(keys.equals(selectListValue.get(text).toString())){
+                                                                    defaultsEntity.setDefaultValues(values);
                                                                 }
                                                             }
-                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                            defaultsEntity.setNames(selectListKey.get(text).toString());
-                                                            selectList2.add(defaultsEntity);
                                                         }
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(selectListKey.get(text).toString());
+                                                        selectList2.add(defaultsEntity);
                                                     }
                                                 }
-                                                hisTask.setSelectLists(selectList2);
                                             }
-                                            System.out.println("=====:  "+hvi.getVariableName());
-                                            if("dateList".equals(hvi.getVariableName())){
-                                                JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
-                                                JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
-                                                JSONArray dateListValue = JSONArray.fromObject(dateList.values());
-                                                List<DefaultsEntity> dateList2=new ArrayList<>();
-                                                for (int text=0;text<dateList.size();text++) {
-                                                    for (int i=0;i<accountField.size();i++) {
-                                                        if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
-                                                            DefaultsEntity defaultsEntity = new DefaultsEntity();
-                                                            defaultsEntity.setRemarks(accountField.get(i).getRemark());
-                                                            defaultsEntity.setNames(dateListKey.get(text).toString());
-                                                            defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
-                                                            dateList2.add(defaultsEntity);
-                                                        }
+                                            hisTask.setSelectLists(selectList2);
+                                        }
+                                        System.out.println("=====:  "+hvi.getVariableName());
+                                        if("dateList".equals(hvi.getVariableName())){
+                                            JSONObject dateList = JSONObject.fromObject(hvi.getValue().toString());
+                                            JSONArray dateListKey = JSONArray.fromObject(dateList.keySet());
+                                            JSONArray dateListValue = JSONArray.fromObject(dateList.values());
+                                            List<DefaultsEntity> dateList2=new ArrayList<>();
+                                            for (int text=0;text<dateList.size();text++) {
+                                                for (int i=0;i<accountField.size();i++) {
+                                                    if(accountField.get(i).getName().equals(dateListKey.get(text).toString())) {
+                                                        DefaultsEntity defaultsEntity = new DefaultsEntity();
+                                                        defaultsEntity.setRemarks(accountField.get(i).getRemark());
+                                                        defaultsEntity.setNames(dateListKey.get(text).toString());
+                                                        defaultsEntity.setDefaultValues(dateListValue.get(text).toString());
+                                                        dateList2.add(defaultsEntity);
                                                     }
                                                 }
+
                                                 hisTask.setDateLists(dateList2);
                                             }
 
+
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+                        if (taskStatus==null||taskStatus==""||"未完成".matches(".*"+taskStatus+".*")){
+                            if(applyPer==null||applyPer==""){
+                                if (taskTy==null||taskTy==""){
+                                    listTask.add(hisTask);
+                                }else {
+                                    for(HistoricVariableInstance hvi:list) {
+                                        if("taskType".equals(hvi.getVariableName())){
+                                            if (hvi.getValue().toString().matches(".*"+taskTy+".*")){
+                                                listTask.add(hisTask);
+                                            }
                                         }
                                     }
                                 }
-
+                            }else {
+                                if(taskTy==null||taskTy==""){
+                                    for(HistoricVariableInstance hvi:list) {
+                                        if("applyPersonName".equals(hvi.getVariableName())){
+                                            if (hvi.getValue().toString().matches(".*"+applyPer+".*")){
+                                                listTask.add(hisTask);
+                                            }
+                                        }
+                                    }
+                                }else {
+                                    for(HistoricVariableInstance hvi:list) {
+                                        if("taskType".equals(hvi.getVariableName())){
+                                            for(HistoricVariableInstance hvi2:list) {
+                                                if("applyPersonName".equals(hvi2.getVariableName())){
+                                                    if ((hvi.getValue().toString().matches(".*"+taskTy+".*"))&&(hvi2.getValue().toString().matches(".*"+applyPer+".*"))){
+                                                        listTask.add(hisTask);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                            listTask.add(hisTask);
                         }
                     }
                 }

@@ -419,9 +419,15 @@ function auditAccount(id) {
 
 
 function  sel() {
+    var taskTy=document.getElementById("taskTy").value;
+    var applyPer=document.getElementById("applyPer").value;
     $.ajax({
         url: "/able",
         type: "POST",
+        data:{
+            taskTy:taskTy,
+            applyPer:applyPer
+        },
         success: function (dat) {
             //渲染分页
             layui.use('laypage', function () {

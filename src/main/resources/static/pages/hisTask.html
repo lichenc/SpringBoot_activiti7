@@ -46,34 +46,30 @@
 
 <div class="cBody">
     <div class="console">
-        <form class="layui-form">
             <div class="layui-form-item layui-search">
-
                 <div class="au layui-input-inline" style="width: 90px;">
                     <span class="span">申请人</span>
                 </div>
                 <div class="layui-input-inline ">
-                    <input type="text" name="taskType"   placeholder="申请人" autocomplete="off" class="layui-input">
+                    <input type="text" id="applyPer"   placeholder="申请人" autocomplete="off" class="layui-input">
                 </div>
                 <div class="au layui-input-inline" style="width: 90px;">
                     <span class="span">任务类型</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="taskType"   placeholder="任务类型" autocomplete="off" class="layui-input">
+                    <input type="text" id="taskTy"   placeholder="任务类型" autocomplete="off" class="layui-input">
                 </div>
                 <div class="au layui-input-inline" style="width: 90px;">
                     <span class="span">任务状态</span>
                 </div>
                 <div class="layui-input-inline">
-                    <input type="text" name="taskType"   placeholder="任务状态" autocomplete="off" class="layui-input">
+                    <input type="text" id="taskStatus"   placeholder="任务状态" autocomplete="off" class="layui-input">
                 </div>
-                <button class="layui-btn" lay-submit lay-filter="submitBut">查询</button>
+                <button class="layui-btn" onclick="histask();">查询</button>
                 <button class="layui-btn" onclick="reset();">重置</button>
                 <button class="layui-btn" id="export">导出</button>
 
             </div>
-        </form>
-
     </div>
     <br>
 

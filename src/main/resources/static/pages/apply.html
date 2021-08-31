@@ -66,6 +66,13 @@
     }
     .layui-timeInput{
         margin-top: 12px;
+        width: 320px;
+    }
+    .layui-form-item .layui-inline{
+        margin-right: 130px;
+    }
+    .layui-taskTy{
+        margin-top: 12px;
     }
 </style>
 <script>
@@ -78,21 +85,22 @@
                 <div class="layui-inline">
                     <label class="layui-form-label layui-applyTimes">申请时间</label>
                     <div class="layui-input-inline">
-                        <input type="text" class="layui-input layui-timeInput" id="times" placeholder="yyyy-MM-dd HH:mm:ss">
+                        <input type="text" class="layui-input layui-timeInput" id="times" placeholder="yyyy-MM-dd HH:mm:ss - yyyy-MM-dd HH:mm:ss">
                     </div>
                 </div>
-                <div class="layui-inline">
+               <!-- <div class="layui-inline">
                     <label class="layui-form-label layui-applyTimes">事件标识</label>
                     <div class="layui-input-inline">
-                        <input type="text" class="layui-input layui-timeInput"  placeholder="事件标识">
+                        <input type="text" id="incident" class="layui-input layui-timeInput"  placeholder="事件标识">
+                    </div>
+                </div>-->
+                <div class="layui-inline">
+                    <label class="layui-form-label layui-applyTimes">任务类型</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="taskTy" class="layui-input layui-taskTy"  placeholder="任务类型">
                     </div>
                 </div>
-                <!-- <div class="au layui-input-inline">
-                     <span class="span">审批人</span>
-                 </div>
-                 <div class="layui-input-inline">
-                     <input type="text" class="layui-input" id="approvedPerson" name="approvedPerson" placeholder="审批人">
-                 </div>-->
+
                 <div class="layui-input-inline layui-selectButton">
                     <button class="layui-btn"  onclick="getPositionLists()">查询&nbsp;</button>
                     <button class="layui-btn"   onclick="reset()">重置&nbsp;</button>
